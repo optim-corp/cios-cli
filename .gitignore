@@ -1,0 +1,11 @@
+api/*
+!api/.openapi-generator-ignore
+*json
+*.exes
+!.gitkeep
+*.exe
+cios*
+.idea
+**node.yml
+**produce.yml
+
