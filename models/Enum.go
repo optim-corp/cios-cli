@@ -29,7 +29,7 @@ var (
 		"active_license.read active_license.write product.read " +
 		"videostream.read videostream.view "
 	URL_JSON = `{
-			"alstroemeria": {
+			"prod": {
 				"DeviceManagement": "device-management.optimcloudapis.com",
 				"DeviceAssetManagement": "device-asset-lifecycle.optimcloudapis.com",
 				"Monitoring": "monitoring.optimcloudapis.com",
@@ -41,7 +41,7 @@ var (
 				"Auth": "auth.optim.cloud",
 				"VideoStreams": "video-streams.optim.cloud"
 			},
-			"viola": {
+			"pre": {
                 "DeviceManagement": "device-management.preapis.cios.dev",
                 "Monitoring": "monitoring.preapis.cios.dev",
                 "Messaging": "messaging.preapis.cios.dev",
