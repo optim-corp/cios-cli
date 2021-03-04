@@ -40,7 +40,7 @@ var (
 				"Iam": "iam.optimcloudapis.com",
 				"Auth": "auth.optim.cloud",
 				"VideoStreams": "video-streams.optim.cloud"
-			},
+			}x,
 			"viola": {
                 "DeviceManagement": "device-management.preapis.cios.dev",
                 "Monitoring": "monitoring.preapis.cios.dev",
