@@ -221,7 +221,9 @@ func embezzleDateStore() *cli.Command {
 				receiver       = make(chan *string)
 				done           = make(chan bool)
 			)
-			Client.PubSub.ConnectWebSocket(targetChannel, done, ciossdk.ConnectWebSocketOptions{PackerFormat: &packerFormat, PublishStr: &receiver})
+			if err := Client.PubSub.ConnectWebSocket(targetChannel, done, ciossdk.ConnectWebSocketOptions{PackerFormat: &packerFormat, PublishStr: &receiver}); err != nil {
+				return err
+			}
 			values, err := Client.PubSub.GetStreamAll(sourceChannel, ciossdk.MakeGetStreamOpts().
 				PackerFormat(packerFormat).TimestampRange(timestampRange).Label(label).Ascending(ascending), context.Background())
 			if err != nil {

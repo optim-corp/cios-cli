@@ -273,7 +273,7 @@ func autoMessage() *cli.Command {
 					PublishStr:   &pubStr,
 				})
 			})
-			arr := []string{}
+			var arr []string
 			if isTypeFile {
 				if f, err := path(file).ReadString(); err != nil {
 					log.Error(err.Error())
