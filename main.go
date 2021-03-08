@@ -141,9 +141,9 @@ func setConfig(config models.Config, urls []byte, stage string) {
 			IamUrl:                   https + domain("iam"),
 			AuthUrl:                  https + domain("auth"),
 			VideoStreamingUrl:        https + domain("video_streaming"),
-			DeviceMonitoringUrl:      https + domain("Monitoring"),
-			DeviceManagementUrl:      https + domain("DeviceManagement"),
-			DeviceAssetManagementUrl: https + domain("DeviceAssetManagement"),
+			DeviceMonitoringUrl:      https + domain("monitoring"),
+			DeviceManagementUrl:      https + domain("device"),
+			DeviceAssetManagementUrl: https + domain("device_asset"),
 		},
 	})
 }
