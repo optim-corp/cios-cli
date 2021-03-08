@@ -2,6 +2,8 @@ package models
 
 import (
 	"github.com/optim-corp/cios-cli/utils"
+	"github.com/optim-kazuhiro-seida/ftil"
+	"github.com/optim-kazuhiro-seida/go-advance-type/convert"
 )
 
 var (
@@ -28,37 +30,64 @@ var (
 		"geo.area.read geo.area.write geo.area-kind.read geo.area-kind.write geo.area.content.write geo.circle.read geo.circle.write geo.map.read geo.map.write geo.point.read geo.point.write geo.polygon.read geo.polygon.write geo.route.read geo.route.write " +
 		"active_license.read active_license.write product.read " +
 		"videostream.read videostream.view "
-	URL_JSON = `{
-			"alstroemeria": {
-				"DeviceManagement": "device-management.optimcloudapis.com",
-				"DeviceAssetManagement": "device-asset-lifecycle.optimcloudapis.com",
-				"Monitoring": "monitoring.optimcloudapis.com",
-				"Messaging": "messaging.optimcloudapis.com",
-				"Location": "location.optimcloudapis.com",
-				"Accounts": "accounts.optimcloudapis.com",
-				"Storage": "storage.optimcloudapis.com",
-				"Iam": "iam.optimcloudapis.com",
-				"Auth": "auth.optim.cloud",
-				"VideoStreams": "video-streams.optim.cloud"
-			}x,
-			"viola": {
-                "DeviceManagement": "device-management.preapis.cios.dev",
-                "Monitoring": "monitoring.preapis.cios.dev",
-                "Messaging": "messaging.preapis.cios.dev",
-                "Location": "location.preapis.cios.dev",
-                "Accounts": "accounts.preapis.cios.dev",
-                "Storage": "storage.preapis.cios.dev",
-                "Iam": "iam.preapis.cios.dev",
-                "Auth": "auth.pre.cios.dev",
-                "VideoStreams": "video-streaming.preapis.cios.dev"
-        	}
-		}`
+	URL_JSON = convert.MustIndentJson(URLs{
+		"alstroemeria": {
+			DeviceManagement:      "device-management.optimcloudapis.com",
+			DeviceAssetManagement: "device-asset-lifecycle.optimcloudapis.com",
+			Monitoring:            "monitoring.optimcloudapis.com",
+			Messaging:             "messaging.optimcloudapis.com",
+			Location:              "location.optimcloudapis.com",
+			Accounts:              "accounts.optimcloudapis.com",
+			Storage:               "storage.optimcloudapis.com",
+			Iam:                   "iam.optimcloudapis.com",
+			Auth:                  "auth.optim.cloud",
+			VideoStreams:          "video-streaming.optim.cloud",
+		},
+		"viola": {
+			DeviceManagement: "device-management.preapis.cios.dev",
+			Monitoring:       "monitoring.preapis.cios.dev",
+			Messaging:        "messaging.preapis.cios.dev",
+			Location:         "location.preapis.cios.dev",
+			Accounts:         "accounts.preapis.cios.dev",
+			Storage:          "storage.preapis.cios.dev",
+			Iam:              "iam.preapis.cios.dev",
+			Auth:             "auth.pre.cios.dev",
+			VideoStreams:     "video-streaming.preapis.cios.dev",
+		},
+	})
 )
 
 func createStages() []string {
-	if str, err := utils.Path(utils.UrlPath).ReadString(); err != nil {
-		return utils.GetKeys(utils.StrToMap(URL_JSON))
+	if str, err := ftil.Path(utils.UrlPath).ReadString(); err != nil {
+		return convert.GetObjectKeys(utils.StrToMap(URL_JSON))
 	} else {
-		return utils.GetKeys(utils.StrToMap(str))
+		return convert.GetObjectKeys(utils.StrToMap(str))
 	}
+}
+
+func GetConfig() (config Config, ok bool) {
+	ok = ftil.Path(utils.ConfigPath).LoadJsonStruct(&config) == nil
+	return
+}
+
+func GetUrls() (urls URLs, ok bool) {
+	ok = ftil.Path(utils.UrlPath).LoadJsonStruct(&urls) == nil
+	return
+}
+
+func GetAccounts() (account Account, ok bool) {
+	ok = ftil.Path(utils.AccountPath).LoadJsonStruct(&account) == nil
+	return
+}
+
+func WriteConfig(config Config) bool {
+	return ftil.Path(utils.ConfigPath).WriteJson(config) == nil
+}
+
+func WriteUrls(urls URLs) bool {
+	return ftil.Path(utils.UrlPath).WriteJson(urls) == nil
+}
+
+func WriteAccounts(account Account) bool {
+	return ftil.Path(utils.AccountPath).WriteJson(account) == nil
 }

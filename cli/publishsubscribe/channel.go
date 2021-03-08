@@ -4,13 +4,11 @@ import (
 	"context"
 	"strings"
 
-	"github.com/optim-corp/cios-golang-sdk/cios"
-
-	ciossdk "github.com/optim-corp/cios-golang-sdk/sdk"
-
 	. "github.com/optim-corp/cios-cli/cli"
 	"github.com/optim-corp/cios-cli/models"
 	"github.com/optim-corp/cios-cli/utils"
+	"github.com/optim-corp/cios-golang-sdk/cios"
+	ciossdk "github.com/optim-corp/cios-golang-sdk/sdk"
 	"github.com/urfave/cli/v2"
 	"gopkg.in/AlecAivazis/survey.v1"
 )

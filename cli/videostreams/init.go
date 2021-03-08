@@ -1,10 +1,12 @@
 package video
 
-import "github.com/optim-corp/cios-cli/utils"
+import (
+	"github.com/optim-corp/cios-cli/utils"
+	"github.com/optim-kazuhiro-seida/ftil"
+)
 
 var (
 	out         = utils.Out
-	log         = utils.Log
 	is          = utils.Is
 	listUtility = utils.ListUtility
 	spaceRight  = utils.SpaceRight
@@ -15,6 +17,6 @@ var (
 	printf      = utils.Printf
 	print       = utils.Print
 	dir         = utils.Dir
-	path        = utils.Path
+	path        = ftil.Path
 	assert      = utils.EAssert
 )

@@ -7,6 +7,8 @@ import (
 	"os"
 	"strings"
 
+	ftil "github.com/optim-kazuhiro-seida/go-advance-type/file"
+
 	"github.com/optim-corp/cios-cli/models"
 	"github.com/optim-corp/cios-cli/utils"
 	"github.com/skratchdot/open-golang/open"
@@ -23,9 +25,7 @@ type input struct {
 }
 
 var (
-	writeJSON  = utils.WriteJson
 	configPath = utils.ConfigPath
-	path       = utils.Path
 	assert     = utils.EAssert
 )
 
@@ -50,7 +50,7 @@ func GetLoginCommand() *cli.Command {
 func setPath(stage string) string {
 	dir := utils.Dir
 	urlDir := dir + "/.cios-cli/URL.json"
-	urls, urlErr := path(urlDir).ReadFile()
+	urls, urlErr := ftil.Path(urlDir).ReadFile()
 	if urlErr != nil {
 		println("No Domain")
 		os.Exit(1)
@@ -118,7 +118,7 @@ func login() {
 				config.Stage = answers.Stage
 				config.LogLevel = "info"
 				config.AuthType = "refresh_token"
-				assert(writeJSON(configPath, config)).Log().NoneErrPrintln("\n\nfinish")
+				assert(ftil.Path(configPath).WriteJson(config)).Log().NoneErrPrintln("\n\nfinish")
 				os.Exit(0)
 			})
 
@@ -167,7 +167,7 @@ func clientLogin() {
 	config.Stage = stage.Stage
 	config.LogLevel = "info"
 	config.Refresh = ""
-	assert(writeJSON(configPath, config)).
+	assert(ftil.Path(configPath).WriteJson(config)).
 		Log().
 		NoneErrPrintln("finish")
 }

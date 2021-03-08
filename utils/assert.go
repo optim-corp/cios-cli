@@ -2,6 +2,8 @@ package utils
 
 import (
 	"os"
+
+	log "github.com/optim-kazuhiro-seida/loglog"
 )
 
 func EAssert(err error) Assert {
@@ -12,7 +14,7 @@ func EAssert(err error) Assert {
 }
 func (self Assert) Log() Assert {
 	if self.Err != nil {
-		Log.Error(self.Err.Error())
+		log.Error(self.Err.Error())
 	}
 	return self
 }

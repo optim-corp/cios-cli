@@ -3,14 +3,15 @@ package device
 import (
 	"context"
 
-	"github.com/optim-corp/cios-golang-sdk/cios"
-
-	ciossdk "github.com/optim-corp/cios-golang-sdk/sdk"
-	"github.com/urfave/cli/v2"
+	log "github.com/optim-kazuhiro-seida/loglog"
 
 	. "github.com/optim-corp/cios-cli/cli"
 	"github.com/optim-corp/cios-cli/models"
 	"github.com/optim-corp/cios-cli/utils"
+	"github.com/optim-corp/cios-golang-sdk/cios"
+	ciossdk "github.com/optim-corp/cios-golang-sdk/sdk"
+	"github.com/optim-kazuhiro-seida/go-advance-type/convert"
+	"github.com/urfave/cli/v2"
 	"gopkg.in/AlecAivazis/survey.v1"
 )
 
@@ -126,7 +127,7 @@ func createDeviceModel() *cli.Command {
 		Action: func(c *cli.Context) error {
 			req := cios.DeviceModelRequest{}
 			input := utils.GetConsoleMultipleLine(">>")
-			assert(utils.DecodeJson(input, &req)).Log().NoneErr(func() {
+			assert(convert.UnMarshalJson(input, &req)).Log().NoneErr(func() {
 				model, _, err := Client.DeviceAssetManagement.CreateModel(req, context.Background())
 				assert(err).Log().NoneErr(func() { utils.OutStructJsonSlim(model) })
 			})
@@ -195,7 +196,7 @@ func entityDeviceModel() *cli.Command {
 				StartAt:         &ans.StartAt,
 			}
 			if ans.Value != "" {
-				assert(utils.DecodeJson(ans.Value, &body.CustomInventory)).
+				assert(convert.UnMarshalJson(ans.Value, &body.CustomInventory)).
 					Log().NoneErr(func() {
 					_, _, err := Client.DeviceAssetManagement.CreateEntity(name, body, context.Background())
 					assert(err).Log()

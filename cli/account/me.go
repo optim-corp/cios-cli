@@ -12,7 +12,6 @@ import (
 )
 
 var (
-	log         = utils.Log
 	listUtility = utils.ListUtility
 	fPrintln    = utils.Fprintln
 	str         = convert.MustStr

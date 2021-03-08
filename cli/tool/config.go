@@ -129,17 +129,15 @@ func GetConfigCommand() *cli.Command {
 				Aliases: []string{"lis", "ls"},
 				Flags:   []cli.Flag{},
 				Action: func(c *cli.Context) error {
-					file, err := configFile.ReadFile()
-					return assert(err).Log().
-						NoneErrAssert(json.Unmarshal(file, &config)).Log().
-						NoneErr(func() {
-							ListUtility(func() {
-								fPrintln("\tStage:          " + config.Stage)
-								fPrintln("\tClient ID:      " + config.ClientID)
-								fPrintln("\tClient Secret:  " + config.ClientSecret)
-								fPrintln("\tLog Level:      " + config.LogLevel)
-							})
-						}).Err
+					if config, ok := models.GetConfig(); ok {
+						ListUtility(func() {
+							fPrintln("\tStage:          " + config.Stage)
+							fPrintln("\tClient ID:      " + config.ClientID)
+							fPrintln("\tClient Secret:  " + config.ClientSecret)
+							fPrintln("\tLog Level:      " + config.LogLevel)
+						})
+					}
+					return nil
 				},
 			},
 			{

@@ -6,12 +6,11 @@ import (
 	"os"
 	"path/filepath"
 
-	ciossdk "github.com/optim-corp/cios-golang-sdk/sdk"
-
-	"github.com/urfave/cli/v2"
-
 	. "github.com/optim-corp/cios-cli/cli"
 	"github.com/optim-corp/cios-cli/utils"
+	ciossdk "github.com/optim-corp/cios-golang-sdk/sdk"
+	log "github.com/optim-kazuhiro-seida/loglog"
+	"github.com/urfave/cli/v2"
 )
 
 func GetFileCommand() *cli.Command {

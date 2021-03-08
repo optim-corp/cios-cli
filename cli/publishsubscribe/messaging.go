@@ -7,18 +7,13 @@ import (
 	"strconv"
 	"time"
 
-	ciossdk "github.com/optim-corp/cios-golang-sdk/sdk"
-
-	"golang.org/x/sync/errgroup"
-
 	. "github.com/optim-corp/cios-cli/cli"
 	"github.com/optim-corp/cios-cli/models"
 	"github.com/optim-corp/cios-cli/utils"
+	ciossdk "github.com/optim-corp/cios-golang-sdk/sdk"
+	log "github.com/optim-kazuhiro-seida/loglog"
 	"github.com/urfave/cli/v2"
-)
-
-const (
-	BOT_SETTING_FILE_NAME = "._channel_setting_.bot"
+	"golang.org/x/sync/errgroup"
 )
 
 func GetMessagingCommand() *cli.Command {

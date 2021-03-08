@@ -9,8 +9,9 @@ require (
 	github.com/mitchellh/go-homedir v1.1.0
 	github.com/mitchellh/mapstructure v1.4.0
 	github.com/optim-corp/cios-golang-sdk v0.0.6
-	github.com/optim-kazuhiro-seida/go-advance-type v1.2.4
-	github.com/optim-kazuhiro-seida/loglog v0.4.0
+	github.com/optim-kazuhiro-seida/ftil v1.0.0
+	github.com/optim-kazuhiro-seida/go-advance-type v1.3.0
+	github.com/optim-kazuhiro-seida/loglog v0.5.0
 	github.com/skratchdot/open-golang v0.0.0-20200116055534-eef842397966
 	github.com/tidwall/gjson v1.6.4
 	github.com/urfave/cli/v2 v2.2.0
