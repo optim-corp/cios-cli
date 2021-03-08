@@ -4,6 +4,7 @@ import (
 	app "github.com/optim-corp/cios-cli/cli"
 	"github.com/optim-corp/cios-cli/models"
 	"github.com/optim-corp/cios-cli/utils"
+	"github.com/skratchdot/open-golang/open"
 	"github.com/urfave/cli/v2"
 	"gopkg.in/AlecAivazis/survey.v1"
 )
@@ -33,7 +34,7 @@ func GetURLCommand() *cli.Command {
 				Name:    models.PATCH,
 				Aliases: []string{"up", "sync"},
 				Action: func(c *cli.Context) error {
-					urlFile := path(utils.UrlPath)
+					urlFile := path(models.UrlPath)
 					urlFile.CreateFile()
 					utils.EAssert(urlFile.WriteFileAsString(models.URL_JSON)).Log()
 					return nil
@@ -98,6 +99,7 @@ func addUrls() *cli.Command {
 			} else if isInteractive {
 				utils.Question(
 					[]*survey.Question{
+						{Name: "stage", Prompt: &survey.Input{Message: "Stage: "}},
 						{Name: "domain", Prompt: &survey.Input{Message: "Domain: "}},
 					}, &in)
 				utils.Question(
@@ -119,6 +121,7 @@ func addUrls() *cli.Command {
 			} else if isInteractiveAll {
 				utils.Question(
 					[]*survey.Question{
+						{Name: "stage", Prompt: &survey.Input{Message: "Stage: "}},
 						{Name: "device", Prompt: &survey.Input{Message: "Device URL: "}},
 						{Name: "device_asset", Prompt: &survey.Input{Message: "Device Asset URL: "}},
 						{Name: "monitoring", Prompt: &survey.Input{Message: "Monitoring URL: "}},
@@ -142,6 +145,8 @@ func addUrls() *cli.Command {
 					Auth:                  in.Auth,
 					VideoStreams:          in.VideoStreams,
 				}
+			} else {
+				open.Start(models.UrlPath)
 			}
 			models.WriteUrls(urls)
 			return nil

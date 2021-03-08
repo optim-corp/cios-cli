@@ -1,6 +1,7 @@
 package video
 
 import (
+	"github.com/optim-corp/cios-cli/models"
 	"github.com/optim-corp/cios-cli/utils"
 	"github.com/optim-kazuhiro-seida/ftil"
 )
@@ -16,7 +17,7 @@ var (
 	println     = utils.Println
 	printf      = utils.Printf
 	print       = utils.Print
-	dir         = utils.Dir
+	dir         = models.Dir
 	path        = ftil.Path
 	assert      = utils.EAssert
 )

@@ -1,6 +1,7 @@
 package utils
 
 import (
+	"encoding/json"
 	"fmt"
 	"io/ioutil"
 	"unicode/utf8"
@@ -118,4 +119,9 @@ func SpaceRight(val string, len int) string {
 
 	}
 	return val
+}
+
+func StructToJsonStr(object interface{}) (string, error) {
+	result, err := json.Marshal(object)
+	return string(result), err
 }

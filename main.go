@@ -31,9 +31,9 @@ const (
 
 var (
 	config     models.Config
-	topDir     = utils.TopDir
-	configPath = utils.ConfigPath
-	urlDir     = utils.UrlPath
+	topDir     = models.TopDir
+	configPath = models.ConfigPath
+	urlDir     = models.UrlPath
 	is         = utils.Is
 	path       = ftil.Path
 	assert     = utils.EAssert

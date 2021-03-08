@@ -11,9 +11,9 @@ var (
 	accountFile         ftil.FileService
 	configFile          ftil.FileService
 	timestampFormatFile ftil.FileService
-	configPath          = utils.ConfigPath
-	accountPath         = utils.AccountPath
-	timestampFormatPath = utils.TimestampFormatFilePath
+	configPath          = models.ConfigPath
+	accountPath         = models.AccountPath
+	timestampFormatPath = models.TimestampFormatFilePath
 	listUtility         = utils.ListUtility
 	fPrintln            = utils.Fprintln
 	fPrint              = utils.Fprint

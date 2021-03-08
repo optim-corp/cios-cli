@@ -25,7 +25,7 @@ type input struct {
 }
 
 var (
-	configPath = utils.ConfigPath
+	configPath = models.ConfigPath
 	assert     = utils.EAssert
 )
 
@@ -48,7 +48,7 @@ func GetLoginCommand() *cli.Command {
 }
 
 func setPath(stage string) string {
-	dir := utils.Dir
+	dir := models.Dir
 	urlDir := dir + "/.cios-cli/URL.json"
 	urls, urlErr := ftil.Path(urlDir).ReadFile()
 	if urlErr != nil {

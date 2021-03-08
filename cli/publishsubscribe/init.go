@@ -1,6 +1,7 @@
 package publishsubscribe
 
 import (
+	"github.com/optim-corp/cios-cli/models"
 	"github.com/optim-corp/cios-cli/utils"
 	"github.com/optim-kazuhiro-seida/ftil"
 )
@@ -14,7 +15,7 @@ var (
 	fPrintln     = utils.Fprintln
 	fPrintf      = utils.Fprintf
 	fPrint       = utils.Fprint
-	datastoreDir = utils.DatastoreDir
+	datastoreDir = models.DatastoreDir
 	path         = ftil.Path
 	assert       = utils.EAssert
 )

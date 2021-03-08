@@ -42,7 +42,7 @@ func GetLogCommand() *cli.Command {
 			} else {
 				levelStr = c.Args().First()
 			}
-			configPath = utils.ConfigPath
+			configPath = models.ConfigPath
 			file, err := path(configPath).ReadFile()
 			assert(err).
 				Log().
@@ -74,8 +74,8 @@ func GetSwitchCommand() *cli.Command {
 			)
 
 			assert(accountFile.LoadJsonStruct(&accounts)).Log().NoneErr(func() {
-				assert(path(utils.AccountPath).LoadJsonStruct(&account)).Log().NoneErr(func() {
-					keys := []string{}
+				assert(path(models.AccountPath).LoadJsonStruct(&account)).Log().NoneErr(func() {
+					var keys []string
 					for key, _ := range account {
 						keys = append(keys, key)
 					}
