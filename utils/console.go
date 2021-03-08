@@ -1,7 +1,9 @@
 package utils
 
 import (
+	"fmt"
 	"io/ioutil"
+	"unicode/utf8"
 
 	"github.com/optim-kazuhiro-seida/go-advance-type/convert"
 	log "github.com/optim-kazuhiro-seida/loglog"
@@ -97,4 +99,23 @@ func GetConsoleMultipleLine(message string) string {
 		{Name: "body", Prompt: &survey.Multiline{Message: message}},
 	}, &ans)
 	return ans.Body
+}
+
+func ListUtility(print func()) {
+	fmt.Fprintln(Out, "\n********************************************************"+
+		"********************************************************\n")
+	print()
+	fmt.Fprintln(Out, "\n********************************************************"+
+		"********************************************************\n")
+	Out.Flush()
+}
+
+func SpaceRight(val string, len int) string {
+	valLen := utf8.RuneCountInString(val)
+	for i := 1; 0 < (len - valLen); i++ {
+		val += " "
+		valLen = utf8.RuneCountInString(val)
+
+	}
+	return val
 }

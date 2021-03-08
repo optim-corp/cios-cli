@@ -124,8 +124,8 @@ func listDataStore() *cli.Command {
 
 			printObj := func(channel cios.Channel, limit int64) {
 				if dataFlag {
-					stageDSDir := datastoreDir + "/" + utils.GetStage()
-					channelDir := datastoreDir + "/" + utils.GetStage() + "/" + channelsMap[channel.Id].Name + "___" + channel.Id
+					stageDSDir := datastoreDir + "/" + models.GetStage()
+					channelDir := datastoreDir + "/" + models.GetStage() + "/" + channelsMap[channel.Id].Name + "___" + channel.Id
 					data, err := Client.PubSub.GetStreamAll(channel.Id, ciossdk.MakeGetStreamOpts().Limit(limit).PackerFormat(packerFormat).TimestampRange(timestampRange).Label(label).Offset(offset), context.Background())
 					assert(err).Log()
 					fPrintf("\n|Channel ID|  : %s \n|Channel Name|: %s\n\n", channel.Id, channelsMap[channel.Id].Name)

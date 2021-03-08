@@ -118,7 +118,7 @@ func setClientType() {
 }
 
 func setConfig(config models.Config, urls []byte, stage string) {
-	_ = utils.SetStage(stage)
+	_ = models.SetStage(stage)
 	log.SetLevelOrDefault(config.LogLevel, log.LOG_LEVEL_WARN)
 	https := "https://"
 	domain := func(name string) string {

@@ -1,8 +1,6 @@
 package models
 
 import (
-	"github.com/optim-corp/cios-cli/utils"
-	"github.com/optim-kazuhiro-seida/ftil"
 	"github.com/optim-kazuhiro-seida/go-advance-type/convert"
 )
 
@@ -56,38 +54,3 @@ var (
 		},
 	})
 )
-
-func createStages() []string {
-	if str, err := ftil.Path(utils.UrlPath).ReadString(); err != nil {
-		return convert.GetObjectKeys(utils.StrToMap(URL_JSON))
-	} else {
-		return convert.GetObjectKeys(utils.StrToMap(str))
-	}
-}
-
-func GetConfig() (config Config, ok bool) {
-	ok = ftil.Path(utils.ConfigPath).LoadJsonStruct(&config) == nil
-	return
-}
-
-func GetUrls() (urls URLs, ok bool) {
-	ok = ftil.Path(utils.UrlPath).LoadJsonStruct(&urls) == nil
-	return
-}
-
-func GetAccounts() (account Account, ok bool) {
-	ok = ftil.Path(utils.AccountPath).LoadJsonStruct(&account) == nil
-	return
-}
-
-func WriteConfig(config Config) bool {
-	return ftil.Path(utils.ConfigPath).WriteJson(config) == nil
-}
-
-func WriteUrls(urls URLs) bool {
-	return ftil.Path(utils.UrlPath).WriteJson(urls) == nil
-}
-
-func WriteAccounts(account Account) bool {
-	return ftil.Path(utils.AccountPath).WriteJson(account) == nil
-}

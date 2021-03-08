@@ -3,6 +3,8 @@ package tool
 import (
 	"encoding/json"
 
+	"github.com/optim-kazuhiro-seida/ftil"
+
 	"github.com/optim-corp/cios-cli/models"
 	"github.com/optim-corp/cios-cli/utils"
 	. "github.com/optim-corp/cios-cli/utils"
@@ -47,7 +49,7 @@ func GetLogCommand() *cli.Command {
 				NoneErrAssert(json.Unmarshal(file, &config)).
 				NoneErr(func() { config.LogLevel = levelStr }).
 				Log().
-				NoneErrAssert(WriteJson(configPath, config)).
+				NoneErrAssert(ftil.Path(configPath).WriteJson(config)).
 				NoneErrPrintln("Config Level: ", config.LogLevel).
 				Log()
 
@@ -165,12 +167,12 @@ func GetConfigCommand() *cli.Command {
 					return assert(accountFile.LoadJsonStruct(&accounts)).Log().
 						NoneErrAssert(configFile.LoadJsonStruct(&config)).Log().
 						NoneErr(func() {
-							configs, ok := accounts[utils.GetStage()]
+							configs, ok := accounts[models.GetStage()]
 							if ok {
 								configs[name] = config
-								accounts[utils.GetStage()] = configs
+								accounts[models.GetStage()] = configs
 							} else {
-								accounts[utils.GetStage()] = map[string]models.Config{name: config}
+								accounts[models.GetStage()] = map[string]models.Config{name: config}
 							}
 						}).
 						NoneErrAssert(accountFile.WriteJson(accounts)).Log().

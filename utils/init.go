@@ -13,7 +13,7 @@ var (
 	Out                     = bufio.NewWriter(os.Stdout)
 	Dir, _                  = homedir.Dir()
 	TopDir                  = Dir + "/.cios-cli"
-	DatastoreDir            = TopDir + "/datastore"
+	tastoreDir              = TopDir + "/datastore"
 	UrlPath                 = Is(os.Getenv("CIOS_CLI_URL_PATH") == "").T(TopDir + "/URL.json").F(os.Getenv("CIOS_CLI_URL_PATH")).Value.(string)
 	ConfigPath              = Is(os.Getenv("CIOS_CLI_CONFIG_PATH") == "").T(TopDir + "/config.json").F(os.Getenv("CIOS_CLI_CONFIG_PATH")).Value.(string)
 	AccountPath             = TopDir + "/accounts.json"
