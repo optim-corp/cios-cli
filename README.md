@@ -5,7 +5,7 @@
 [OPTiM Cloud IoT OS(CIOS)](https://www.optim.cloud/platform/) The command line interface (CLI) is an integrated tool for managing CIOS.
 This tool will be provided in binary and will help automation with scripts etc. that operate CIOS.
 
-This repository is in [OPTiM Cloud IoT OS Golang SDK](https://github.com/optim-corp/cios-golang-sdk).
+This repository depends on [OPTiM Cloud IoT OS Golang SDK](https://github.com/optim-corp/cios-golang-sdk).
 
 Use API as of 2021/03/10.
 
