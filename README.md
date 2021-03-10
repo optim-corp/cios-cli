@@ -5,6 +5,10 @@
 [OPTiM Cloud IoT OS(CIOS)](https://www.optim.cloud/platform/) The command line interface (CLI) is an integrated tool for managing CIOS.
 This tool will be provided in binary and will help automation with scripts etc. that operate CIOS.
 
+This repository is in [OPTiM Cloud IoT OS Golang SDK](https://github.com/optim-corp/cios-golang-sdk).
+
+Use API as of 2021/03/10.
+
 ## CIOS CLI Reference
 
 [CIOS CLI Document](./cli/README.md)
@@ -13,9 +17,9 @@ This tool will be provided in binary and will help automation with scripts etc. 
 
 ### 0. CLI Download
 - v0.2.3
- - [Linux amd64](https://s3-ap-northeast-1.amazonaws.com/cios-cli.tso.optim-test.com/release/cios-cli-0.2.3-linux-amd64)
- - [Windows amd64](https://s3-ap-northeast-1.amazonaws.com/cios-cli.tso.optim-test.com/release/cios-cli-0.2.3-windows-amd64.exe)
- - [macOS amd64](https://s3-ap-northeast-1.amazonaws.com/cios-cli.tso.optim-test.com/release/cios-cli-0.2.3-macos-amd64)
+    - [Linux amd64](https://s3-ap-northeast-1.amazonaws.com/cios-cli.tso.optim-test.com/release/cios-cli-0.2.3-linux-amd64)
+    - [Windows amd64](https://s3-ap-northeast-1.amazonaws.com/cios-cli.tso.optim-test.com/release/cios-cli-0.2.3-windows-amd64.exe)
+    - [macOS amd64](https://s3-ap-northeast-1.amazonaws.com/cios-cli.tso.optim-test.com/release/cios-cli-0.2.3-macos-amd64)
 
 ### 1. Create config file
 
@@ -67,6 +71,22 @@ $ cios config save
 ? Name:  Develop                                        
 Success to save config
 ```
+
+## Custom API FQDNs
+
+You can change the destination environment by entering the following command.
+
+```shell
+cios url edit
+```
+
+- Option `-i` : The entered domain will be set.
+- Option `-ia` : Write all URLs.
+- Option none : The settings folder opens.
+
+## How to Development
+
+Please see [DEVELOP.md](./DEVELOP.md)
 
 ## How to Support
 
