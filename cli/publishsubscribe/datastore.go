@@ -7,15 +7,13 @@ import (
 	"strings"
 	"time"
 
-	"github.com/optim-kazuhiro-seida/go-advance-type/convert"
-
-	"github.com/optim-corp/cios-golang-sdk/cios"
-
-	ciossdk "github.com/optim-corp/cios-golang-sdk/sdk"
-
 	. "github.com/optim-corp/cios-cli/cli"
 	"github.com/optim-corp/cios-cli/models"
 	"github.com/optim-corp/cios-cli/utils"
+	"github.com/optim-corp/cios-golang-sdk/cios"
+	ciossdk "github.com/optim-corp/cios-golang-sdk/sdk"
+	"github.com/optim-kazuhiro-seida/go-advance-type/convert"
+	log "github.com/optim-kazuhiro-seida/loglog"
 	"github.com/urfave/cli/v2"
 )
 
@@ -126,8 +124,8 @@ func listDataStore() *cli.Command {
 
 			printObj := func(channel cios.Channel, limit int64) {
 				if dataFlag {
-					stageDSDir := datastoreDir + "/" + utils.GetStage()
-					channelDir := datastoreDir + "/" + utils.GetStage() + "/" + channelsMap[channel.Id].Name + "___" + channel.Id
+					stageDSDir := datastoreDir + "/" + models.GetStage()
+					channelDir := datastoreDir + "/" + models.GetStage() + "/" + channelsMap[channel.Id].Name + "___" + channel.Id
 					data, err := Client.PubSub.GetStreamAll(channel.Id, ciossdk.MakeGetStreamOpts().Limit(limit).PackerFormat(packerFormat).TimestampRange(timestampRange).Label(label).Offset(offset), context.Background())
 					assert(err).Log()
 					fPrintf("\n|Channel ID|  : %s \n|Channel Name|: %s\n\n", channel.Id, channelsMap[channel.Id].Name)
@@ -221,7 +219,9 @@ func embezzleDateStore() *cli.Command {
 				receiver       = make(chan *string)
 				done           = make(chan bool)
 			)
-			Client.PubSub.ConnectWebSocket(targetChannel, done, ciossdk.ConnectWebSocketOptions{PackerFormat: &packerFormat, PublishStr: &receiver})
+			if err := Client.PubSub.ConnectWebSocket(targetChannel, done, ciossdk.ConnectWebSocketOptions{PackerFormat: &packerFormat, PublishStr: &receiver}); err != nil {
+				return err
+			}
 			values, err := Client.PubSub.GetStreamAll(sourceChannel, ciossdk.MakeGetStreamOpts().
 				PackerFormat(packerFormat).TimestampRange(timestampRange).Label(label).Ascending(ascending), context.Background())
 			if err != nil {

@@ -83,7 +83,7 @@ func listDeviceLifecycle() *cli.Command {
 					ComponentId(componentId).
 					StartEventAt(startTimestamp).
 					EndEventAt(endTimestamp), context.Background())
-				stageDSDir := lifecycleDir + "/" + utils.GetStage()
+				stageDSDir := lifecycleDir + "/" + models.GetStage()
 				if save {
 					path(lifecycleDir).CreateDir()
 					path(stageDSDir).CreateDir()

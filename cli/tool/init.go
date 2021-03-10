@@ -3,26 +3,24 @@ package tool
 import (
 	"github.com/optim-corp/cios-cli/models"
 	"github.com/optim-corp/cios-cli/utils"
+	ftil "github.com/optim-kazuhiro-seida/go-advance-type/file"
 )
 
 var (
 	config              models.Config
-	accountFile         utils.FileService
-	configFile          utils.FileService
-	timestampFormatFile utils.FileService
-	configPath          = utils.ConfigPath
-	urlDir              = utils.UrlPath
-	accountPath         = utils.AccountPath
-	timestampFormatPath = utils.TimestampFormatFilePath
-	log                 = utils.Log
+	accountFile         ftil.FileService
+	configFile          ftil.FileService
+	timestampFormatFile ftil.FileService
+	configPath          = models.ConfigPath
+	accountPath         = models.AccountPath
+	timestampFormatPath = models.TimestampFormatFilePath
 	listUtility         = utils.ListUtility
 	fPrintln            = utils.Fprintln
-	fPrintf             = utils.Fprintf
 	fPrint              = utils.Fprint
 	println             = utils.Println
 	printf              = utils.Printf
 	print               = utils.Print
-	path                = utils.Path
+	path                = ftil.Path
 	assert              = utils.EAssert
 	is                  = utils.Is
 )

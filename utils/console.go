@@ -1,11 +1,13 @@
 package utils
 
 import (
-	"errors"
+	"encoding/json"
+	"fmt"
 	"io/ioutil"
-	"os"
-	"path/filepath"
-	"strings"
+	"unicode/utf8"
+
+	"github.com/optim-kazuhiro-seida/go-advance-type/convert"
+	log "github.com/optim-kazuhiro-seida/loglog"
 
 	"github.com/urfave/cli/v2"
 	"gopkg.in/AlecAivazis/survey.v1"
@@ -14,78 +16,9 @@ import (
 func Question(question []*survey.Question, st interface{}) {
 	err := survey.Ask(question, st)
 	if err != nil {
-		Log.Emergency(err.Error())
+		log.Emergency(err.Error())
 		panic(err)
 	}
-}
-func FindFolderIncludeFile(path string, fileKey string) (*string, error) {
-	path, err := filepath.Abs(path)
-	if err != nil || Path(path).IsFile() {
-		println(path)
-		return nil, errors.New("No Dir String")
-	}
-	if dirs, err := ioutil.ReadDir(path); err != nil {
-		return nil, err
-	} else {
-		item := []string{}
-		for _, d := range dirs {
-			if strings.Contains(d.Name(), fileKey) {
-				return &path, nil
-			}
-			if d.IsDir() {
-				item = append(item, d.Name())
-			}
-		}
-		if len(item) == 0 {
-			return nil, errors.New("No Store")
-		}
-		ans := struct{ Value string }{}
-		Question([]*survey.Question{
-			{
-				Name: "value",
-				Prompt: &survey.Select{
-					Options: item,
-					Message: "Pick a File or Dir",
-				},
-			},
-		}, &ans)
-		return FindFolderIncludeFile(filepath.Join(path, ans.Value), fileKey)
-	}
-}
-func PickFile(path string, filter *string) ([]byte, error) {
-	path, err := filepath.Abs(path)
-	fileInfo, err := os.Stat(path)
-	if err != nil {
-		return nil, err
-	}
-	if !fileInfo.IsDir() {
-		file, err := ioutil.ReadFile(path)
-		return file, err
-	}
-	dirs, err := ioutil.ReadDir(path)
-	if err != nil {
-		return nil, err
-	}
-	item := []string{}
-	for _, d := range dirs {
-		if filter != nil {
-			if !strings.Contains(d.Name(), *filter) && !d.IsDir() {
-				break
-			}
-		}
-		item = append(item, d.Name())
-	}
-	ans := struct{ Value string }{}
-	Question([]*survey.Question{
-		{
-			Name: "value",
-			Prompt: &survey.Select{
-				Options: item,
-				Message: "Pick a File or Dir",
-			},
-		},
-	}, &ans)
-	return PickFile(filepath.Join(path, ans.Value), filter)
 }
 
 func CliArgsForEach(c *cli.Context, fun func(val string)) {
@@ -102,9 +35,9 @@ func CliArgs(c *cli.Context) []string {
 }
 func ListDirs(_dir string, indent string) {
 	dirs, err := ioutil.ReadDir(_dir)
-	Log.Debug(_dir)
+	log.Debug(_dir)
 	if err != nil {
-		Log.Error(err.Error())
+		log.Error(err.Error())
 		return
 	}
 	for _, dir := range dirs {
@@ -121,11 +54,11 @@ func ListDirs(_dir string, indent string) {
 func FOutStructJson(object interface{}) {
 	body, err := StructToJsonStr(object)
 	if err != nil {
-		Log.Error(err.Error())
+		log.Error(err.Error())
 	} else {
-		result, err := IndentJson(body)
+		result, err := convert.IndentJson(body)
 		if err != nil {
-			Log.Error(err.Error())
+			log.Error(err.Error())
 		} else {
 			Fprintln(result)
 		}
@@ -134,11 +67,11 @@ func FOutStructJson(object interface{}) {
 func OutStructJson(object interface{}) {
 	body, err := StructToJsonStr(object)
 	if err != nil {
-		Log.Error(err.Error())
+		log.Error(err.Error())
 	} else {
-		result, err := IndentJson(body)
+		result, err := convert.IndentJson(body)
 		if err != nil {
-			Log.Error(err.Error())
+			log.Error(err.Error())
 		} else {
 			println(result)
 		}
@@ -147,7 +80,7 @@ func OutStructJson(object interface{}) {
 func FOutStructJsonSlim(object interface{}) {
 	body, err := StructToJsonStr(object)
 	if err != nil {
-		Log.Error(err.Error())
+		log.Error(err.Error())
 	} else {
 		Fprintln(body)
 	}
@@ -155,7 +88,7 @@ func FOutStructJsonSlim(object interface{}) {
 func OutStructJsonSlim(object interface{}) {
 	body, err := StructToJsonStr(object)
 	if err != nil {
-		Log.Error(err.Error())
+		log.Error(err.Error())
 	} else {
 		println(body)
 	}
@@ -167,4 +100,28 @@ func GetConsoleMultipleLine(message string) string {
 		{Name: "body", Prompt: &survey.Multiline{Message: message}},
 	}, &ans)
 	return ans.Body
+}
+
+func ListUtility(print func()) {
+	fmt.Fprintln(Out, "\n********************************************************"+
+		"********************************************************\n")
+	print()
+	fmt.Fprintln(Out, "\n********************************************************"+
+		"********************************************************\n")
+	Out.Flush()
+}
+
+func SpaceRight(val string, len int) string {
+	valLen := utf8.RuneCountInString(val)
+	for i := 1; 0 < (len - valLen); i++ {
+		val += " "
+		valLen = utf8.RuneCountInString(val)
+
+	}
+	return val
+}
+
+func StructToJsonStr(object interface{}) (string, error) {
+	result, err := json.Marshal(object)
+	return string(result), err
 }

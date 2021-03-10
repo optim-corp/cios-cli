@@ -1,3 +1,3 @@
-package geography
+package collection
 
 // TODO: Implement

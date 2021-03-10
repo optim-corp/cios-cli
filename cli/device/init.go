@@ -1,9 +1,12 @@
 package device
 
-import "github.com/optim-corp/cios-cli/utils"
+import (
+	"github.com/optim-corp/cios-cli/models"
+	"github.com/optim-corp/cios-cli/utils"
+	"github.com/optim-kazuhiro-seida/ftil"
+)
 
 var (
-	log          = utils.Log
 	listUtility  = utils.ListUtility
 	fPrintln     = utils.Fprintln
 	is           = utils.Is
@@ -11,6 +14,6 @@ var (
 	print        = utils.Print
 	printf       = utils.Printf
 	assert       = utils.EAssert
-	lifecycleDir = utils.LifecycleDir
-	path         = utils.Path
+	lifecycleDir = models.LifecycleDir
+	path         = ftil.Path
 )

@@ -7,10 +7,11 @@ import (
 	"os"
 	"strings"
 
+	ftil "github.com/optim-kazuhiro-seida/go-advance-type/file"
+
 	"github.com/optim-corp/cios-cli/models"
 	"github.com/optim-corp/cios-cli/utils"
 	"github.com/skratchdot/open-golang/open"
-	"github.com/tidwall/gjson"
 	"github.com/urfave/cli/v2"
 	"gopkg.in/AlecAivazis/survey.v1"
 )
@@ -23,9 +24,7 @@ type input struct {
 }
 
 var (
-	writeJSON  = utils.WriteJson
-	configPath = utils.ConfigPath
-	path       = utils.Path
+	configPath = models.ConfigPath
 	assert     = utils.EAssert
 )
 
@@ -48,20 +47,12 @@ func GetLoginCommand() *cli.Command {
 }
 
 func setPath(stage string) string {
-	dir := utils.Dir
-	urlDir := dir + "/.cios-cli/URL.json"
-	urls, urlErr := path(urlDir).ReadFile()
-	if urlErr != nil {
-		println("No Domain")
-		os.Exit(1)
+	if urls, ok := models.GetUrls(); ok {
+		if _url, ok := urls[stage]; ok {
+			return "https://" + _url.Auth
+		}
 	}
-	_url := gjson.GetBytes(urls, stage+".Auth")
-	println(_url.String())
-	if _url.String() == "" {
-		println("No Domain")
-		os.Exit(1)
-	}
-	return "https://" + _url.String()
+	return ""
 }
 
 func login() {
@@ -93,7 +84,6 @@ func login() {
 		},
 	}, &answers)
 	answers.Stage = stage.Stage
-
 	basePath := setPath(answers.Stage)
 	port := answers.RedirectUri[16:21]
 	path := answers.RedirectUri[21:]
@@ -118,7 +108,7 @@ func login() {
 				config.Stage = answers.Stage
 				config.LogLevel = "info"
 				config.AuthType = "refresh_token"
-				assert(writeJSON(configPath, config)).Log().NoneErrPrintln("\n\nfinish")
+				assert(ftil.Path(configPath).WriteJson(config)).Log().NoneErrPrintln("\n\nfinish")
 				os.Exit(0)
 			})
 
@@ -167,7 +157,7 @@ func clientLogin() {
 	config.Stage = stage.Stage
 	config.LogLevel = "info"
 	config.Refresh = ""
-	assert(writeJSON(configPath, config)).
+	assert(ftil.Path(configPath).WriteJson(config)).
 		Log().
 		NoneErrPrintln("finish")
 }
