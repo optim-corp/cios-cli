@@ -26,7 +26,7 @@ import (
 
 const (
 	NAME    = "Could CLI"
-	VERSION = "0.0.1"
+	VERSION = "0.2.4"
 )
 
 var (
