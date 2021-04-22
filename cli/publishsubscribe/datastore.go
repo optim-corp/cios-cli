@@ -224,13 +224,13 @@ func saveDataStore() *cli.Command {
 				return convert.MustCompactJson(jsonFormat)
 			}
 			indentJson := func(data string) string {
-				var jsonFormat cios.PackerFormatJson
+				var jsonFormat interface{}
 				assert(convert.UnMarshalJson([]byte(data), &jsonFormat)).Log()
 				return convert.MustIndentJson(jsonFormat)
 			}
 			job := func(channel cios.Channel, limit int64) {
 				switch {
-				case replaced != "" || indent:
+				case replaced != "":
 					packerFormat = "json"
 					fallthrough
 				case outputDir == "":
