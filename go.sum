@@ -119,6 +119,7 @@ github.com/hashicorp/golang-lru v0.5.0/go.mod h1:/m3WP610KZHVQ1SGc6re/UDhFvYD7pJ
 github.com/hashicorp/golang-lru v0.5.1/go.mod h1:/m3WP610KZHVQ1SGc6re/UDhFvYD7pJ4Ao+sR/qLZy8=
 github.com/hinshun/vt10x v0.0.0-20180616224451-1954e6464174 h1:WlZsjVhE8Af9IcZDGgJGQpNflI3+MJSBhsgT5PCtzBQ=
 github.com/hinshun/vt10x v0.0.0-20180616224451-1954e6464174/go.mod h1:DqJ97dSdRW1W22yXSB90986pcOyQ7r45iio1KN2ez1A=
+github.com/iancoleman/strcase v0.1.2 h1:gnomlvw9tnV3ITTAxzKSgTF+8kFWcU/f+TgttpXGz1U=
 github.com/iancoleman/strcase v0.1.2/go.mod h1:SK73tn/9oHe+/Y0h39VT4UCxmurVJkR5NA7kMEAOgSE=
 github.com/ianlancetaylor/demangle v0.0.0-20181102032728-5e5cf60278f6/go.mod h1:aSSvb/t6k1mPoxDqO4vJh6VOCGPwU4O0C2/Eqndh1Sc=
 github.com/json-iterator/go v1.1.10 h1:Kz6Cvnvv2wGdaG/V8yMvfkmNiXq9Ya2KUv4rouJJr68=
@@ -158,14 +159,14 @@ github.com/modern-go/reflect2 v1.0.1 h1:9f412s+6RmYXLWZSEzVVgPGK7C2PphHj5RJrvfx9
 github.com/modern-go/reflect2 v1.0.1/go.mod h1:bx2lNnkwVCuqBIxFjflWJWanXIb3RllmbCylyMrvgv0=
 github.com/optim-corp/cios-golang-sdk v0.0.6 h1:yPXciFu45QG308Ocqd9v+xbtRhuAMBYSSdrH8HbtNdI=
 github.com/optim-corp/cios-golang-sdk v0.0.6/go.mod h1:L2RQeKwAavA8J8YYpkwwLdFy3cjcIpppQOAPqzxkNXI=
+github.com/optim-corp/cios-golang-sdk v0.1.0 h1:AcRJVZMkoxmyWGU6qycgRBgXGnso4v7Zppcf1juaOkQ=
+github.com/optim-corp/cios-golang-sdk v0.1.0/go.mod h1:L2RQeKwAavA8J8YYpkwwLdFy3cjcIpppQOAPqzxkNXI=
 github.com/optim-kazuhiro-seida/ftil v1.0.0 h1:f+dj6KIPzRLTrq1oHY18eKDnXIqEhfNN0uRt2ticp+s=
 github.com/optim-kazuhiro-seida/ftil v1.0.0/go.mod h1:dTGehrWE16Kye+Ww40G8wSLjKKXOfWqgHSwISWrHpmU=
 github.com/optim-kazuhiro-seida/go-advance-type v1.2.4 h1:LUk8wNjGfO7/SYhW8ejmcrl3A4187jB2aW9VQaLPneI=
 github.com/optim-kazuhiro-seida/go-advance-type v1.2.4/go.mod h1:t8CQQ6DsvogVqWuXuTIaCQsbfSYqDJ1YOXm+RtZd2H0=
 github.com/optim-kazuhiro-seida/go-advance-type v1.3.0 h1:YNe0LH1d+hMiYRdg8g37VomGH97sDFvGXMese2HC2Ns=
 github.com/optim-kazuhiro-seida/go-advance-type v1.3.0/go.mod h1:t8CQQ6DsvogVqWuXuTIaCQsbfSYqDJ1YOXm+RtZd2H0=
-github.com/optim-kazuhiro-seida/loglog v0.4.0 h1:utoA/slmkTkVOrzDS5sWI2rsN0FyhI5SXiobssY10EI=
-github.com/optim-kazuhiro-seida/loglog v0.4.0/go.mod h1:49632KJ6jnHKLb+eA+knAR57nZ7yFpAfe8JziL2EEIo=
 github.com/optim-kazuhiro-seida/loglog v0.5.0 h1:cjE7K/UVDfbs+JGnamLElFHVRg04xOxA1lQSNCp57FM=
 github.com/optim-kazuhiro-seida/loglog v0.5.0/go.mod h1:ng87+rDVhUYVvJzd0c7T3paBwXNXhxlNGPmo7usFtkM=
 github.com/pmezard/go-difflib v1.0.0 h1:4DBwDE0NGyQoBHbLQYPwSUPoCMWR5BEzIk/f1lZbAQM=
