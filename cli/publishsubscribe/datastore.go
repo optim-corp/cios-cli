@@ -230,7 +230,7 @@ func saveDataStore() *cli.Command {
 			}
 			job := func(channel cios.Channel, limit int64) {
 				switch {
-				case replaced != "":
+				case replaced != "" || indent:
 					packerFormat = "json"
 					fallthrough
 				case outputDir == "":
