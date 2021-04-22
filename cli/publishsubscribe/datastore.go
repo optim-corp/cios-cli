@@ -194,7 +194,6 @@ func saveDataStore() *cli.Command {
 			&cli.StringFlag{Name: "timestamp_range", Aliases: []string{"tr"}, DefaultText: "Now Time", Value: ":" + convert.MustStr(time.Now().UnixNano())},
 			&cli.StringFlag{Name: "save_dir", Aliases: []string{"out"}},
 			&cli.StringFlag{Name: "label", Aliases: []string{"lb"}},
-			&cli.BoolFlag{Name: "data", Aliases: []string{"d"}},
 			&cli.BoolFlag{Name: "indent", Aliases: []string{"idt", "idnt", "i"}},
 			&cli.BoolFlag{Name: "collective", Aliases: []string{"compact", "coll", "collect"}},
 			&cli.Int64Flag{Name: "limit", Aliases: []string{"l"}, DefaultText: "30", Value: 30},
