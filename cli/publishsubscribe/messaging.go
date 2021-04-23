@@ -372,6 +372,7 @@ func registerJob() *cli.Command {
 						log.Debug(name, ": job number ->", idx)
 						var formatJson cios.PackerFormatJson
 						_ = convert.UnMarshalJson([]byte(v.Data), &formatJson)
+						formatJson.Header.ChannelId = job.Channel
 						send(name, v, formatJson, job.Loop, ms.SendJson)
 					}
 
