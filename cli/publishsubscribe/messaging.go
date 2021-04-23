@@ -324,7 +324,15 @@ func registerJob() *cli.Command {
 				byts, err          = path(filePath).ReadFile()
 				wg                 = sync.WaitGroup{}
 			)
-			fmt.Println(filePath, beginningTimestamp)
+			startMsg := func(name, channelId string) *ciossdk.CiosMessaging {
+				ms := Client.PubSub.NewMessaging(channelId, "publish", "json")
+				if err := ms.Start(context.Background()); err != nil {
+					log.Error(err)
+					return ms
+				}
+				fmt.Println(fmt.Sprintf("Start Job: %s", name))
+				return ms
+			}
 			check := func(jobYaml models.Job) error {
 				for _, jobs := range jobYaml {
 					for _, job := range jobs {
@@ -333,47 +341,38 @@ func registerJob() *cli.Command {
 							if err := convert.UnMarshalJson([]byte(v.Data), &formatJson); err != nil {
 								return err
 							}
-
 						}
 					}
 				}
 				return nil
 			}
-			send := func(v models.MessagingJobValue, formatJson cios.PackerFormatJson, loop int, SendJson func(interface{}) error) error {
-				for i, cnt := int64(0), 0; cnt < loop; i++ {
+			send := func(name string, v models.MessagingJobValue, formatJson cios.PackerFormatJson, loop int, SendJson func(interface{}) error) {
+				wg2 := sync.WaitGroup{}
+				wg2.Add(loop)
+				log.Debug(name, ": Loop Number", loop)
+				for i := 0; i < loop; i++ {
+					log.Debug(name, ": Sleep", v.Timestamp)
+					time.Sleep(time.Nanosecond * time.Duration(v.Timestamp))
 					go func() {
-						switch {
-						case i%v.Timestamp == 0:
-							formatJson.Header.Timestamp = str(beginningTimestamp + i)
-							fallthrough
-						case v.Timestamp == -1 || i%v.Timestamp == 0:
-							fmt.Println("Publish", formatJson.Header.Timestamp)
-							if err := SendJson(formatJson); err != nil {
-								log.Error(err)
-							}
-							cnt++
+						defer wg2.Done()
+						formatJson.Header.Timestamp = str(beginningTimestamp + v.Timestamp)
+						fmt.Println(name, "Publish", formatJson.Header.Timestamp)
+						if err := SendJson(formatJson); err != nil {
+							log.Error(err)
 						}
 					}()
-					time.Sleep(time.Nanosecond)
 				}
-				return nil
+				wg2.Wait()
 			}
 			execJob := func(jobs models.MessagingJobs, name string) {
 				defer wg.Done()
 				for _, job := range jobs {
-					ms := Client.PubSub.NewMessaging(job.Channel, "publish", "json")
-					if err := ms.Start(context.Background()); err != nil {
-						log.Error(err)
-						return
-					}
-					fmt.Println(fmt.Sprintf("Start Job: %s", name))
-
-					for _, v := range job.Value {
+					ms := startMsg(name, job.Channel)
+					for idx, v := range job.Value {
+						log.Debug(name, ": job number ->", idx)
 						var formatJson cios.PackerFormatJson
 						_ = convert.UnMarshalJson([]byte(v.Data), &formatJson)
-						if err := send(v, formatJson, job.Loop, ms.SendJson); err != nil {
-							break
-						}
+						send(name, v, formatJson, job.Loop, ms.SendJson)
 					}
 
 				}
@@ -382,8 +381,8 @@ func registerJob() *cli.Command {
 				NoneErrAssert(yaml.Unmarshal(byts, &jobYaml)).Log().
 				NoneErrAssert(check(jobYaml)).Log().
 				NoneErr(func() {
+					wg.Add(len(jobYaml))
 					for name, jobs := range jobYaml {
-						wg.Add(1)
 						go execJob(jobs, name)
 					}
 					wg.Wait()
