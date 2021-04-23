@@ -341,17 +341,19 @@ func registerJob() *cli.Command {
 			}
 			send := func(v models.MessagingJobValue, formatJson cios.PackerFormatJson, loop int, SendJson func(interface{}) error) error {
 				for i, cnt := int64(0), 0; cnt < loop; i++ {
-					switch {
-					case i%v.Timestamp == 0:
-						formatJson.Header.Timestamp = str(beginningTimestamp + i)
-						fallthrough
-					case v.Timestamp == -1 || i%v.Timestamp == 0:
-						fmt.Println("Publish", formatJson.Header.Timestamp)
-						if err := SendJson(formatJson); err != nil {
-							return err
+					go func() {
+						switch {
+						case i%v.Timestamp == 0:
+							formatJson.Header.Timestamp = str(beginningTimestamp + i)
+							fallthrough
+						case v.Timestamp == -1 || i%v.Timestamp == 0:
+							fmt.Println("Publish", formatJson.Header.Timestamp)
+							if err := SendJson(formatJson); err != nil {
+								log.Error(err)
+							}
+							cnt++
 						}
-						cnt++
-					}
+					}()
 					time.Sleep(time.Nanosecond)
 				}
 				return nil
