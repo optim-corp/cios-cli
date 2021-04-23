@@ -25,8 +25,8 @@ import (
 )
 
 const (
-	NAME    = "Could CLI"
-	VERSION = "0.2.4"
+	NAME    = "Could IoT OS CLI"
+	VERSION = "0.3.0"
 )
 
 var (

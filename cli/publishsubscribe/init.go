@@ -4,6 +4,7 @@ import (
 	"github.com/optim-corp/cios-cli/models"
 	"github.com/optim-corp/cios-cli/utils"
 	"github.com/optim-kazuhiro-seida/ftil"
+	"github.com/optim-kazuhiro-seida/go-advance-type/convert"
 )
 
 var (
@@ -18,4 +19,5 @@ var (
 	datastoreDir = models.DatastoreDir
 	path         = ftil.Path
 	assert       = utils.EAssert
+	str          = convert.MustStr
 )
