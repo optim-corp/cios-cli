@@ -8,7 +8,6 @@ import (
 
 	log "github.com/optim-kazuhiro-seida/loglog"
 
-	"github.com/k0kubun/pp"
 	"github.com/optim-corp/cios-cli/models"
 	"github.com/optim-corp/cios-cli/utils"
 	"github.com/urfave/cli/v2"
@@ -36,7 +35,7 @@ func GetTimestampCommand() *cli.Command {
 						return err
 					}
 					formats := strings.Split(string(file), "\n")
-					println(pp.Sprint(formats))
+					println(formats)
 					return nil
 				},
 			},
