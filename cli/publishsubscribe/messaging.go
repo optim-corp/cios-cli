@@ -3,13 +3,19 @@ package publishsubscribe
 import (
 	"context"
 	"errors"
+	"fmt"
 	"os"
 	"strconv"
+	"sync"
 	"time"
+
+	"github.com/optim-kazuhiro-seida/go-advance-type/convert"
+	"gopkg.in/yaml.v2"
 
 	. "github.com/optim-corp/cios-cli/cli"
 	"github.com/optim-corp/cios-cli/models"
 	"github.com/optim-corp/cios-cli/utils"
+	"github.com/optim-corp/cios-golang-sdk/cios"
 	ciossdk "github.com/optim-corp/cios-golang-sdk/sdk"
 	log "github.com/optim-kazuhiro-seida/loglog"
 	"github.com/urfave/cli/v2"
@@ -31,6 +37,7 @@ func GetMessagingCommand() *cli.Command {
 			listChannels(),
 			publishMessage(),
 			autoMessage(),
+			registerJob(),
 		},
 		Action: func(c *cli.Context) error {
 			var (
@@ -296,6 +303,90 @@ func autoMessage() *cli.Command {
 				}
 			}
 			return nil
+		},
+	}
+}
+
+func registerJob() *cli.Command {
+	return &cli.Command{
+		Name:    "job",
+		Aliases: []string{"register", "reg", "j"},
+		Usage:   "cios messaging job | register",
+		Flags: []cli.Flag{
+			&cli.StringFlag{Name: "path", Aliases: []string{"file_path", "f", "p", "file"}},
+			&cli.Int64Flag{Name: "beginning_timestamp", Aliases: []string{"start", "b", "start_timestamp", "beginning"}, Value: time.Now().UnixNano(), DefaultText: "Now Timestamp"},
+		},
+		Action: func(c *cli.Context) error {
+			var (
+				filePath           = c.String("file_path")
+				beginningTimestamp = c.Int64("beginning_timestamp")
+				jobYaml            models.Job
+				byts, err          = path(filePath).ReadFile()
+				wg                 = sync.WaitGroup{}
+			)
+			fmt.Println(filePath, beginningTimestamp)
+			check := func(jobYaml models.Job) error {
+				for _, jobs := range jobYaml {
+					for _, job := range jobs {
+						for _, v := range job.Value {
+							var formatJson cios.PackerFormatJson
+							if err := convert.UnMarshalJson([]byte(v.Data), &formatJson); err != nil {
+								return err
+							}
+
+						}
+					}
+				}
+				return nil
+			}
+			send := func(v models.MessagingJobValue, formatJson cios.PackerFormatJson, loop int, SendJson func(interface{}) error) error {
+				for i, cnt := int64(0), 0; cnt < loop; i++ {
+					switch {
+					case i%v.Timestamp == 0:
+						formatJson.Header.Timestamp = str(beginningTimestamp + i)
+						fallthrough
+					case v.Timestamp == -1 || i%v.Timestamp == 0:
+						fmt.Println("Publish", formatJson.Header.Timestamp)
+						if err := SendJson(formatJson); err != nil {
+							return err
+						}
+						cnt++
+					}
+					time.Sleep(time.Nanosecond)
+				}
+				return nil
+			}
+			execJob := func(jobs models.MessagingJobs, name string) {
+				defer wg.Done()
+				for _, job := range jobs {
+					ms := Client.PubSub.NewMessaging(job.Channel, "publish", "json")
+					if err := ms.Start(context.Background()); err != nil {
+						log.Error(err)
+						return
+					}
+					fmt.Println(fmt.Sprintf("Start Job: %s", name))
+
+					for _, v := range job.Value {
+						var formatJson cios.PackerFormatJson
+						_ = convert.UnMarshalJson([]byte(v.Data), &formatJson)
+						if err := send(v, formatJson, job.Loop, ms.SendJson); err != nil {
+							break
+						}
+					}
+
+				}
+			}
+			return assert(err).Log().
+				NoneErrAssert(yaml.Unmarshal(byts, &jobYaml)).Log().
+				NoneErrAssert(check(jobYaml)).Log().
+				NoneErr(func() {
+					for name, jobs := range jobYaml {
+						wg.Add(1)
+						go execJob(jobs, name)
+					}
+					wg.Wait()
+				}).
+				Err
 		},
 	}
 }

@@ -43,16 +43,16 @@ func init() {
 	if os.Getenv("AUTH_TYPE") == "client" {
 		setClientType()
 	} else {
-		path(topDir).CreateDir()
+		assert(path(topDir).CreateDir()).Log()
 		configFile := path(configPath)
 		urlFile := path(urlDir)
 		file, configErr := configFile.ReadFile()
 		urls, urlErr := urlFile.ReadFile()
 		assert(urlErr).
-			OnErr(func() { urlFile.CreateFile() }).
+			OnErr(func() { assert(urlFile.CreateFile()).Log() }).
 			OnErr(func() { assert(urlFile.WriteFileAsString(models.URL_JSON)) })
 		assert(configErr).
-			OnErr(func() { configFile.CreateFile() }).
+			OnErr(func() { assert(configFile.CreateFile()).Log() }).
 			ExitWith(0)
 		assert(json.Unmarshal(file, &config)).
 			NoneErr(func() { setConfig(config, urls, config.Stage) })
@@ -94,7 +94,6 @@ func main() {
 		log.Error(err.Error())
 	}
 }
-
 func setClientType() {
 	logLevel := os.Getenv("LOG_LEVEL")
 	log.SetLevelOrDefault(is(logLevel == "").T("info").F(logLevel).Value.(string), log.LOG_LEVEL_WARN)
@@ -116,7 +115,6 @@ func setClientType() {
 		},
 	})
 }
-
 func setConfig(config models.Config, urls []byte, stage string) {
 	_ = models.SetStage(stage)
 	log.SetLevelOrDefault(config.LogLevel, log.LOG_LEVEL_WARN)
