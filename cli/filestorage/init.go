@@ -2,7 +2,7 @@ package filestorage
 
 import (
 	"github.com/optim-corp/cios-cli/utils"
-	"github.com/optim-kazuhiro-seida/ftil"
+	ftil "github.com/optim-kazuhiro-seida/go-advance-type/file"
 )
 
 var (

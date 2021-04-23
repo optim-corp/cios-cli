@@ -3,8 +3,8 @@ package publishsubscribe
 import (
 	"github.com/optim-corp/cios-cli/models"
 	"github.com/optim-corp/cios-cli/utils"
-	"github.com/optim-kazuhiro-seida/ftil"
 	"github.com/optim-kazuhiro-seida/go-advance-type/convert"
+	ftil "github.com/optim-kazuhiro-seida/go-advance-type/file"
 )
 
 var (
