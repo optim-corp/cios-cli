@@ -332,6 +332,7 @@ func registerJob() *cli.Command {
 					for name, _jobs := range jobs {
 						fmt.Println("Job:", name)
 						for _, job := range _jobs {
+							fmt.Print("Enter <-")
 							scanner.Scan()
 							var formatJson cios.PackerFormatJson
 							if err := json.Unmarshal([]byte(job.Value), &formatJson); err != nil {
