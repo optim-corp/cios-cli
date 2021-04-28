@@ -7,15 +7,15 @@ import (
 	"strings"
 	"time"
 
-	"github.com/optim-kazuhiro-seida/go-advance-type/wrapper"
+	"github.com/optim-corp/cios-cli/utils/go_advance_type/wrapper"
 
 	. "github.com/optim-corp/cios-cli/cli"
 	"github.com/optim-corp/cios-cli/models"
 	"github.com/optim-corp/cios-cli/utils"
+	"github.com/optim-corp/cios-cli/utils/go_advance_type/convert"
+	log "github.com/optim-corp/cios-cli/utils/loglog"
 	"github.com/optim-corp/cios-golang-sdk/cios"
 	ciossdk "github.com/optim-corp/cios-golang-sdk/sdk"
-	"github.com/optim-kazuhiro-seida/go-advance-type/convert"
-	log "github.com/optim-kazuhiro-seida/loglog"
 	"github.com/urfave/cli/v2"
 )
 

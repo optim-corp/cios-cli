@@ -3,7 +3,7 @@ package utils
 import (
 	"os"
 
-	log "github.com/optim-kazuhiro-seida/loglog"
+	log "github.com/optim-corp/cios-cli/utils/loglog"
 )
 
 func EAssert(err error) Assert {

@@ -6,11 +6,11 @@ import (
 	. "github.com/optim-corp/cios-cli/cli"
 	"github.com/optim-corp/cios-cli/models"
 	"github.com/optim-corp/cios-cli/utils"
+	"github.com/optim-corp/cios-cli/utils/go_advance_type/convert"
+	xmath "github.com/optim-corp/cios-cli/utils/go_advance_type/math"
+	log "github.com/optim-corp/cios-cli/utils/loglog"
 	"github.com/optim-corp/cios-golang-sdk/cios"
 	ciossdk "github.com/optim-corp/cios-golang-sdk/sdk"
-	"github.com/optim-kazuhiro-seida/go-advance-type/convert"
-	xmath "github.com/optim-kazuhiro-seida/go-advance-type/math"
-	log "github.com/optim-kazuhiro-seida/loglog"
 	"github.com/urfave/cli/v2"
 )
 

@@ -3,7 +3,7 @@ package device
 import (
 	"context"
 
-	xmath "github.com/optim-kazuhiro-seida/go-advance-type/math"
+	xmath "github.com/optim-corp/cios-cli/utils/go_advance_type/math"
 
 	. "github.com/optim-corp/cios-cli/cli"
 	"github.com/optim-corp/cios-cli/models"

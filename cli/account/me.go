@@ -3,7 +3,7 @@ package account
 import (
 	"context"
 
-	"github.com/optim-kazuhiro-seida/go-advance-type/convert"
+	"github.com/optim-corp/cios-cli/utils/go_advance_type/convert"
 
 	. "github.com/optim-corp/cios-cli/cli"
 	"github.com/optim-corp/cios-cli/models"

@@ -5,7 +5,7 @@ import (
 	"strings"
 	"unicode/utf8"
 
-	"github.com/optim-kazuhiro-seida/go-advance-type/convert"
+	"github.com/optim-corp/cios-cli/utils/go_advance_type/convert"
 
 	"github.com/optim-corp/cios-golang-sdk/cios"
 
