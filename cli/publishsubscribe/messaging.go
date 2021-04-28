@@ -1,22 +1,25 @@
 package publishsubscribe
 
 import (
+	"bufio"
 	"context"
+	"encoding/json"
 	"errors"
 	"fmt"
 	"os"
 	"strconv"
-	"sync"
 	"time"
 
 	"github.com/optim-corp/cios-cli/utils/go_advance_type/convert"
+
+	"github.com/optim-corp/cios-golang-sdk/cios"
+
 	"gopkg.in/yaml.v2"
 
 	. "github.com/optim-corp/cios-cli/cli"
 	"github.com/optim-corp/cios-cli/models"
 	"github.com/optim-corp/cios-cli/utils"
 	log "github.com/optim-corp/cios-cli/utils/loglog"
-	"github.com/optim-corp/cios-golang-sdk/cios"
 	ciossdk "github.com/optim-corp/cios-golang-sdk/sdk"
 	"github.com/urfave/cli/v2"
 	"golang.org/x/sync/errgroup"
@@ -313,79 +316,37 @@ func registerJob() *cli.Command {
 		Aliases: []string{"register", "reg", "j"},
 		Usage:   "cios messaging job | register",
 		Flags: []cli.Flag{
-			&cli.StringFlag{Name: "path", Aliases: []string{"file_path", "f", "p", "file"}},
-			&cli.Int64Flag{Name: "beginning_timestamp", Aliases: []string{"start", "b", "start_timestamp", "beginning"}, Value: time.Now().UnixNano(), DefaultText: "Now Timestamp"},
+			&cli.StringFlag{Name: "path", Aliases: []string{"file_path", "f", "p", "file"}, Required: true},
 		},
 		Action: func(c *cli.Context) error {
 			var (
-				filePath           = c.String("file_path")
-				beginningTimestamp = c.Int64("beginning_timestamp")
-				jobYaml            models.Job
-				byts, err          = path(filePath).ReadFile()
-				wg                 = sync.WaitGroup{}
+				filePath  = c.String("file_path")
+				jobs      models.Job
+				scanner   = bufio.NewScanner(os.Stdin)
+				byts, err = path(filePath).ReadFile()
 			)
-			fmt.Println(filePath, beginningTimestamp)
-			check := func(jobYaml models.Job) error {
-				for _, jobs := range jobYaml {
-					for _, job := range jobs {
-						for _, v := range job.Value {
+			fmt.Println(filePath)
+			return assert(err).Log().
+				NoneErrAssert(yaml.Unmarshal(byts, &jobs)).Log().
+				NoneErrAssert((func() error {
+					for name, _jobs := range jobs {
+						fmt.Println("Job:", name)
+						for _, job := range _jobs {
+							scanner.Scan()
 							var formatJson cios.PackerFormatJson
-							if err := convert.UnMarshalJson([]byte(v.Data), &formatJson); err != nil {
+							if err := json.Unmarshal([]byte(job.Value), &formatJson); err != nil {
+								log.Error(err)
 								return err
 							}
-
+							if _, err := Client.PubSub.PublishMessageJSON(formatJson.Header.ChannelId, formatJson, context.Background()); err != nil {
+								return err
+							}
+							println("Publish", time.Unix(0, convert.MustInt64(formatJson.Header.Timestamp)).String(), formatJson.Header.ChannelId)
 						}
 					}
-				}
-				return nil
-			}
-			send := func(v models.MessagingJobValue, formatJson cios.PackerFormatJson, loop int, SendJson func(interface{}) error) error {
-				for i, cnt := int64(0), 0; cnt < loop; i++ {
-					switch {
-					case i%v.Timestamp == 0:
-						formatJson.Header.Timestamp = str(beginningTimestamp + i)
-						fallthrough
-					case v.Timestamp == -1 || i%v.Timestamp == 0:
-						fmt.Println("Publish", formatJson.Header.Timestamp)
-						if err := SendJson(formatJson); err != nil {
-							return err
-						}
-						cnt++
-					}
-					time.Sleep(time.Nanosecond)
-				}
-				return nil
-			}
-			execJob := func(jobs models.MessagingJobs, name string) {
-				defer wg.Done()
-				for _, job := range jobs {
-					ms := Client.PubSub.NewMessaging(job.Channel, "publish", "json")
-					if err := ms.Start(context.Background()); err != nil {
-						log.Error(err)
-						return
-					}
-					fmt.Println(fmt.Sprintf("Start Job: %s", name))
-
-					for _, v := range job.Value {
-						var formatJson cios.PackerFormatJson
-						_ = convert.UnMarshalJson([]byte(v.Data), &formatJson)
-						if err := send(v, formatJson, job.Loop, ms.SendJson); err != nil {
-							break
-						}
-					}
-
-				}
-			}
-			return assert(err).Log().
-				NoneErrAssert(yaml.Unmarshal(byts, &jobYaml)).Log().
-				NoneErrAssert(check(jobYaml)).Log().
-				NoneErr(func() {
-					for name, jobs := range jobYaml {
-						wg.Add(1)
-						go execJob(jobs, name)
-					}
-					wg.Wait()
-				}).
+					return nil
+				})()).Log().
+				NoneErrPrintln("Completed").
 				Err
 		},
 	}
