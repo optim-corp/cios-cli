@@ -9,15 +9,15 @@ import (
 	"sync"
 	"time"
 
-	"github.com/optim-kazuhiro-seida/go-advance-type/convert"
+	"github.com/optim-corp/cios-cli/utils/go_advance_type/convert"
 	"gopkg.in/yaml.v2"
 
 	. "github.com/optim-corp/cios-cli/cli"
 	"github.com/optim-corp/cios-cli/models"
 	"github.com/optim-corp/cios-cli/utils"
+	log "github.com/optim-corp/cios-cli/utils/loglog"
 	"github.com/optim-corp/cios-golang-sdk/cios"
 	ciossdk "github.com/optim-corp/cios-golang-sdk/sdk"
-	log "github.com/optim-kazuhiro-seida/loglog"
 	"github.com/urfave/cli/v2"
 	"golang.org/x/sync/errgroup"
 )

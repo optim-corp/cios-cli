@@ -16,10 +16,10 @@ import (
 	"github.com/optim-corp/cios-cli/cli/tool"
 	"github.com/optim-corp/cios-cli/models"
 	"github.com/optim-corp/cios-cli/utils"
+	ftil "github.com/optim-corp/cios-cli/utils/go_advance_type/file"
+	log "github.com/optim-corp/cios-cli/utils/loglog"
 	sdkmodel "github.com/optim-corp/cios-golang-sdk/model"
 	ciossdk "github.com/optim-corp/cios-golang-sdk/sdk"
-	ftil "github.com/optim-kazuhiro-seida/go-advance-type/file"
-	log "github.com/optim-kazuhiro-seida/loglog"
 	"github.com/tidwall/gjson"
 	"github.com/urfave/cli/v2"
 )

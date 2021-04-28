@@ -5,8 +5,8 @@ import (
 
 	"github.com/mitchellh/go-homedir"
 	"github.com/optim-corp/cios-cli/utils"
-	"github.com/optim-kazuhiro-seida/go-advance-type/convert"
-	ftil "github.com/optim-kazuhiro-seida/go-advance-type/file"
+	"github.com/optim-corp/cios-cli/utils/go_advance_type/convert"
+	ftil "github.com/optim-corp/cios-cli/utils/go_advance_type/file"
 )
 
 var (

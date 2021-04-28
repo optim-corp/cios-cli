@@ -8,8 +8,8 @@ import (
 
 	. "github.com/optim-corp/cios-cli/cli"
 	"github.com/optim-corp/cios-cli/utils"
+	log "github.com/optim-corp/cios-cli/utils/loglog"
 	ciossdk "github.com/optim-corp/cios-golang-sdk/sdk"
-	log "github.com/optim-kazuhiro-seida/loglog"
 	"github.com/urfave/cli/v2"
 )
 

@@ -6,8 +6,8 @@ import (
 	"io/ioutil"
 	"unicode/utf8"
 
-	"github.com/optim-kazuhiro-seida/go-advance-type/convert"
-	log "github.com/optim-kazuhiro-seida/loglog"
+	"github.com/optim-corp/cios-cli/utils/go_advance_type/convert"
+	log "github.com/optim-corp/cios-cli/utils/loglog"
 
 	"github.com/urfave/cli/v2"
 	"gopkg.in/AlecAivazis/survey.v1"
