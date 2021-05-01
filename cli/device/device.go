@@ -3,7 +3,7 @@ package device
 import (
 	"context"
 
-	"github.com/optim-corp/cios-cli/utils/go_advance_type/convert"
+	cnv "github.com/fcfcqloow/go-advance/convert"
 
 	. "github.com/optim-corp/cios-cli/cli"
 	"github.com/optim-corp/cios-cli/models"
@@ -131,7 +131,7 @@ func listDevice() *cli.Command {
 						func() {
 							value, err := utils.StructToJsonStr(device)
 							assert(err).Log().ExitWith(1)
-							value, err = convert.IndentJson(value)
+							value, err = cnv.IndentJson(value)
 							assert(err).Log().ExitWith(1)
 							println(value)
 						})
@@ -153,7 +153,7 @@ func listDevice() *cli.Command {
 										T(func() string {
 											str, err := utils.StructToJsonStr(device)
 											assert(err).Log().ExitWith(1)
-											str, err = convert.IndentJson(str)
+											str, err = cnv.IndentJson(str)
 											assert(err).Log().ExitWith(1)
 											return str
 										}()).

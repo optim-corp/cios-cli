@@ -7,8 +7,7 @@ import (
 	"os"
 	"strings"
 
-	ftil "github.com/optim-corp/cios-cli/utils/go_advance_type/file"
-
+	"github.com/fcfcqloow/go-advance/ftil"
 	"github.com/optim-corp/cios-cli/models"
 	"github.com/optim-corp/cios-cli/utils"
 	"github.com/skratchdot/open-golang/open"

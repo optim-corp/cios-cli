@@ -5,11 +5,11 @@ import (
 	"strconv"
 	"unicode/utf8"
 
+	cnv "github.com/fcfcqloow/go-advance/convert"
+	"github.com/fcfcqloow/go-advance/log"
 	. "github.com/optim-corp/cios-cli/cli"
 	"github.com/optim-corp/cios-cli/models"
 	"github.com/optim-corp/cios-cli/utils"
-	"github.com/optim-corp/cios-cli/utils/go_advance_type/convert"
-	log "github.com/optim-corp/cios-cli/utils/loglog"
 	"github.com/optim-corp/cios-golang-sdk/cios"
 	ciossdk "github.com/optim-corp/cios-golang-sdk/sdk"
 	"github.com/urfave/cli/v2"
@@ -103,7 +103,7 @@ func listNode() *cli.Command {
 				for _, node := range nodes {
 					parentNodeID := is(node.ParentNodeId.Get() == nil).
 						T(spaceRight("null", utf8.RuneCountInString("0000000000000000000"))).
-						F(convert.MustStr(node.ParentNodeId.Get())).Value.(string)
+						F(cnv.MustStr(node.ParentNodeId.Get())).Value.(string)
 					fPrintf(
 						"\t%s\t%s\t%s\t\t%s : %s\n",
 						node.Id,

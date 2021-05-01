@@ -1,7 +1,7 @@
 package models
 
 import (
-	"github.com/optim-corp/cios-cli/utils/go_advance_type/convert"
+	cnv "github.com/fcfcqloow/go-advance/convert"
 )
 
 var (
@@ -28,7 +28,7 @@ var (
 		"geo.area.read geo.area.write geo.area-kind.read geo.area-kind.write geo.area.content.write geo.circle.read geo.circle.write geo.map.read geo.map.write geo.point.read geo.point.write geo.polygon.read geo.polygon.write geo.route.read geo.route.write " +
 		"active_license.read active_license.write product.read " +
 		"videostream.read videostream.view "
-	URL_JSON = convert.MustIndentJson(URLs{
+	URL_JSON = cnv.MustIndentJson(URLs{
 		"prod": {
 			DeviceManagement:      "device-management.optimcloudapis.com",
 			DeviceAssetManagement: "device-asset-lifecycle.optimcloudapis.com",
