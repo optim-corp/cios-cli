@@ -7,13 +7,13 @@ import (
 	"strings"
 	"time"
 
-	"github.com/optim-corp/cios-cli/utils/go_advance_type/wrapper"
+	wrp "github.com/fcfcqloow/go-advance/wrapper"
 
+	cnv "github.com/fcfcqloow/go-advance/convert"
+	"github.com/fcfcqloow/go-advance/log"
 	. "github.com/optim-corp/cios-cli/cli"
 	"github.com/optim-corp/cios-cli/models"
 	"github.com/optim-corp/cios-cli/utils"
-	"github.com/optim-corp/cios-cli/utils/go_advance_type/convert"
-	log "github.com/optim-corp/cios-cli/utils/loglog"
 	"github.com/optim-corp/cios-golang-sdk/cios"
 	ciossdk "github.com/optim-corp/cios-golang-sdk/sdk"
 	"github.com/urfave/cli/v2"
@@ -98,7 +98,7 @@ func listDataStore() *cli.Command {
 		Flags: []cli.Flag{
 			&cli.StringFlag{Name: "channel_id", Aliases: []string{"c"}},
 			&cli.StringFlag{Name: "packer_format", Aliases: []string{"pf"}, Value: "payload_only"},
-			&cli.StringFlag{Name: "timestamp_range", Aliases: []string{"tr"}, DefaultText: "Now Time", Value: ":" + convert.MustStr(time.Now().UnixNano())},
+			&cli.StringFlag{Name: "timestamp_range", Aliases: []string{"tr"}, DefaultText: "Now Time", Value: ":" + cnv.MustStr(time.Now().UnixNano())},
 			&cli.StringFlag{Name: "label", Aliases: []string{"lb"}},
 			&cli.BoolFlag{Name: "data", Aliases: []string{"d"}},
 			&cli.Int64Flag{Name: "limit", Aliases: []string{"l"}, DefaultText: "30", Value: 30},
@@ -191,7 +191,7 @@ func saveDataStore() *cli.Command {
 		Flags: []cli.Flag{
 			&cli.StringFlag{Name: "channel_id", Aliases: []string{"c"}},
 			&cli.StringFlag{Name: "packer_format", Aliases: []string{"pf"}, Value: "payload_only"},
-			&cli.StringFlag{Name: "timestamp_range", Aliases: []string{"tr"}, DefaultText: "Now Time", Value: ":" + convert.MustStr(time.Now().UnixNano())},
+			&cli.StringFlag{Name: "timestamp_range", Aliases: []string{"tr"}, DefaultText: "Now Time", Value: ":" + cnv.MustStr(time.Now().UnixNano())},
 			&cli.StringFlag{Name: "save_dir", Aliases: []string{"out"}},
 			&cli.StringFlag{Name: "label", Aliases: []string{"lb"}},
 			&cli.BoolFlag{Name: "indent", Aliases: []string{"idt", "idnt", "i"}},
@@ -210,8 +210,8 @@ func saveDataStore() *cli.Command {
 				timestampRange    = c.String("timestamp_range")
 				resourceOwnerID   = c.String("resource_owner_id")
 				label             = c.String("label")
-				outputDir         = wrapper.AsString(c.String("save_dir"))
-				replaced          = wrapper.AsString(c.String("replace_save_data_channel"))
+				outputDir         = wrp.AsString(c.String("save_dir"))
+				replaced          = wrp.AsString(c.String("replace_save_data_channel"))
 				indent            = c.Bool("indent")
 				collective        = c.Bool("collective")
 				channelsMap, _, _ = Client.PubSub.GetChannelsMapByID(ciossdk.MakeGetChannelsOpts(), context.Background())
@@ -219,14 +219,14 @@ func saveDataStore() *cli.Command {
 			)
 			replaceChannelId := func(data string) string {
 				var jsonFormat cios.PackerFormatJson
-				assert(convert.UnMarshalJson([]byte(data), &jsonFormat)).Log()
+				assert(cnv.UnMarshalJson([]byte(data), &jsonFormat)).Log()
 				jsonFormat.Header.ChannelId = replaced.Str()
-				return convert.MustCompactJson(jsonFormat)
+				return cnv.MustCompactJson(jsonFormat)
 			}
 			indentJson := func(data string) string {
 				var jsonFormat interface{}
-				assert(convert.UnMarshalJson([]byte(data), &jsonFormat)).Log()
-				return convert.MustIndentJson(jsonFormat)
+				assert(cnv.UnMarshalJson([]byte(data), &jsonFormat)).Log()
+				return cnv.MustIndentJson(jsonFormat)
 			}
 			job := func(channel cios.Channel, limit int64) {
 				switch {
@@ -234,7 +234,7 @@ func saveDataStore() *cli.Command {
 					packerFormat = "json"
 					fallthrough
 				case outputDir == "":
-					outputDir = wrapper.String(fmt.Sprintf("%s/%s/%s___%s", datastoreDir, models.GetStage(), channelsMap[channel.Id].Name, channel.Id))
+					outputDir = wrp.String(fmt.Sprintf("%s/%s/%s___%s", datastoreDir, models.GetStage(), channelsMap[channel.Id].Name, channel.Id))
 					fallthrough
 				default:
 					data, err := Client.PubSub.GetStreamAll(channel.Id, ciossdk.MakeGetStreamOpts().

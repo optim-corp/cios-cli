@@ -6,8 +6,8 @@ import (
 	"io/ioutil"
 	"unicode/utf8"
 
-	"github.com/optim-corp/cios-cli/utils/go_advance_type/convert"
-	log "github.com/optim-corp/cios-cli/utils/loglog"
+	cnv "github.com/fcfcqloow/go-advance/convert"
+	"github.com/fcfcqloow/go-advance/log"
 
 	"github.com/urfave/cli/v2"
 	"gopkg.in/AlecAivazis/survey.v1"
@@ -56,7 +56,7 @@ func FOutStructJson(object interface{}) {
 	if err != nil {
 		log.Error(err.Error())
 	} else {
-		result, err := convert.IndentJson(body)
+		result, err := cnv.IndentJson(body)
 		if err != nil {
 			log.Error(err.Error())
 		} else {
@@ -69,7 +69,7 @@ func OutStructJson(object interface{}) {
 	if err != nil {
 		log.Error(err.Error())
 	} else {
-		result, err := convert.IndentJson(body)
+		result, err := cnv.IndentJson(body)
 		if err != nil {
 			log.Error(err.Error())
 		} else {

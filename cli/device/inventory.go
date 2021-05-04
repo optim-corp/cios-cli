@@ -3,11 +3,10 @@ package device
 import (
 	"context"
 
-	"github.com/optim-corp/cios-golang-sdk/cios"
-
 	. "github.com/optim-corp/cios-cli/cli"
 	"github.com/optim-corp/cios-cli/models"
 	"github.com/optim-corp/cios-cli/utils"
+	"github.com/optim-corp/cios-golang-sdk/cios"
 	"github.com/urfave/cli/v2"
 )
 

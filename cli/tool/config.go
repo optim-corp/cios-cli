@@ -3,10 +3,10 @@ package tool
 import (
 	"encoding/json"
 
+	"github.com/fcfcqloow/go-advance/ftil"
 	"github.com/optim-corp/cios-cli/models"
 	"github.com/optim-corp/cios-cli/utils"
 	. "github.com/optim-corp/cios-cli/utils"
-	ftil "github.com/optim-corp/cios-cli/utils/go_advance_type/file"
 	"github.com/urfave/cli/v2"
 	"gopkg.in/AlecAivazis/survey.v1"
 )

@@ -3,7 +3,7 @@ package account
 import (
 	"context"
 
-	"github.com/optim-corp/cios-cli/utils/go_advance_type/convert"
+	cnv "github.com/fcfcqloow/go-advance/convert"
 
 	. "github.com/optim-corp/cios-cli/cli"
 	"github.com/optim-corp/cios-cli/models"
@@ -14,7 +14,7 @@ import (
 var (
 	listUtility = utils.ListUtility
 	fPrintln    = utils.Fprintln
-	str         = convert.MustStr
+	str         = cnv.MustStr
 	assert      = utils.EAssert
 )
 

@@ -5,7 +5,7 @@ import (
 	"strings"
 	"unicode/utf8"
 
-	"github.com/optim-corp/cios-cli/utils/go_advance_type/convert"
+	cnv "github.com/fcfcqloow/go-advance/convert"
 
 	"github.com/optim-corp/cios-golang-sdk/cios"
 
@@ -196,7 +196,7 @@ func listGroup() *cli.Command {
 						fPrintf(
 							"%s\t%s\t%s\t%s　　%s / %s\n",
 							value.Id,
-							spaceRight(convert.MustStr(value.ParentGroupId), length),
+							spaceRight(cnv.MustStr(value.ParentGroupId), length),
 							resource.Id,
 							spaceRight(value.Type, utf8.RuneCountInString("Corporation")),
 							value.Name,

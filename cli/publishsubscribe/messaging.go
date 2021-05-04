@@ -9,13 +9,14 @@ import (
 	"sync"
 	"time"
 
-	"github.com/optim-corp/cios-cli/utils/go_advance_type/convert"
+	cnv "github.com/fcfcqloow/go-advance/convert"
+	"github.com/fcfcqloow/go-advance/log"
+
 	"gopkg.in/yaml.v2"
 
 	. "github.com/optim-corp/cios-cli/cli"
 	"github.com/optim-corp/cios-cli/models"
 	"github.com/optim-corp/cios-cli/utils"
-	log "github.com/optim-corp/cios-cli/utils/loglog"
 	"github.com/optim-corp/cios-golang-sdk/cios"
 	ciossdk "github.com/optim-corp/cios-golang-sdk/sdk"
 	"github.com/urfave/cli/v2"
@@ -330,7 +331,7 @@ func registerJob() *cli.Command {
 					for _, job := range jobs {
 						for _, v := range job.Value {
 							var formatJson cios.PackerFormatJson
-							if err := convert.UnMarshalJson([]byte(v.Data), &formatJson); err != nil {
+							if err := cnv.UnMarshalJson([]byte(v.Data), &formatJson); err != nil {
 								return err
 							}
 
@@ -368,7 +369,7 @@ func registerJob() *cli.Command {
 
 					for _, v := range job.Value {
 						var formatJson cios.PackerFormatJson
-						_ = convert.UnMarshalJson([]byte(v.Data), &formatJson)
+						_ = cnv.UnMarshalJson([]byte(v.Data), &formatJson)
 						if err := send(v, formatJson, job.Loop, ms.SendJson); err != nil {
 							break
 						}
