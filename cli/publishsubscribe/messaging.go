@@ -10,19 +10,16 @@ import (
 	"strconv"
 	"time"
 
-	"github.com/optim-corp/cios-cli/utils/go_advance_type/convert"
-
-	"github.com/optim-corp/cios-golang-sdk/cios"
-
-	"gopkg.in/yaml.v2"
-
+	cnv "github.com/fcfcqloow/go-advance/convert"
+	"github.com/fcfcqloow/go-advance/log"
 	. "github.com/optim-corp/cios-cli/cli"
 	"github.com/optim-corp/cios-cli/models"
 	"github.com/optim-corp/cios-cli/utils"
-	log "github.com/optim-corp/cios-cli/utils/loglog"
+	"github.com/optim-corp/cios-golang-sdk/cios"
 	ciossdk "github.com/optim-corp/cios-golang-sdk/sdk"
 	"github.com/urfave/cli/v2"
 	"golang.org/x/sync/errgroup"
+	"gopkg.in/yaml.v2"
 )
 
 func GetMessagingCommand() *cli.Command {
@@ -342,7 +339,7 @@ func registerJob() *cli.Command {
 							if _, err := Client.PubSub.PublishMessageJSON(formatJson.Header.ChannelId, formatJson, context.Background()); err != nil {
 								return err
 							}
-							println("Publish", time.Unix(0, convert.MustInt64(formatJson.Header.Timestamp)).String(), formatJson.Header.ChannelId)
+							println("Publish", time.Unix(0, cnv.MustInt64(formatJson.Header.Timestamp)).String(), formatJson.Header.ChannelId)
 						}
 					}
 					return nil
