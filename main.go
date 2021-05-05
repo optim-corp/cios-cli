@@ -4,6 +4,8 @@ import (
 	"encoding/json"
 	"os"
 
+	"github.com/fcfcqloow/go-advance/ftil"
+	"github.com/fcfcqloow/go-advance/log"
 	. "github.com/optim-corp/cios-cli/cli"
 	"github.com/optim-corp/cios-cli/cli/account"
 	"github.com/optim-corp/cios-cli/cli/authorization"
@@ -16,8 +18,6 @@ import (
 	"github.com/optim-corp/cios-cli/cli/tool"
 	"github.com/optim-corp/cios-cli/models"
 	"github.com/optim-corp/cios-cli/utils"
-	ftil "github.com/optim-corp/cios-cli/utils/go_advance_type/file"
-	log "github.com/optim-corp/cios-cli/utils/loglog"
 	sdkmodel "github.com/optim-corp/cios-golang-sdk/model"
 	ciossdk "github.com/optim-corp/cios-golang-sdk/sdk"
 	"github.com/tidwall/gjson"

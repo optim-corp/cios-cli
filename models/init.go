@@ -3,10 +3,10 @@ package models
 import (
 	"os"
 
+	cnv "github.com/fcfcqloow/go-advance/convert"
+	"github.com/fcfcqloow/go-advance/ftil"
 	"github.com/mitchellh/go-homedir"
 	"github.com/optim-corp/cios-cli/utils"
-	"github.com/optim-corp/cios-cli/utils/go_advance_type/convert"
-	ftil "github.com/optim-corp/cios-cli/utils/go_advance_type/file"
 )
 
 var (
@@ -32,7 +32,7 @@ func createStages() []string {
 	if err := ftil.Path(UrlPath).LoadJsonStruct(&urls); err != nil {
 		return make([]string, 0)
 	}
-	return convert.GetObjectKeys(urls)
+	return cnv.GetObjectKeys(urls)
 
 }
 

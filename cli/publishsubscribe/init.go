@@ -1,10 +1,10 @@
 package publishsubscribe
 
 import (
+	cnv "github.com/fcfcqloow/go-advance/convert"
+	"github.com/fcfcqloow/go-advance/ftil"
 	"github.com/optim-corp/cios-cli/models"
 	"github.com/optim-corp/cios-cli/utils"
-	"github.com/optim-corp/cios-cli/utils/go_advance_type/convert"
-	ftil "github.com/optim-corp/cios-cli/utils/go_advance_type/file"
 )
 
 var (
@@ -19,5 +19,5 @@ var (
 	datastoreDir = models.DatastoreDir
 	path         = ftil.Path
 	assert       = utils.EAssert
-	str          = convert.MustStr
+	str          = cnv.MustStr
 )

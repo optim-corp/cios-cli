@@ -1,9 +1,9 @@
 package video
 
 import (
+	"github.com/fcfcqloow/go-advance/ftil"
 	"github.com/optim-corp/cios-cli/models"
 	"github.com/optim-corp/cios-cli/utils"
-	ftil "github.com/optim-corp/cios-cli/utils/go_advance_type/file"
 )
 
 var (

@@ -3,7 +3,7 @@ package utils
 import (
 	"os"
 
-	log "github.com/optim-corp/cios-cli/utils/loglog"
+	"github.com/fcfcqloow/go-advance/log"
 )
 
 func EAssert(err error) Assert {

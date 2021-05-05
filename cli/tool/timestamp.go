@@ -6,7 +6,7 @@ import (
 	"strings"
 	"time"
 
-	log "github.com/optim-corp/cios-cli/utils/loglog"
+	"github.com/fcfcqloow/go-advance/log"
 
 	"github.com/optim-corp/cios-cli/models"
 	"github.com/optim-corp/cios-cli/utils"

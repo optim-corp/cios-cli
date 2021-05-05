@@ -3,12 +3,11 @@ package device
 import (
 	"context"
 
-	log "github.com/optim-corp/cios-cli/utils/loglog"
-
+	cnv "github.com/fcfcqloow/go-advance/convert"
+	"github.com/fcfcqloow/go-advance/log"
 	. "github.com/optim-corp/cios-cli/cli"
 	"github.com/optim-corp/cios-cli/models"
 	"github.com/optim-corp/cios-cli/utils"
-	"github.com/optim-corp/cios-cli/utils/go_advance_type/convert"
 	"github.com/optim-corp/cios-golang-sdk/cios"
 	ciossdk "github.com/optim-corp/cios-golang-sdk/sdk"
 	"github.com/urfave/cli/v2"
@@ -127,7 +126,7 @@ func createDeviceModel() *cli.Command {
 		Action: func(c *cli.Context) error {
 			req := cios.DeviceModelRequest{}
 			input := utils.GetConsoleMultipleLine(">>")
-			assert(convert.UnMarshalJson(input, &req)).Log().NoneErr(func() {
+			assert(cnv.UnMarshalJson(input, &req)).Log().NoneErr(func() {
 				model, _, err := Client.DeviceAssetManagement.CreateModel(req, context.Background())
 				assert(err).Log().NoneErr(func() { utils.OutStructJsonSlim(model) })
 			})
@@ -196,7 +195,7 @@ func entityDeviceModel() *cli.Command {
 				StartAt:         &ans.StartAt,
 			}
 			if ans.Value != "" {
-				assert(convert.UnMarshalJson(ans.Value, &body.CustomInventory)).
+				assert(cnv.UnMarshalJson(ans.Value, &body.CustomInventory)).
 					Log().NoneErr(func() {
 					_, _, err := Client.DeviceAssetManagement.CreateEntity(name, body, context.Background())
 					assert(err).Log()
