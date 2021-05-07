@@ -29,7 +29,7 @@ import (
 
 const (
 	NAME             = "Could IoT OS CLI"
-	VERSION          = "0.3.1"
+	VERSION          = "0.3.2"
 	COPYRIGHT        = "OPTiM Corporation"
 	APPLICATION_LOGO = `
 {{.AnsiColor.Black}}
