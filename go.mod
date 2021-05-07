@@ -6,6 +6,7 @@ require (
 	github.com/atotto/clipboard v0.1.2
 	github.com/dimiro1/banner v1.1.0 // indirect
 	github.com/fcfcqloow/go-advance v0.0.1
+	github.com/mattn/go-colorable v0.1.8 // indirect
 	github.com/mitchellh/go-homedir v1.1.0
 	github.com/optim-corp/cios-golang-sdk v0.2.0
 	github.com/skratchdot/open-golang v0.0.0-20200116055534-eef842397966
