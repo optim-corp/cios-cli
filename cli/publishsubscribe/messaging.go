@@ -10,6 +10,8 @@ import (
 	"strconv"
 	"time"
 
+	"github.com/fcfcqloow/go-advance/util"
+
 	cnv "github.com/fcfcqloow/go-advance/convert"
 	"github.com/fcfcqloow/go-advance/log"
 	. "github.com/optim-corp/cios-cli/cli"
@@ -314,10 +316,14 @@ func registerJob() *cli.Command {
 		Usage:   "cios messaging job | register",
 		Flags: []cli.Flag{
 			&cli.StringFlag{Name: "path", Aliases: []string{"file_path", "f", "p", "file"}, Required: true},
+			&cli.StringFlag{Name: "channel_id", Aliases: []string{"c", "channel"}, Required: true},
+			&cli.BoolFlag{Name: "packer_format_json", Aliases: []string{"json"}},
 		},
 		Action: func(c *cli.Context) error {
 			var (
 				filePath  = c.String("file_path")
+				isJson    = c.Bool("packer_format_json")
+				channelId = c.String("channel_id")
 				jobs      models.Job
 				scanner   = bufio.NewScanner(os.Stdin)
 				byts, err = path(filePath).ReadFile()
@@ -331,15 +337,25 @@ func registerJob() *cli.Command {
 						for _, job := range _jobs {
 							fmt.Print("Enter <-")
 							scanner.Scan()
-							var formatJson cios.PackerFormatJson
-							if err := json.Unmarshal([]byte(job.Value), &formatJson); err != nil {
-								log.Error(err)
-								return err
+							if isJson {
+								var formatJson cios.PackerFormatJson
+								if err := json.Unmarshal([]byte(job.Value), &formatJson); err != nil {
+									log.Error(err)
+									return err
+								}
+								_channelId := util.Is(channelId == "").T(formatJson.Header.ChannelId).F(channelId).Value().AsString()
+								if _, err := Client.PubSub.PublishMessageJSON(_channelId, formatJson, context.Background()); err != nil {
+									return err
+								}
+								println("Publish", time.Unix(0, cnv.MustInt64(formatJson.Header.Timestamp)).String(), formatJson.Header.ChannelId)
+							} else if channelId != "" {
+								if _, err := Client.PubSub.PublishMessage(channelId, job.Value, nil, context.Background()); err != nil {
+									return err
+								}
+								println("Publish", channelId)
+							} else {
+								panic("No Channel ID")
 							}
-							if _, err := Client.PubSub.PublishMessageJSON(formatJson.Header.ChannelId, formatJson, context.Background()); err != nil {
-								return err
-							}
-							println("Publish", time.Unix(0, cnv.MustInt64(formatJson.Header.Timestamp)).String(), formatJson.Header.ChannelId)
 							println(job.Description)
 						}
 					}
