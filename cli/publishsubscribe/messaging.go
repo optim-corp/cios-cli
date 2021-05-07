@@ -340,6 +340,7 @@ func registerJob() *cli.Command {
 								return err
 							}
 							println("Publish", time.Unix(0, cnv.MustInt64(formatJson.Header.Timestamp)).String(), formatJson.Header.ChannelId)
+							println(job.Description)
 						}
 					}
 					return nil
