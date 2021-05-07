@@ -4,6 +4,7 @@ go 1.14
 
 require (
 	github.com/atotto/clipboard v0.1.2
+	github.com/dimiro1/banner v1.1.0 // indirect
 	github.com/fcfcqloow/go-advance v0.0.1
 	github.com/mitchellh/go-homedir v1.1.0
 	github.com/optim-corp/cios-golang-sdk v0.2.0
