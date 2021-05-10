@@ -63,9 +63,9 @@ const (
 {{ .AnsiColor.Default }}
 `
 	APPLICATION_ABOUT_TEMPLATE = `
-	Name: %s
-	Version: %s
-	Copyright: %s
+Name: %s
+Version: %s
+Copyright: %s
 `
 )
 
