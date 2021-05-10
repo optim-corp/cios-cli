@@ -7,12 +7,12 @@ import (
 	"os"
 	"strings"
 
+	"github.com/AlecAivazis/survey/v2"
 	"github.com/fcfcqloow/go-advance/ftil"
 	"github.com/optim-corp/cios-cli/models"
 	"github.com/optim-corp/cios-cli/utils"
 	"github.com/skratchdot/open-golang/open"
 	"github.com/urfave/cli/v2"
-	"gopkg.in/AlecAivazis/survey.v1"
 )
 
 type input struct {

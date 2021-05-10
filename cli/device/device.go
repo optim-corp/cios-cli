@@ -5,13 +5,13 @@ import (
 
 	cnv "github.com/fcfcqloow/go-advance/convert"
 
+	"github.com/AlecAivazis/survey/v2"
 	. "github.com/optim-corp/cios-cli/cli"
 	"github.com/optim-corp/cios-cli/models"
 	"github.com/optim-corp/cios-cli/utils"
 	"github.com/optim-corp/cios-golang-sdk/cios"
 	ciossdk "github.com/optim-corp/cios-golang-sdk/sdk"
 	"github.com/urfave/cli/v2"
-	"gopkg.in/AlecAivazis/survey.v1"
 )
 
 func GetDeviceCommand() *cli.Command {

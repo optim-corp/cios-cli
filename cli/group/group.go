@@ -13,10 +13,10 @@ import (
 
 	"github.com/urfave/cli/v2"
 
+	"github.com/AlecAivazis/survey/v2"
 	. "github.com/optim-corp/cios-cli/cli"
 	"github.com/optim-corp/cios-cli/models"
 	"github.com/optim-corp/cios-cli/utils"
-	"gopkg.in/AlecAivazis/survey.v1"
 )
 
 var (
