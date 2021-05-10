@@ -3,6 +3,7 @@ package main
 import (
 	"bytes"
 	"encoding/json"
+	"fmt"
 	"os"
 
 	"github.com/dimiro1/banner"
@@ -59,6 +60,12 @@ const (
 ████████████████████████████████████████████████████████████{{.AnsiColor.BrightMagenta}}████{{.AnsiColor.Black}}█████████████████████{{.AnsiColor.BrightMagenta}}████{{.AnsiColor.Black}}██████████████████████{{.AnsiColor.BrightMagenta}}████{{.AnsiColor.Black}}██████████████████
 █████████████████████████████████████████████████████████████████{{.AnsiColor.BrightMagenta}}██████████████{{.AnsiColor.Black}}██████{{.AnsiColor.BrightMagenta}}█████████████████████{{.AnsiColor.Black}}███{{.AnsiColor.BrightMagenta}}████████{{.AnsiColor.Black}}████████████████
 █████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████
+{{ .AnsiColor.Default }}
+`
+	APPLICATION_ABOUT_TEMPLATE = `
+	Name: %s
+	Version: %s
+	Copyright: %s
 `
 )
 
@@ -98,6 +105,7 @@ func main() {
 		Copyright: COPYRIGHT,
 		Action: func(context *cli.Context) error {
 			banner.Init(colorable.NewColorableStdout(), true, true, bytes.NewBufferString(APPLICATION_LOGO))
+			println(fmt.Sprintf(APPLICATION_ABOUT_TEMPLATE, NAME, VERSION, COPYRIGHT))
 			println("\n\n\nPlease $cios help !!!!\n\n")
 			return nil
 		},
