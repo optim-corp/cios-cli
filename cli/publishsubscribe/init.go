@@ -8,7 +8,6 @@ import (
 )
 
 var (
-	print        = utils.Print
 	printf       = utils.Printf
 	out          = utils.Out
 	is           = utils.Is

@@ -10,10 +10,12 @@ import (
 	"strconv"
 	"time"
 
-	"github.com/fcfcqloow/go-advance/util"
+	"github.com/AlecAivazis/survey/v2"
 
 	cnv "github.com/fcfcqloow/go-advance/convert"
+
 	"github.com/fcfcqloow/go-advance/log"
+	"github.com/fcfcqloow/go-advance/util"
 	. "github.com/optim-corp/cios-cli/cli"
 	"github.com/optim-corp/cios-cli/models"
 	"github.com/optim-corp/cios-cli/utils"
@@ -327,40 +329,58 @@ func registerJob() *cli.Command {
 				jobs      models.Job
 				scanner   = bufio.NewScanner(os.Stdin)
 				byts, err = path(filePath).ReadFile()
+				pubMsg    = func(channelId string, body interface{}, packetFormat string) error {
+					_, err := Client.PubSub.PublishMessage(channelId, body, &packetFormat, context.Background())
+					return err
+				}
+				getChannelID = func(channelId string, formatJson cios.PackerFormatJson) string {
+					return util.Is(channelId == "").T(formatJson.Header.ChannelId).F(channelId).Value().AsString()
+				}
+				sendMessage = func(job models.MessagingJob) {
+					var err error
+					switch {
+					case isJson:
+						var formatJson cios.PackerFormatJson
+						err = assert(json.Unmarshal([]byte(job.Value), &formatJson)).
+							NoneErrAssert(pubMsg(getChannelID(channelId, formatJson), formatJson, "json")).
+							NoneErrPrintln("Publish", time.Unix(0, cnv.MustInt64(formatJson.Header.Timestamp)).String(), formatJson.Header.ChannelId).
+							Err
+					case channelId != "":
+						err = assert(pubMsg(channelId, job.Value, "payload_only")).
+							NoneErrPrintln("Publish", channelId).Err
+					default:
+						err = fmt.Errorf("not found channel id")
+					}
+					if err != nil {
+						panic(err)
+					}
+				}
 			)
-			fmt.Println(filePath)
 			return assert(err).Log().
 				NoneErrAssert(yaml.Unmarshal(byts, &jobs)).Log().
 				NoneErrAssert((func() error {
-					for name, _jobs := range jobs {
-						fmt.Println("Job:", name)
-						for _, job := range _jobs {
-							fmt.Print("Enter <-")
-							scanner.Scan()
-							if isJson {
-								var formatJson cios.PackerFormatJson
-								if err := json.Unmarshal([]byte(job.Value), &formatJson); err != nil {
-									log.Error(err)
-									return err
-								}
-								_channelId := util.Is(channelId == "").T(formatJson.Header.ChannelId).F(channelId).Value().AsString()
-								if _, err := Client.PubSub.PublishMessageJSON(_channelId, formatJson, context.Background()); err != nil {
-									return err
-								}
-								println("Publish", time.Unix(0, cnv.MustInt64(formatJson.Header.Timestamp)).String(), formatJson.Header.ChannelId)
-							} else if channelId != "" {
-								if _, err := Client.PubSub.PublishMessage(channelId, job.Value, nil, context.Background()); err != nil {
-									return err
-								}
-								println("Publish", channelId)
-							} else {
-								panic("No Channel ID")
+					for jobNames := cnv.GetObjectKeys(jobs); ; {
+						ans := struct{ JobName string }{}
+						utils.Q([]*survey.Question{
+							{Name: "JobName", Prompt: &survey.Select{Message: "Select a Job", Options: append(jobNames, "exit")}}},
+							&ans,
+						)
+						switch ans.JobName {
+						case "exit":
+							return nil
+						default:
+							println("Job Name: ", ans.JobName)
+							for _, job := range jobs[ans.JobName] {
+								print(
+									"\n\nJob Description: ", job.Description,
+									"\nEnter <-",
+								)
+								scanner.Scan()
+								sendMessage(job)
 							}
-							println(job.Description)
 						}
 					}
-					return nil
-				})()).Log().
+				})()).
 				NoneErrPrintln("Completed").
 				Err
 		},

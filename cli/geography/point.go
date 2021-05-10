@@ -4,16 +4,13 @@ import (
 	"context"
 	"strings"
 
-	"github.com/optim-corp/cios-golang-sdk/cios"
-
-	ciossdk "github.com/optim-corp/cios-golang-sdk/sdk"
-
-	"github.com/urfave/cli/v2"
-
+	"github.com/AlecAivazis/survey/v2"
 	. "github.com/optim-corp/cios-cli/cli"
 	"github.com/optim-corp/cios-cli/models"
 	"github.com/optim-corp/cios-cli/utils"
-	"gopkg.in/AlecAivazis/survey.v1"
+	"github.com/optim-corp/cios-golang-sdk/cios"
+	ciossdk "github.com/optim-corp/cios-golang-sdk/sdk"
+	"github.com/urfave/cli/v2"
 )
 
 func GetPointCommand() *cli.Command {
