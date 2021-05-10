@@ -316,7 +316,7 @@ func registerJob() *cli.Command {
 		Usage:   "cios messaging job | register",
 		Flags: []cli.Flag{
 			&cli.StringFlag{Name: "path", Aliases: []string{"file_path", "f", "p", "file"}, Required: true},
-			&cli.StringFlag{Name: "channel_id", Aliases: []string{"c", "channel"}, Required: true},
+			&cli.StringFlag{Name: "channel_id", Aliases: []string{"c", "channel"}},
 			&cli.BoolFlag{Name: "packer_format_json", Aliases: []string{"json"}},
 		},
 		Action: func(c *cli.Context) error {
