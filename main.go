@@ -48,7 +48,7 @@ const (
 ████████{{.AnsiColor.Cyan}}██████████████{{.AnsiColor.Black}}█████{{.AnsiColor.Cyan}}████████{{.AnsiColor.Black}}████████{{.AnsiColor.Cyan}}███████████████{{.AnsiColor.Black}}███████████{{.AnsiColor.Cyan}}██████████████{{.AnsiColor.Black}}██████████████████████████████████████████████████
 █████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████
 █████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████
-██████████████████████████████████████████████████████████████████{{.AnsiColor.BrightMagenta}}█████████████{{.AnsiColor.Black}}██████{{.AnsiColor.BrightMagenta}}████{{.AnsiColor.Black}}████████████████████{{.AnsiColor.BrightMagenta}}████████{{.AnsiColor.Black}}████████████████
+██████████████████████████████████████████████████████████████{{.AnsiColor.BrightMagenta}}█████████████████{{.AnsiColor.Black}}██████{{.AnsiColor.BrightMagenta}}████{{.AnsiColor.Black}}████████████████████{{.AnsiColor.BrightMagenta}}████████{{.AnsiColor.Black}}████████████████
 ████████████████████████████████████████████████████████████{{.AnsiColor.BrightMagenta}}████{{.AnsiColor.Black}}█████████████████████{{.AnsiColor.BrightMagenta}}████{{.AnsiColor.Black}}██████████████████████{{.AnsiColor.BrightMagenta}}████{{.AnsiColor.Black}}██████████████████
 ████████████████████████████████████████████████████████████{{.AnsiColor.BrightMagenta}}████{{.AnsiColor.Black}}█████████████████████{{.AnsiColor.BrightMagenta}}████{{.AnsiColor.Black}}██████████████████████{{.AnsiColor.BrightMagenta}}████{{.AnsiColor.Black}}██████████████████
 ████████████████████████████████████████████████████████████{{.AnsiColor.BrightMagenta}}████{{.AnsiColor.Black}}█████████████████████{{.AnsiColor.BrightMagenta}}████{{.AnsiColor.Black}}██████████████████████{{.AnsiColor.BrightMagenta}}████{{.AnsiColor.Black}}██████████████████
@@ -58,7 +58,7 @@ const (
 ████████████████████████████████████████████████████████████{{.AnsiColor.BrightMagenta}}████{{.AnsiColor.Black}}█████████████████████{{.AnsiColor.BrightMagenta}}████{{.AnsiColor.Black}}██████████████████████{{.AnsiColor.BrightMagenta}}████{{.AnsiColor.Black}}██████████████████
 ████████████████████████████████████████████████████████████{{.AnsiColor.BrightMagenta}}████{{.AnsiColor.Black}}█████████████████████{{.AnsiColor.BrightMagenta}}████{{.AnsiColor.Black}}██████████████████████{{.AnsiColor.BrightMagenta}}████{{.AnsiColor.Black}}██████████████████
 ████████████████████████████████████████████████████████████{{.AnsiColor.BrightMagenta}}████{{.AnsiColor.Black}}█████████████████████{{.AnsiColor.BrightMagenta}}████{{.AnsiColor.Black}}██████████████████████{{.AnsiColor.BrightMagenta}}████{{.AnsiColor.Black}}██████████████████
-█████████████████████████████████████████████████████████████████{{.AnsiColor.BrightMagenta}}██████████████{{.AnsiColor.Black}}██████{{.AnsiColor.BrightMagenta}}█████████████████████{{.AnsiColor.Black}}███{{.AnsiColor.BrightMagenta}}████████{{.AnsiColor.Black}}████████████████
+██████████████████████████████████████████████████████████████{{.AnsiColor.BrightMagenta}}█████████████████{{.AnsiColor.Black}}██████{{.AnsiColor.BrightMagenta}}█████████████████████{{.AnsiColor.Black}}███{{.AnsiColor.BrightMagenta}}████████{{.AnsiColor.Black}}████████████████
 █████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████
 {{ .AnsiColor.Default }}
 `
