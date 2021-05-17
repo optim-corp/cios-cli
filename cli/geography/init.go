@@ -3,11 +3,9 @@ package geography
 import "github.com/optim-corp/cios-cli/utils"
 
 var (
-	println     = utils.Println
-	print       = utils.Print
-	printf      = utils.Printf
+	printf      = utils.Console.Printf
 	listUtility = utils.ListUtility
-	fPrintln    = utils.Fprintln
-	fPrintf     = utils.Fprintf
+	fPrintln    = utils.Console.Fprintln
+	fPrintf     = utils.Console.Fprintf
 	assert      = utils.EAssert
 )

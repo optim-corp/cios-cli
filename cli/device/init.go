@@ -8,11 +8,9 @@ import (
 
 var (
 	listUtility  = utils.ListUtility
-	fPrintln     = utils.Fprintln
+	fPrintln     = utils.Console.Fprintln
 	is           = utils.Is
-	println      = utils.Println
-	print        = utils.Print
-	printf       = utils.Printf
+	printf       = utils.Console.Printf
 	assert       = utils.EAssert
 	lifecycleDir = models.LifecycleDir
 	path         = ftil.Path
