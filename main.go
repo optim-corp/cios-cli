@@ -1,11 +1,15 @@
 package main
 
 import (
+	"bytes"
 	"encoding/json"
+	"fmt"
 	"os"
 
+	"github.com/dimiro1/banner"
 	"github.com/fcfcqloow/go-advance/ftil"
 	"github.com/fcfcqloow/go-advance/log"
+	"github.com/mattn/go-colorable"
 	. "github.com/optim-corp/cios-cli/cli"
 	"github.com/optim-corp/cios-cli/cli/account"
 	"github.com/optim-corp/cios-cli/cli/authorization"
@@ -25,8 +29,44 @@ import (
 )
 
 const (
-	NAME    = "Could IoT OS CLI"
-	VERSION = "0.3.1"
+	NAME             = "Could IoT OS CLI"
+	VERSION          = "0.3.3"
+	COPYRIGHT        = "OPTiM Corporation"
+	APPLICATION_LOGO = `
+{{.AnsiColor.Black}}
+█████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████
+████████{{.AnsiColor.Cyan}}██████████████{{.AnsiColor.Black}}█████{{.AnsiColor.Cyan}}████████{{.AnsiColor.Black}}████████{{.AnsiColor.Cyan}}███████████████{{.AnsiColor.Black}}███████████{{.AnsiColor.Cyan}}████████████████{{.AnsiColor.Black}}████████████████████████████████████████████████
+█████{{.AnsiColor.Cyan}}████{{.AnsiColor.Black}}████████████████████{{.AnsiColor.Cyan}}████{{.AnsiColor.Black}}███████{{.AnsiColor.Cyan}}█████████████████████{{.AnsiColor.Black}}█████{{.AnsiColor.Cyan}}███████████████████{{.AnsiColor.Black}}████████████████████████████████████████████████
+█████{{.AnsiColor.Cyan}}████{{.AnsiColor.Black}}████████████████████{{.AnsiColor.Cyan}}████{{.AnsiColor.Black}}███████{{.AnsiColor.Cyan}}█████{{.AnsiColor.Black}}███████████{{.AnsiColor.Cyan}}█████{{.AnsiColor.Black}}████{{.AnsiColor.Cyan}}██████{{.AnsiColor.Black}}██████████████████████████████████████████████████████████████
+█████{{.AnsiColor.Cyan}}████{{.AnsiColor.Black}}████████████████████{{.AnsiColor.Cyan}}████{{.AnsiColor.Black}}███████{{.AnsiColor.Cyan}}████{{.AnsiColor.Black}}█████████████{{.AnsiColor.Cyan}}████{{.AnsiColor.Black}}█████{{.AnsiColor.Cyan}}█████{{.AnsiColor.Black}}██████████████████████████████████████████████████████████████
+█████{{.AnsiColor.Cyan}}████{{.AnsiColor.Black}}████████████████████{{.AnsiColor.Cyan}}████{{.AnsiColor.Black}}███████{{.AnsiColor.Cyan}}████{{.AnsiColor.Black}}█████████████{{.AnsiColor.Cyan}}████{{.AnsiColor.Black}}███████{{.AnsiColor.Cyan}}█████{{.AnsiColor.Black}}████████████████████████████████████████████████████████████
+█████{{.AnsiColor.Cyan}}████{{.AnsiColor.Black}}████████████████████{{.AnsiColor.Cyan}}████{{.AnsiColor.Black}}███████{{.AnsiColor.Cyan}}████{{.AnsiColor.Black}}█████████████{{.AnsiColor.Cyan}}████{{.AnsiColor.Black}}███████████{{.AnsiColor.Cyan}}██████████████{{.AnsiColor.Black}}███████████████████████████████████████████████
+█████{{.AnsiColor.Cyan}}████{{.AnsiColor.Black}}████████████████████{{.AnsiColor.Cyan}}████{{.AnsiColor.Black}}███████{{.AnsiColor.Cyan}}████{{.AnsiColor.Black}}█████████████{{.AnsiColor.Cyan}}████{{.AnsiColor.Black}}██████████████████████{{.AnsiColor.Cyan}}████{{.AnsiColor.Black}}██████████████████████████████████████████████
+█████{{.AnsiColor.Cyan}}████{{.AnsiColor.Black}}████████████████████{{.AnsiColor.Cyan}}████{{.AnsiColor.Black}}███████{{.AnsiColor.Cyan}}████{{.AnsiColor.Black}}█████████████{{.AnsiColor.Cyan}}████{{.AnsiColor.Black}}███████████████████████{{.AnsiColor.Cyan}}████{{.AnsiColor.Black}}█████████████████████████████████████████████
+█████{{.AnsiColor.Cyan}}████{{.AnsiColor.Black}}████████████████████{{.AnsiColor.Cyan}}████{{.AnsiColor.Black}}███████{{.AnsiColor.Cyan}}█████{{.AnsiColor.Black}}███████████{{.AnsiColor.Cyan}}█████{{.AnsiColor.Black}}██████████████████████{{.AnsiColor.Cyan}}████{{.AnsiColor.Black}}██████████████████████████████████████████████
+█████{{.AnsiColor.Cyan}}████{{.AnsiColor.Black}}████████████████████{{.AnsiColor.Cyan}}████{{.AnsiColor.Black}}███████{{.AnsiColor.Cyan}}█████████████████████{{.AnsiColor.Black}}████████████████████{{.AnsiColor.Cyan}}████{{.AnsiColor.Black}}████████████████████████████████████████████████
+████████{{.AnsiColor.Cyan}}██████████████{{.AnsiColor.Black}}█████{{.AnsiColor.Cyan}}████████{{.AnsiColor.Black}}████████{{.AnsiColor.Cyan}}███████████████{{.AnsiColor.Black}}███████████{{.AnsiColor.Cyan}}██████████████{{.AnsiColor.Black}}██████████████████████████████████████████████████
+█████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████
+█████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████
+██████████████████████████████████████████████████████████████{{.AnsiColor.BrightMagenta}}█████████████████{{.AnsiColor.Black}}██████{{.AnsiColor.BrightMagenta}}████{{.AnsiColor.Black}}████████████████████{{.AnsiColor.BrightMagenta}}████████{{.AnsiColor.Black}}████████████████
+████████████████████████████████████████████████████████████{{.AnsiColor.BrightMagenta}}████{{.AnsiColor.Black}}█████████████████████{{.AnsiColor.BrightMagenta}}████{{.AnsiColor.Black}}██████████████████████{{.AnsiColor.BrightMagenta}}████{{.AnsiColor.Black}}██████████████████
+████████████████████████████████████████████████████████████{{.AnsiColor.BrightMagenta}}████{{.AnsiColor.Black}}█████████████████████{{.AnsiColor.BrightMagenta}}████{{.AnsiColor.Black}}██████████████████████{{.AnsiColor.BrightMagenta}}████{{.AnsiColor.Black}}██████████████████
+████████████████████████████████████████████████████████████{{.AnsiColor.BrightMagenta}}████{{.AnsiColor.Black}}█████████████████████{{.AnsiColor.BrightMagenta}}████{{.AnsiColor.Black}}██████████████████████{{.AnsiColor.BrightMagenta}}████{{.AnsiColor.Black}}██████████████████
+████████████████████████████████████████████████████████████{{.AnsiColor.BrightMagenta}}████{{.AnsiColor.Black}}█████████████████████{{.AnsiColor.BrightMagenta}}████{{.AnsiColor.Black}}██████████████████████{{.AnsiColor.BrightMagenta}}████{{.AnsiColor.Black}}██████████████████
+████████████████████████████████████████████████████████████{{.AnsiColor.BrightMagenta}}████{{.AnsiColor.Black}}█████████████████████{{.AnsiColor.BrightMagenta}}████{{.AnsiColor.Black}}██████████████████████{{.AnsiColor.BrightMagenta}}████{{.AnsiColor.Black}}██████████████████
+████████████████████████████████████████████████████████████{{.AnsiColor.BrightMagenta}}████{{.AnsiColor.Black}}█████████████████████{{.AnsiColor.BrightMagenta}}████{{.AnsiColor.Black}}██████████████████████{{.AnsiColor.BrightMagenta}}████{{.AnsiColor.Black}}██████████████████
+████████████████████████████████████████████████████████████{{.AnsiColor.BrightMagenta}}████{{.AnsiColor.Black}}█████████████████████{{.AnsiColor.BrightMagenta}}████{{.AnsiColor.Black}}██████████████████████{{.AnsiColor.BrightMagenta}}████{{.AnsiColor.Black}}██████████████████
+████████████████████████████████████████████████████████████{{.AnsiColor.BrightMagenta}}████{{.AnsiColor.Black}}█████████████████████{{.AnsiColor.BrightMagenta}}████{{.AnsiColor.Black}}██████████████████████{{.AnsiColor.BrightMagenta}}████{{.AnsiColor.Black}}██████████████████
+████████████████████████████████████████████████████████████{{.AnsiColor.BrightMagenta}}████{{.AnsiColor.Black}}█████████████████████{{.AnsiColor.BrightMagenta}}████{{.AnsiColor.Black}}██████████████████████{{.AnsiColor.BrightMagenta}}████{{.AnsiColor.Black}}██████████████████
+██████████████████████████████████████████████████████████████{{.AnsiColor.BrightMagenta}}█████████████████{{.AnsiColor.Black}}██████{{.AnsiColor.BrightMagenta}}█████████████████████{{.AnsiColor.Black}}███{{.AnsiColor.BrightMagenta}}████████{{.AnsiColor.Black}}████████████████
+█████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████
+{{ .AnsiColor.Default }}
+`
+	APPLICATION_ABOUT_TEMPLATE = `
+Name: %s
+Version: %s
+Copyright: %s
+`
 )
 
 var (
@@ -60,8 +100,15 @@ func init() {
 }
 func main() {
 	app := &cli.App{
-		Name:    NAME,
-		Version: VERSION,
+		Name:      NAME,
+		Version:   VERSION,
+		Copyright: COPYRIGHT,
+		Action: func(context *cli.Context) error {
+			banner.Init(colorable.NewColorableStdout(), true, true, bytes.NewBufferString(APPLICATION_LOGO))
+			println(fmt.Sprintf(APPLICATION_ABOUT_TEMPLATE, NAME, VERSION, COPYRIGHT))
+			println("\n\n\nPlease $cios help !!!!\n\n")
+			return nil
+		},
 		Commands: []*cli.Command{
 			publishsubscribe.GetDataStoreCommand(),
 			publishsubscribe.GetMessagingCommand(),

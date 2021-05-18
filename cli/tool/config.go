@@ -3,12 +3,12 @@ package tool
 import (
 	"encoding/json"
 
+	"github.com/AlecAivazis/survey/v2"
 	"github.com/fcfcqloow/go-advance/ftil"
 	"github.com/optim-corp/cios-cli/models"
 	"github.com/optim-corp/cios-cli/utils"
 	. "github.com/optim-corp/cios-cli/utils"
 	"github.com/urfave/cli/v2"
-	"gopkg.in/AlecAivazis/survey.v1"
 )
 
 func GetLogCommand() *cli.Command {

@@ -3,6 +3,7 @@ package device
 import (
 	"context"
 
+	"github.com/AlecAivazis/survey/v2"
 	cnv "github.com/fcfcqloow/go-advance/convert"
 	"github.com/fcfcqloow/go-advance/log"
 	. "github.com/optim-corp/cios-cli/cli"
@@ -11,7 +12,6 @@ import (
 	"github.com/optim-corp/cios-golang-sdk/cios"
 	ciossdk "github.com/optim-corp/cios-golang-sdk/sdk"
 	"github.com/urfave/cli/v2"
-	"gopkg.in/AlecAivazis/survey.v1"
 )
 
 func GetDeviceModelsCommand() *cli.Command {

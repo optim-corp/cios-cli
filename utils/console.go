@@ -6,13 +6,15 @@ import (
 	"io/ioutil"
 	"unicode/utf8"
 
+	"github.com/AlecAivazis/survey/v2"
 	cnv "github.com/fcfcqloow/go-advance/convert"
 	"github.com/fcfcqloow/go-advance/log"
-
 	"github.com/urfave/cli/v2"
-	"gopkg.in/AlecAivazis/survey.v1"
 )
 
+func Q(question []*survey.Question, st interface{}) {
+	Question(question, st)
+}
 func Question(question []*survey.Question, st interface{}) {
 	err := survey.Ask(question, st)
 	if err != nil {
