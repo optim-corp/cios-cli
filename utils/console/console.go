@@ -59,7 +59,7 @@ func FOutStructJson(object interface{}) {
 		if err != nil {
 			log.Error(err.Error())
 		} else {
-			console.Fprintln(result)
+			Fprintln(result)
 		}
 	}
 }
@@ -81,7 +81,7 @@ func FOutStructJsonSlim(object interface{}) {
 	if err != nil {
 		log.Error(err.Error())
 	} else {
-		console.Fprintln(body)
+		Fprintln(body)
 	}
 }
 func OutStructJsonSlim(object interface{}) {
