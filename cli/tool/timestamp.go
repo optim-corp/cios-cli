@@ -6,10 +6,11 @@ import (
 	"strings"
 	"time"
 
+	"github.com/optim-corp/cios-cli/utils/console"
+
 	"github.com/fcfcqloow/go-advance/log"
 
 	"github.com/optim-corp/cios-cli/models"
-	"github.com/optim-corp/cios-cli/utils"
 	"github.com/urfave/cli/v2"
 )
 
@@ -47,7 +48,7 @@ func GetTimestampCommand() *cli.Command {
 				file, err := timestampFormatFile.ReadFile()
 				assert(err).Log().NoneErr(func() {
 					str := string(file)
-					utils.CliArgsForEach(c, func(format string) { str += format + "\n" })
+					console.CliArgsForEach(c, func(format string) { str += format + "\n" })
 					assert(timestampFormatFile.WriteFileAsString(str)).Log()
 				})
 				return nil
@@ -75,7 +76,7 @@ func GetTimestampCommand() *cli.Command {
 
 			byt, _ := timestampFormatFile.ReadFile()
 			formats := strings.Split(string(byt), "\n")
-			utils.CliArgsForEach(c, func(arg string) {
+			console.CliArgsForEach(c, func(arg string) {
 				arg = strings.ReplaceAll(arg, "\"", "")
 				ok := false
 				for _, format := range formats {

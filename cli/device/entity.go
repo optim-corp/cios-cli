@@ -3,11 +3,12 @@ package device
 import (
 	"context"
 
+	"github.com/optim-corp/cios-cli/utils/console"
+
 	xmath "github.com/fcfcqloow/go-advance/math"
 
 	. "github.com/optim-corp/cios-cli/cli"
 	"github.com/optim-corp/cios-cli/models"
-	"github.com/optim-corp/cios-cli/utils"
 	ciossdk "github.com/optim-corp/cios-golang-sdk/sdk"
 	"github.com/urfave/cli/v2"
 )
@@ -61,7 +62,7 @@ func listDeviceEntities() *cli.Command {
 							fPrintln("|Resource Owner ID|: ", model.ResourceOwnerId)
 							fPrintln("|Component ID|     : ", model.Components.Get().Id)
 							fPrintln("|Key|             : ", model.Key, "\n")
-							utils.FOutStructJsonSlim(model)
+							console.FOutStructJsonSlim(model)
 							fPrintln("\n------------------------------------------------------------------------------------------------------------------------------------------------------------\n")
 						}
 					} else {

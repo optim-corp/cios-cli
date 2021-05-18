@@ -3,9 +3,10 @@ package device
 import (
 	"context"
 
+	"github.com/optim-corp/cios-cli/utils/console"
+
 	. "github.com/optim-corp/cios-cli/cli"
 	"github.com/optim-corp/cios-cli/models"
-	"github.com/optim-corp/cios-cli/utils"
 	ciossdk "github.com/optim-corp/cios-golang-sdk/sdk"
 	"github.com/urfave/cli/v2"
 )
@@ -39,12 +40,12 @@ func listDeviceMonitoringCommand() *cli.Command {
 					}
 				})
 			} else {
-				utils.CliArgsForEach(c, func(a string) { deviceIDs = append(deviceIDs, a) })
+				console.CliArgsForEach(c, func(a string) { deviceIDs = append(deviceIDs, a) })
 			}
 			monitorings, _, err := Client.DeviceManagement.GetMonitoringLatestList(deviceIDs, context.Background())
 			assert(err).
 				Log().
-				NoneErrPrintln(func() { utils.OutStructJson(monitorings) })
+				NoneErrPrintln(func() { console.OutStructJson(monitorings) })
 			return nil
 		},
 	}

@@ -4,6 +4,8 @@ import (
 	"context"
 	"unicode/utf8"
 
+	"github.com/optim-corp/cios-cli/utils/console"
+
 	ciossdk "github.com/optim-corp/cios-golang-sdk/sdk"
 
 	. "github.com/optim-corp/cios-cli/cli"
@@ -13,10 +15,10 @@ import (
 )
 
 var (
-	listUtility = utils.ListUtility
-	spaceRight  = utils.SpaceRight
-	fPrintln    = utils.Console.Fprintln
-	fPrintf     = utils.Console.Fprintf
+	listUtility = console.ListUtility
+	spaceRight  = console.SpaceRight
+	fPrintln    = console.Fprintln
+	fPrintf     = console.Fprintf
 	assert      = utils.EAssert
 )
 

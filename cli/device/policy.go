@@ -3,11 +3,12 @@ package device
 import (
 	"context"
 
+	"github.com/optim-corp/cios-cli/utils/console"
+
 	"github.com/optim-corp/cios-golang-sdk/cios"
 
 	. "github.com/optim-corp/cios-cli/cli"
 	"github.com/optim-corp/cios-cli/models"
-	"github.com/optim-corp/cios-cli/utils"
 	"github.com/urfave/cli/v2"
 )
 
@@ -33,7 +34,7 @@ func createDevicePolicy() *cli.Command {
 		},
 		Action: func(c *cli.Context) error {
 			policy, _, err := Client.DeviceManagement.CreatePolicy(c.String("resourceOwnerId"), context.Background())
-			assert(err).Log().NoneErr(func() { utils.OutStructJson(policy) })
+			assert(err).Log().NoneErr(func() { console.OutStructJson(policy) })
 			return nil
 		},
 	}
@@ -67,7 +68,7 @@ func deleteDevicePolicy() *cli.Command {
 		Aliases:   models.ALIAS_DELETE,
 		UsageText: "cios device monitoring del [command options] [policy_id...]",
 		Action: func(c *cli.Context) error {
-			utils.CliArgsForEach(c, func(t string) {
+			console.CliArgsForEach(c, func(t string) {
 				_, err := Client.DeviceManagement.DeletePolicy(t, context.Background())
 				assert(err).Log()
 			})

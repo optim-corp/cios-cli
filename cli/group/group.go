@@ -5,6 +5,8 @@ import (
 	"strings"
 	"unicode/utf8"
 
+	"github.com/optim-corp/cios-cli/utils/console"
+
 	cnv "github.com/fcfcqloow/go-advance/convert"
 
 	"github.com/optim-corp/cios-golang-sdk/cios"
@@ -21,10 +23,10 @@ import (
 
 var (
 	is          = utils.Is
-	listUtility = utils.ListUtility
-	spaceRight  = utils.SpaceRight
-	fPrintln    = utils.Console.Fprintln
-	fPrintf     = utils.Console.Fprintf
+	listUtility = console.ListUtility
+	spaceRight  = console.SpaceRight
+	fPrintln    = console.Fprintln
+	fPrintf     = console.Fprintf
 	assert      = utils.EAssert
 )
 
@@ -58,7 +60,7 @@ func createGroup() *cli.Command {
 				Tags          string
 			}{}
 			if c.String("name") == "" {
-				utils.Question(
+				console.Question(
 					[]*survey.Question{
 						{
 							Name:   "name",
@@ -154,7 +156,7 @@ func deleteGroup() *cli.Command {
 		Name:    models.DELETE,
 		Aliases: models.ALIAS_DELETE,
 		Action: func(c *cli.Context) error {
-			utils.CliArgsForEach(c, func(id string) {
+			console.CliArgsForEach(c, func(id string) {
 				_, err := Client.Account.DeleteGroup(id, context.Background())
 				assert(err).Log().NoneErrPrintln("Completed " + id)
 			})
@@ -229,7 +231,7 @@ func inviteGroup() *cli.Command {
 					answers := struct {
 						Email string
 					}{}
-					utils.Question([]*survey.Question{
+					console.Question([]*survey.Question{
 						{
 							Name:   "email",
 							Prompt: &survey.Input{Message: "email or exit: "},
@@ -241,7 +243,7 @@ func inviteGroup() *cli.Command {
 						emails = append(emails, answers.Email)
 					}
 				}
-				utils.CliArgsForEach(c, func(id string) {
+				console.CliArgsForEach(c, func(id string) {
 					for _, email := range emails {
 						_, _, err := Client.Account.InviteGroup(id, email, context.Background())
 						assert(err).Log().NoneErrPrintln("Completed ", id, "\n", email)

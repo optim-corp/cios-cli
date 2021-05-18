@@ -7,6 +7,8 @@ import (
 	"os"
 	"strings"
 
+	"github.com/optim-corp/cios-cli/utils/console"
+
 	"github.com/AlecAivazis/survey/v2"
 	"github.com/fcfcqloow/go-advance/ftil"
 	"github.com/optim-corp/cios-cli/models"
@@ -59,7 +61,7 @@ func login() {
 	stage := struct {
 		Stage string
 	}{}
-	utils.Question([]*survey.Question{
+	console.Question([]*survey.Question{
 		{
 			Name: "stage",
 			Prompt: &survey.Select{
@@ -68,7 +70,7 @@ func login() {
 			},
 		},
 	}, &stage)
-	utils.Question([]*survey.Question{
+	console.Question([]*survey.Question{
 		{
 			Name:   "redirectUri",
 			Prompt: &survey.Input{Message: "Redirect URI: "},
@@ -130,7 +132,7 @@ func clientLogin() {
 		Stage string
 	}{}
 	in := input{}
-	utils.Question([]*survey.Question{
+	console.Question([]*survey.Question{
 		{
 			Name: "stage",
 			Prompt: &survey.Select{
@@ -139,7 +141,7 @@ func clientLogin() {
 			},
 		},
 	}, &stage)
-	utils.Question([]*survey.Question{
+	console.Question([]*survey.Question{
 		{
 			Name:   "clientID",
 			Prompt: &survey.Input{Message: "Client ID: "},

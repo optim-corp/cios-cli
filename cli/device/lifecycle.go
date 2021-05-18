@@ -3,9 +3,10 @@ package device
 import (
 	"context"
 
+	"github.com/optim-corp/cios-cli/utils/console"
+
 	. "github.com/optim-corp/cios-cli/cli"
 	"github.com/optim-corp/cios-cli/models"
-	"github.com/optim-corp/cios-cli/utils"
 	ciossdk "github.com/optim-corp/cios-golang-sdk/sdk"
 	"github.com/urfave/cli/v2"
 )
@@ -93,7 +94,7 @@ func listDeviceLifecycle() *cli.Command {
 				assert(err).Log().NoneErr(func() {
 					listUtility(func() {
 						for _, lifecycle := range lifecycles {
-							utils.FOutStructJson(lifecycle)
+							console.FOutStructJson(lifecycle)
 						}
 					})
 

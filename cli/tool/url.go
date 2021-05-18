@@ -5,6 +5,7 @@ import (
 	app "github.com/optim-corp/cios-cli/cli"
 	"github.com/optim-corp/cios-cli/models"
 	"github.com/optim-corp/cios-cli/utils"
+	"github.com/optim-corp/cios-cli/utils/console"
 	"github.com/skratchdot/open-golang/open"
 	"github.com/urfave/cli/v2"
 )
@@ -97,12 +98,12 @@ func addUrls() *cli.Command {
 					VideoStreams:          "video-streaming." + domain,
 				}
 			} else if isInteractive {
-				utils.Question(
+				console.Question(
 					[]*survey.Question{
 						{Name: "stage", Prompt: &survey.Input{Message: "Stage: "}},
 						{Name: "domain", Prompt: &survey.Input{Message: "Domain: "}},
 					}, &in)
-				utils.Question(
+				console.Question(
 					[]*survey.Question{
 						{Name: "auth", Prompt: &survey.Input{Message: "Auth URL: ", Default: "auth." + in.Domain}},
 					}, &in)
@@ -119,7 +120,7 @@ func addUrls() *cli.Command {
 					VideoStreams:          "video-streaming." + in.Domain,
 				}
 			} else if isInteractiveAll {
-				utils.Question(
+				console.Question(
 					[]*survey.Question{
 						{Name: "stage", Prompt: &survey.Input{Message: "Stage: "}},
 						{Name: "device", Prompt: &survey.Input{Message: "Device URL: "}},

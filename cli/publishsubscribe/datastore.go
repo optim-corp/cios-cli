@@ -7,13 +7,14 @@ import (
 	"strings"
 	"time"
 
+	"github.com/optim-corp/cios-cli/utils/console"
+
 	wrp "github.com/fcfcqloow/go-advance/wrapper"
 
 	cnv "github.com/fcfcqloow/go-advance/convert"
 	"github.com/fcfcqloow/go-advance/log"
 	. "github.com/optim-corp/cios-cli/cli"
 	"github.com/optim-corp/cios-cli/models"
-	"github.com/optim-corp/cios-cli/utils"
 	"github.com/optim-corp/cios-golang-sdk/cios"
 	ciossdk "github.com/optim-corp/cios-golang-sdk/sdk"
 	"github.com/urfave/cli/v2"
@@ -42,7 +43,7 @@ func createDataStore() *cli.Command {
 			&cli.StringFlag{Name: "resource_owner_id", Aliases: []string{"r"}},
 		},
 		Action: func(c *cli.Context) error {
-			utils.CliArgsForEach(c, func(channelID string) {})
+			console.CliArgsForEach(c, func(channelID string) {})
 			fmt.Println("未実装")
 			return nil
 		},
@@ -80,7 +81,7 @@ func deleteDataStore() *cli.Command {
 					_, err := Client.PubSub.DeleteDataByChannel(channelID, context.Background())
 					assert(err).Log()
 				} else {
-					utils.CliArgsForEach(c, func(objectID string) {
+					console.CliArgsForEach(c, func(objectID string) {
 						_, err := Client.PubSub.DeleteObject(channelID, objectID, nil)
 						assert(err).Log().NoneErrPrintln("Completed ", channelID, objectID)
 					})
@@ -161,7 +162,7 @@ func listDataStore() *cli.Command {
 					printObject(channel.Id)
 				}
 
-				assert(utils.Console.Flush()).Log()
+				assert(console.Flush()).Log()
 			}
 
 			listUtility(func() {

@@ -4,10 +4,11 @@ import (
 	"context"
 	"strings"
 
+	"github.com/optim-corp/cios-cli/utils/console"
+
 	"github.com/AlecAivazis/survey/v2"
 	. "github.com/optim-corp/cios-cli/cli"
 	"github.com/optim-corp/cios-cli/models"
-	"github.com/optim-corp/cios-cli/utils"
 	"github.com/optim-corp/cios-golang-sdk/cios"
 	ciossdk "github.com/optim-corp/cios-golang-sdk/sdk"
 	"github.com/urfave/cli/v2"
@@ -42,7 +43,7 @@ func createPoint() *cli.Command {
 				ResourceOwnerID string
 				Label           string
 			}{}
-			utils.Question([]*survey.Question{
+			console.Question([]*survey.Question{
 				{
 					Name:   "name",
 					Prompt: &survey.Input{Message: "name: "},
@@ -104,7 +105,7 @@ func createPoint() *cli.Command {
 				Labels: &labels,
 			}
 			point, _, err := Client.Geography.CreatePoint(request, context.Background())
-			assert(err).Log().NoneErr(func() { utils.OutStructJson(point) })
+			assert(err).Log().NoneErr(func() { console.OutStructJson(point) })
 			return nil
 		},
 	}
@@ -114,7 +115,7 @@ func deletePoint() *cli.Command {
 		Name:    models.DELETE,
 		Aliases: models.ALIAS_DELETE,
 		Action: func(c *cli.Context) error {
-			utils.CliArgsForEach(c, func(id string) {
+			console.CliArgsForEach(c, func(id string) {
 				_, _, err := Client.Geography.DeletePoint(id, context.Background())
 				assert(err).Log().NoneErrPrintln("Completed ", id)
 			})

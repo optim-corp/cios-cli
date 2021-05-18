@@ -3,12 +3,13 @@ package device
 import (
 	"context"
 
+	"github.com/optim-corp/cios-cli/utils/console"
+
 	cnv "github.com/fcfcqloow/go-advance/convert"
 
 	"github.com/AlecAivazis/survey/v2"
 	. "github.com/optim-corp/cios-cli/cli"
 	"github.com/optim-corp/cios-cli/models"
-	"github.com/optim-corp/cios-cli/utils"
 	"github.com/optim-corp/cios-golang-sdk/cios"
 	ciossdk "github.com/optim-corp/cios-golang-sdk/sdk"
 	"github.com/urfave/cli/v2"
@@ -51,7 +52,7 @@ func createDevice() *cli.Command {
 				RsaPublickey    string
 			}{}
 
-			utils.Question([]*survey.Question{
+			console.Question([]*survey.Question{
 				{
 					Name:   "idNumber",
 					Prompt: &survey.Input{Message: "ID Number: "},
@@ -105,7 +106,7 @@ func deleteDevice() *cli.Command {
 			&cli.BoolFlag{Name: "all", Aliases: []string{"a"}},
 		},
 		Action: func(c *cli.Context) error {
-			utils.CliArgsForEach(c, func(id string) {
+			console.CliArgsForEach(c, func(id string) {
 				_, err := Client.DeviceManagement.DeleteDevice(id, context.Background())
 				assert(err).Log().NoneErrPrintln("Completed ", id)
 			})
@@ -125,11 +126,11 @@ func listDevice() *cli.Command {
 		},
 		Action: func(c *cli.Context) error {
 			if c.Args().Len() > 0 {
-				utils.CliArgsForEach(c, func(id string) {
+				console.CliArgsForEach(c, func(id string) {
 					device, _, err := Client.DeviceManagement.GetDevice(id, nil, nil, context.Background())
 					assert(err).Log().NoneErr(
 						func() {
-							value, err := utils.StructToJsonStr(device)
+							value, err := console.StructToJsonStr(device)
 							assert(err).Log().ExitWith(1)
 							value, err = cnv.IndentJson(value)
 							assert(err).Log().ExitWith(1)
@@ -151,7 +152,7 @@ func listDevice() *cli.Command {
 								fPrintln(
 									is(isAll).
 										T(func() string {
-											str, err := utils.StructToJsonStr(device)
+											str, err := console.StructToJsonStr(device)
 											assert(err).Log().ExitWith(1)
 											str, err = cnv.IndentJson(str)
 											assert(err).Log().ExitWith(1)

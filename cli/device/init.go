@@ -4,13 +4,14 @@ import (
 	"github.com/fcfcqloow/go-advance/ftil"
 	"github.com/optim-corp/cios-cli/models"
 	"github.com/optim-corp/cios-cli/utils"
+	"github.com/optim-corp/cios-cli/utils/console"
 )
 
 var (
-	listUtility  = utils.ListUtility
-	fPrintln     = utils.Console.Fprintln
+	listUtility  = console.ListUtility
+	fPrintln     = console.Fprintln
 	is           = utils.Is
-	printf       = utils.Console.Printf
+	printf       = console.Printf
 	assert       = utils.EAssert
 	lifecycleDir = models.LifecycleDir
 	path         = ftil.Path

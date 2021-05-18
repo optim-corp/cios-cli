@@ -10,6 +10,8 @@ import (
 	"strconv"
 	"time"
 
+	"github.com/optim-corp/cios-cli/utils/console"
+
 	"github.com/AlecAivazis/survey/v2"
 
 	cnv "github.com/fcfcqloow/go-advance/convert"
@@ -18,7 +20,6 @@ import (
 	"github.com/fcfcqloow/go-advance/util"
 	. "github.com/optim-corp/cios-cli/cli"
 	"github.com/optim-corp/cios-cli/models"
-	"github.com/optim-corp/cios-cli/utils"
 	"github.com/optim-corp/cios-golang-sdk/cios"
 	ciossdk "github.com/optim-corp/cios-golang-sdk/sdk"
 	"github.com/urfave/cli/v2"
@@ -60,7 +61,7 @@ func GetMessagingCommand() *cli.Command {
 				}
 				scanLogic = func(message string) {
 					for {
-						in := utils.GetConsoleMultipleLine(message)
+						in := console.GetConsoleMultipleLine(message)
 						if in == "/exit" {
 							done <- true
 							exit = true
@@ -83,7 +84,7 @@ func GetMessagingCommand() *cli.Command {
 					return err
 				}
 			} else {
-				channelIDs = utils.CliArgs(c)
+				channelIDs = console.CliArgs(c)
 			}
 			go func() {
 				err := eg.Wait()
@@ -149,7 +150,7 @@ func listChannels() *cli.Command {
 			assert(err).Log().NoneErr(func() {
 				if c.Bool("datastore") {
 					println(datastoreDir)
-					utils.ListDirs(datastoreDir, "|-")
+					console.ListDirs(datastoreDir, "|-")
 					return
 				}
 
@@ -193,7 +194,7 @@ func publishMessage() *cli.Command {
 				str          = make(chan *string)
 				done         = make(chan bool)
 			)
-			utils.CliArgsForEach(c, func(channelID string) {
+			console.CliArgsForEach(c, func(channelID string) {
 				eg.Go(func() error {
 					return Client.PubSub.ConnectWebSocket(channelID, done, ciossdk.ConnectWebSocketOptions{
 						PackerFormat: &packerFormat,
@@ -231,7 +232,7 @@ func publishMessage() *cli.Command {
 
 				})
 			} else {
-				input := utils.GetConsoleMultipleLine("")
+				input := console.GetConsoleMultipleLine("")
 				str <- &input
 			}
 			str <- nil
@@ -361,7 +362,7 @@ func registerJob() *cli.Command {
 				NoneErrAssert((func() error {
 					for jobNames := cnv.GetObjectKeys(jobs); ; {
 						ans := struct{ JobName string }{}
-						utils.Q([]*survey.Question{
+						console.Q([]*survey.Question{
 							{Name: "JobName", Prompt: &survey.Select{Message: "Select a Job", Options: append(jobNames, "exit")}}},
 							&ans,
 						)

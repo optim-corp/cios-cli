@@ -1,9 +1,7 @@
 package video
 
-import (
-	"github.com/optim-corp/cios-cli/utils"
-)
+import "github.com/optim-corp/cios-cli/utils/console"
 
 var (
-	fPrint = utils.Console.Fprint
+	fPrint = console.Fprint
 )

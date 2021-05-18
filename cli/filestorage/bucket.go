@@ -3,6 +3,8 @@ package filestorage
 import (
 	"strconv"
 
+	"github.com/optim-corp/cios-cli/utils/console"
+
 	"github.com/fcfcqloow/go-advance/log"
 
 	xmath "github.com/fcfcqloow/go-advance/math"
@@ -11,7 +13,6 @@ import (
 
 	. "github.com/optim-corp/cios-cli/cli"
 	"github.com/optim-corp/cios-cli/models"
-	"github.com/optim-corp/cios-cli/utils"
 	"github.com/optim-corp/cios-golang-sdk/cios"
 	ciossdk "github.com/optim-corp/cios-golang-sdk/sdk"
 	"github.com/urfave/cli/v2"
@@ -60,7 +61,7 @@ func deleteBucket() *cli.Command {
 		UsageText: "cios bucket delete  [id...]",
 		Flags:     []cli.Flag{},
 		Action: func(c *cli.Context) error {
-			utils.CliArgsForEach(c, func(id string) {
+			console.CliArgsForEach(c, func(id string) {
 				_, err := Client.FileStorage.DeleteBucket(id, nil)
 				assert(err).Log().NoneErrPrintln("Completed " + id)
 			})

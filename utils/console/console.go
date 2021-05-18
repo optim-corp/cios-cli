@@ -1,7 +1,6 @@
-package utils
+package console
 
 import (
-	"encoding/json"
 	"io/ioutil"
 	"unicode/utf8"
 
@@ -15,8 +14,7 @@ func Q(question []*survey.Question, st interface{}) {
 	Question(question, st)
 }
 func Question(question []*survey.Question, st interface{}) {
-	err := survey.Ask(question, st)
-	if err != nil {
+	if err := survey.Ask(question, st); err != nil {
 		log.Emergency(err.Error())
 		panic(err)
 	}
@@ -61,7 +59,7 @@ func FOutStructJson(object interface{}) {
 		if err != nil {
 			log.Error(err.Error())
 		} else {
-			Console.Fprintln(result)
+			console.Fprintln(result)
 		}
 	}
 }
@@ -83,7 +81,7 @@ func FOutStructJsonSlim(object interface{}) {
 	if err != nil {
 		log.Error(err.Error())
 	} else {
-		Console.Fprintln(body)
+		console.Fprintln(body)
 	}
 }
 func OutStructJsonSlim(object interface{}) {
@@ -104,12 +102,12 @@ func GetConsoleMultipleLine(message string) string {
 }
 
 func ListUtility(print func()) {
-	Console.Fprintln("\n********************************************************" +
+	Fprintln("\n********************************************************" +
 		"********************************************************\n")
 	print()
-	Console.Fprintln("\n********************************************************" +
+	Fprintln("\n********************************************************" +
 		"********************************************************\n")
-	Console.Flush()
+	Flush()
 }
 
 func SpaceRight(val string, len int) string {
@@ -123,6 +121,5 @@ func SpaceRight(val string, len int) string {
 }
 
 func StructToJsonStr(object interface{}) (string, error) {
-	result, err := json.Marshal(object)
-	return string(result), err
+	return cnv.Json(object)
 }

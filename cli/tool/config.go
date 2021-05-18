@@ -3,11 +3,11 @@ package tool
 import (
 	"encoding/json"
 
+	"github.com/optim-corp/cios-cli/utils/console"
+
 	"github.com/AlecAivazis/survey/v2"
 	"github.com/fcfcqloow/go-advance/ftil"
 	"github.com/optim-corp/cios-cli/models"
-	"github.com/optim-corp/cios-cli/utils"
-	. "github.com/optim-corp/cios-cli/utils"
 	"github.com/urfave/cli/v2"
 )
 
@@ -22,7 +22,7 @@ func GetLogCommand() *cli.Command {
 
 			if c.Args().Len() == 0 {
 				ans := struct{ Value string }{}
-				Question([]*survey.Question{
+				console.Question([]*survey.Question{
 					{
 						Name: "value",
 						Prompt: &survey.Select{
@@ -78,7 +78,7 @@ func GetSwitchCommand() *cli.Command {
 					for key, _ := range account {
 						keys = append(keys, key)
 					}
-					utils.Question(
+					console.Question(
 						[]*survey.Question{
 							{
 								Name:   "name",
@@ -91,7 +91,7 @@ func GetSwitchCommand() *cli.Command {
 						keys = append(keys, k)
 					}
 
-					utils.Question(
+					console.Question(
 						[]*survey.Question{
 							{
 								Name: "name",
@@ -131,7 +131,7 @@ func GetConfigCommand() *cli.Command {
 				Flags:   []cli.Flag{},
 				Action: func(c *cli.Context) error {
 					if config, ok := models.GetConfig(); ok {
-						ListUtility(func() {
+						console.ListUtility(func() {
 							fPrintln("\tStage:          " + config.Stage)
 							fPrintln("\tClient ID:      " + config.ClientID)
 							fPrintln("\tClient Secret:  " + config.ClientSecret)
@@ -150,7 +150,7 @@ func GetConfigCommand() *cli.Command {
 						in := struct {
 							Name string
 						}{}
-						utils.Question(
+						console.Question(
 							[]*survey.Question{
 								{
 									Name:   "name",

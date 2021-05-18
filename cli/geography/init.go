@@ -1,11 +1,14 @@
 package geography
 
-import "github.com/optim-corp/cios-cli/utils"
+import (
+	"github.com/optim-corp/cios-cli/utils"
+	"github.com/optim-corp/cios-cli/utils/console"
+)
 
 var (
-	printf      = utils.Console.Printf
-	listUtility = utils.ListUtility
-	fPrintln    = utils.Console.Fprintln
-	fPrintf     = utils.Console.Fprintf
+	printf      = console.Printf
+	listUtility = console.ListUtility
+	fPrintln    = console.Fprintln
+	fPrintf     = console.Fprintf
 	assert      = utils.EAssert
 )

@@ -3,12 +3,13 @@ package device
 import (
 	"context"
 
+	"github.com/optim-corp/cios-cli/utils/console"
+
 	"github.com/AlecAivazis/survey/v2"
 	cnv "github.com/fcfcqloow/go-advance/convert"
 	"github.com/fcfcqloow/go-advance/log"
 	. "github.com/optim-corp/cios-cli/cli"
 	"github.com/optim-corp/cios-cli/models"
-	"github.com/optim-corp/cios-cli/utils"
 	"github.com/optim-corp/cios-golang-sdk/cios"
 	ciossdk "github.com/optim-corp/cios-golang-sdk/sdk"
 	"github.com/urfave/cli/v2"
@@ -47,11 +48,11 @@ func listDeviceModels() *cli.Command {
 				fPrintln("|Watch|            : ", model.Watch)
 				fPrintln("|Created at|       : ", model.CreatedAt)
 				fPrintln("|Updated at|       : ", model.UpdatedAt, "\n")
-				utils.FOutStructJsonSlim(model.Components)
+				console.FOutStructJsonSlim(model.Components)
 				fPrintln("\n------------------------------------------------------------------------------------------------------------------------------------------------------------\n")
 			}
 			if c.Args().Len() > 0 {
-				utils.CliArgsForEach(c, func(arg string) {
+				console.CliArgsForEach(c, func(arg string) {
 					modelMap, err := Client.DeviceAssetManagement.GetModelsMapByID(ciossdk.MakeGetModelsOpts(), context.Background())
 					assert(err).Log().NoneErr(func() {
 						model, ok := modelMap[arg]
@@ -100,7 +101,7 @@ func deleteDeviceModel() *cli.Command {
 			&cli.BoolFlag{Name: "all", Aliases: []string{"a"}},
 		},
 		Action: func(c *cli.Context) error {
-			utils.CliArgsForEach(c, func(arg string) {
+			console.CliArgsForEach(c, func(arg string) {
 				_, err := Client.DeviceAssetManagement.DeleteModel(arg, context.Background())
 				assert(err).Log().NoneErr(func() {
 					modelMap, err := Client.DeviceAssetManagement.GetModelsMapByID(ciossdk.MakeGetModelsOpts(), context.Background())
@@ -125,10 +126,10 @@ func createDeviceModel() *cli.Command {
 		Flags:   []cli.Flag{},
 		Action: func(c *cli.Context) error {
 			req := cios.DeviceModelRequest{}
-			input := utils.GetConsoleMultipleLine(">>")
+			input := console.GetConsoleMultipleLine(">>")
 			assert(cnv.UnMarshalJson(input, &req)).Log().NoneErr(func() {
 				model, _, err := Client.DeviceAssetManagement.CreateModel(req, context.Background())
-				assert(err).Log().NoneErr(func() { utils.OutStructJsonSlim(model) })
+				assert(err).Log().NoneErr(func() { console.OutStructJsonSlim(model) })
 			})
 			return nil
 		},
@@ -171,7 +172,7 @@ func entityDeviceModel() *cli.Command {
 				Value           string
 			}{}
 
-			utils.Question([]*survey.Question{
+			console.Question([]*survey.Question{
 				{
 					Name:   "serialNumber",
 					Prompt: &survey.Input{Message: "Serial Number: "},

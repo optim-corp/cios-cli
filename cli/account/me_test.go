@@ -8,8 +8,6 @@ import (
 	"os"
 	"testing"
 
-	"github.com/optim-corp/cios-cli/utils"
-
 	wrp "github.com/fcfcqloow/go-advance/wrapper"
 
 	xos "github.com/fcfcqloow/go-advance/os"
@@ -21,6 +19,7 @@ import (
 	sdkmodel "github.com/optim-corp/cios-golang-sdk/model"
 
 	app "github.com/optim-corp/cios-cli/cli"
+	"github.com/optim-corp/cios-cli/utils/console"
 	ciossdk "github.com/optim-corp/cios-golang-sdk/sdk"
 
 	"github.com/urfave/cli/v2"
@@ -52,7 +51,7 @@ func TestGetMeCommand(t *testing.T) {
 	})
 
 	buff := xos.CaptureStdout(func() {
-		utils.Console.SetWriter(os.Stdout)
+		console.SetWriter(os.Stdout)
 		account.GetMeCommand().Subcommands[0].Action(ctx)
 	})
 

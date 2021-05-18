@@ -5,11 +5,12 @@ import (
 	"strconv"
 	"unicode/utf8"
 
+	"github.com/optim-corp/cios-cli/utils/console"
+
 	cnv "github.com/fcfcqloow/go-advance/convert"
 	"github.com/fcfcqloow/go-advance/log"
 	. "github.com/optim-corp/cios-cli/cli"
 	"github.com/optim-corp/cios-cli/models"
-	"github.com/optim-corp/cios-cli/utils"
 	"github.com/optim-corp/cios-golang-sdk/cios"
 	ciossdk "github.com/optim-corp/cios-golang-sdk/sdk"
 	"github.com/urfave/cli/v2"
@@ -42,7 +43,7 @@ func createNode() *cli.Command {
 		},
 		Action: func(c *cli.Context) error {
 			var parentNodeId = c.String("parent_node_id")
-			utils.CliArgsForEach(c, func(name string) {
+			console.CliArgsForEach(c, func(name string) {
 				_, _, err := Client.FileStorage.CreateNodeOnNodeID(c.String("bucket_id"), cios.NodeRequest{
 					Name:         name,
 					ParentNodeId: &parentNodeId,
@@ -63,7 +64,7 @@ func deleteNode() *cli.Command {
 		},
 		Action: func(c *cli.Context) error {
 			bucketID := c.String("bucket_id")
-			utils.CliArgsForEach(c, func(nodeID string) {
+			console.CliArgsForEach(c, func(nodeID string) {
 				_, err := Client.FileStorage.DeleteNode(bucketID, nodeID, context.Background())
 				assert(err).Log().NoneErrPrintln("Completed " + nodeID)
 			})
@@ -117,7 +118,7 @@ func listNode() *cli.Command {
 			}
 			listUtility(func() {
 				if c.Args().Len() > 0 {
-					utils.CliArgsForEach(c, func(bucketID string) {
+					console.CliArgsForEach(c, func(bucketID string) {
 						res, _, err := Client.FileStorage.GetBucket(bucketID, nil)
 						assert(err).Log().NoneErr(func() { lsNode(res) })
 					})
@@ -150,7 +151,7 @@ func copyNode() *cli.Command {
 				destBucketId = c.String("dest_bucket_id")
 				parentNodeId = c.String("parent_node_id")
 			)
-			utils.CliArgsForEach(c, func(nodeID string) {
+			console.CliArgsForEach(c, func(nodeID string) {
 				_, _, err := Client.FileStorage.CopyNode(
 					bucketId,
 					nodeID,
@@ -180,7 +181,7 @@ func moveNode() *cli.Command {
 				destBucketId = c.String("dest_bucket_id")
 				parentNodeId = c.String("parent_node_id")
 			)
-			utils.CliArgsForEach(c, func(nodeID string) {
+			console.CliArgsForEach(c, func(nodeID string) {
 				_, _, err := Client.FileStorage.MoveNode(
 					bucketId,
 					nodeID,

@@ -6,9 +6,10 @@ import (
 	"os"
 	"path/filepath"
 
+	"github.com/optim-corp/cios-cli/utils/console"
+
 	"github.com/fcfcqloow/go-advance/log"
 	. "github.com/optim-corp/cios-cli/cli"
-	"github.com/optim-corp/cios-cli/utils"
 	ciossdk "github.com/optim-corp/cios-golang-sdk/sdk"
 	"github.com/urfave/cli/v2"
 )
@@ -40,7 +41,7 @@ func downloadFile() *cli.Command {
 			)
 			println("Download start....")
 
-			utils.CliArgsForEach(c, func(nodeID string) {
+			console.CliArgsForEach(c, func(nodeID string) {
 				node, _, err := Client.FileStorage.GetNode(bucketID, nodeID, nil)
 				assert(err).
 					Log().
@@ -109,7 +110,7 @@ func uploadFile() *cli.Command {
 				}
 				return nil
 			}
-			utils.CliArgsForEach(c, func(localPath string) {
+			console.CliArgsForEach(c, func(localPath string) {
 				byts, err := path(localPath).ReadFile()
 				assert(err).Log().NoneErr(func() {
 					_, err := Client.FileStorage.UploadFile(bucketID, byts, ciossdk.MakeUploadFileOpts().Name(filepath.Base(localPath)).NodeId(nodeID), context.Background())
