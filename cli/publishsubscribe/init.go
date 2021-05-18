@@ -8,13 +8,12 @@ import (
 )
 
 var (
-	printf       = utils.Printf
 	out          = utils.Out
 	is           = utils.Is
 	listUtility  = utils.ListUtility
-	fPrintln     = utils.Fprintln
-	fPrintf      = utils.Fprintf
-	fPrint       = utils.Fprint
+	fPrintln     = utils.Console.Fprintln
+	fPrintf      = utils.Console.Fprintf
+	fPrint       = utils.Console.Fprint
 	datastoreDir = models.DatastoreDir
 	path         = ftil.Path
 	assert       = utils.EAssert
