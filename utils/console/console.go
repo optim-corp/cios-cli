@@ -20,17 +20,16 @@ func Question(question []*survey.Question, st interface{}) {
 	}
 }
 
-func CliArgsForEach(c *cli.Context, fun func(val string)) {
+func CliArgsForEach(c *cli.Context, fun func(string)) {
 	for i := 0; i < c.Args().Len(); i++ {
 		fun(c.Args().Get(i))
 	}
 }
-func CliArgs(c *cli.Context) []string {
-	result := []string{}
-	for i := 0; i < c.Args().Len(); i++ {
-		result = append(result, c.Args().Get(i))
-	}
-	return result
+func CliArgs(c *cli.Context) (result []string) {
+	CliArgsForEach(c, func(val string) {
+		result = append(result, val)
+	})
+	return
 }
 func ListDirs(_dir string, indent string) {
 	dirs, err := ioutil.ReadDir(_dir)
@@ -46,17 +45,14 @@ func ListDirs(_dir string, indent string) {
 		} else {
 			println(indent + dir.Name() + " <File>")
 		}
-
 	}
 }
 
 func FOutStructJson(object interface{}) {
-	body, err := StructToJsonStr(object)
-	if err != nil {
+	if body, err := cnv.Json(object); err != nil {
 		log.Error(err.Error())
 	} else {
-		result, err := cnv.IndentJson(body)
-		if err != nil {
+		if result, err := cnv.IndentJson(body); err != nil {
 			log.Error(err.Error())
 		} else {
 			Fprintln(result)
@@ -64,7 +60,7 @@ func FOutStructJson(object interface{}) {
 	}
 }
 func OutStructJson(object interface{}) {
-	body, err := StructToJsonStr(object)
+	body, err := cnv.Json(object)
 	if err != nil {
 		log.Error(err.Error())
 	} else {
@@ -77,16 +73,14 @@ func OutStructJson(object interface{}) {
 	}
 }
 func FOutStructJsonSlim(object interface{}) {
-	body, err := StructToJsonStr(object)
-	if err != nil {
+	if body, err := cnv.Json(object); err != nil {
 		log.Error(err.Error())
 	} else {
 		Fprintln(body)
 	}
 }
 func OutStructJsonSlim(object interface{}) {
-	body, err := StructToJsonStr(object)
-	if err != nil {
+	if body, err := cnv.Json(object); err != nil {
 		log.Error(err.Error())
 	} else {
 		println(body)
@@ -115,7 +109,6 @@ func SpaceRight(val string, len int) string {
 	for i := 1; 0 < (len - valLen); i++ {
 		val += " "
 		valLen = utf8.RuneCountInString(val)
-
 	}
 	return val
 }
