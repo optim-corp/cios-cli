@@ -3,6 +3,8 @@ package account
 import (
 	"context"
 
+	"github.com/fcfcqloow/go-advance/check"
+
 	cnv "github.com/fcfcqloow/go-advance/convert"
 
 	. "github.com/optim-corp/cios-cli/cli"
@@ -38,7 +40,9 @@ func listMe() *cli.Command {
 				assert(err).Log().NoneErr(func() {
 					fPrintln("|Name|                : " + str(value.Name))
 					fPrintln("|Email|               : " + value.Email)
-					fPrintln("|Corporation|         : " + str(value.Corporation.Name))
+					if !check.IsNil(value.Corporation) && !check.IsNil(value.Corporation.Name) {
+						fPrintln("|Corporation|         : " + str(value.Corporation.Name))
+					}
 					fPrintln("\t     |group id|\t\t\t\t|resource_owner_id|\t\t|name / type|")
 					if value.Groups != nil {
 						// 1000件超えたら積

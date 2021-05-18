@@ -7,12 +7,10 @@ import (
 )
 
 var (
-	Out = bufio.NewWriter(os.Stdout)
-
 	IsWindows = (runtime.GOOS == "windows")
 	IsLinux   = (runtime.GOOS == "linux")
 	IsMac     = (runtime.GOOS == "darwin")
-	Console   = out{writer: Out}
+	Console   = &out{writer: bufio.NewWriter(os.Stdout)}
 )
 
 type (

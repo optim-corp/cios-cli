@@ -2,7 +2,6 @@ package utils
 
 import (
 	"encoding/json"
-	"fmt"
 	"io/ioutil"
 	"unicode/utf8"
 
@@ -105,12 +104,12 @@ func GetConsoleMultipleLine(message string) string {
 }
 
 func ListUtility(print func()) {
-	fmt.Fprintln(Out, "\n********************************************************"+
+	Console.Fprintln("\n********************************************************" +
 		"********************************************************\n")
 	print()
-	fmt.Fprintln(Out, "\n********************************************************"+
+	Console.Fprintln("\n********************************************************" +
 		"********************************************************\n")
-	Out.Flush()
+	Console.Flush()
 }
 
 func SpaceRight(val string, len int) string {

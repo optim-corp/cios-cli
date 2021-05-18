@@ -5,7 +5,16 @@ import (
 	"flag"
 	"net/http"
 	"net/http/httptest"
+	"os"
 	"testing"
+
+	"github.com/optim-corp/cios-cli/utils"
+
+	wrp "github.com/fcfcqloow/go-advance/wrapper"
+
+	xos "github.com/fcfcqloow/go-advance/os"
+
+	cnv "github.com/fcfcqloow/go-advance/convert"
 
 	"github.com/optim-corp/cios-golang-sdk/cios"
 
@@ -22,26 +31,38 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func TestGetMeCommand(t *testing.T) {
-	ts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		w.Header().Set("Content-Type", "application/json")
-		if r.Method != "GET" {
-			t.Fatal(r.Method)
-		}
-		if r.URL.Path == "/v2/me" {
-			response := cios.Me{
-				Id: "test",
-			}
-			json.NewEncoder(w).Encode(response)
-		}
-	}))
-	defer ts.Close()
+func mockCiosClient(fun http.HandlerFunc) *httptest.Server {
+	ts := httptest.NewServer(fun)
 	app.Client = ciossdk.NewCiosClient(ciossdk.CiosClientConfig{Urls: sdkmodel.CIOSUrl{AccountsUrl: ts.URL}})
-	cmd := account.GetMeCommand()
-	assert.Equal(t, "me", cmd.Name)
-	assert.Equal(t, "list", cmd.Subcommands[0].Name)
-	assert.Equal(t, models.ALIAS_LIST, cmd.Subcommands[0].Aliases)
-	ctx := cli.NewContext(cli.NewApp(), &flag.FlagSet{}, &cli.Context{})
-	cmd.Subcommands[0].Action(ctx)
+	return ts
+}
+
+var ctx = cli.NewContext(cli.NewApp(), &flag.FlagSet{}, &cli.Context{})
+
+func TestGetMeCommand(t *testing.T) {
+	mockCiosClient(func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("Content-Type", "application/json")
+		if r.Method == "GET" && r.URL.Path == "/v2/me" {
+			json.NewEncoder(w).Encode(cios.Me{
+				Id:    "test",
+				Name:  cnv.StrPtr("test-name"),
+				Email: "example@sample.com",
+			})
+		}
+	})
+
+	buff := xos.CaptureStdout(func() {
+		utils.Console.SetWriter(os.Stdout)
+		account.GetMeCommand().Subcommands[0].Action(ctx)
+	})
+
+	assert.Equal(t, "me", account.GetMeCommand().Name)
+	assert.Equal(t, "list", account.GetMeCommand().Subcommands[0].Name)
+	assert.Equal(t, models.ALIAS_LIST, account.GetMeCommand().Subcommands[0].Aliases)
+
+	result := wrp.MakeString(buff.String())
+	if !result.ContainsAll("test-name", "example@sample.com") {
+		t.Fatal("Fail Plot Name")
+	}
 
 }

@@ -3,6 +3,7 @@ package utils
 import (
 	"bufio"
 	"fmt"
+	"io"
 )
 
 type out struct{ writer *bufio.Writer }
@@ -26,4 +27,7 @@ func (o *out) Flush() error {
 
 func (o *out) F() {
 	o.Flush()
+}
+func (o *out) SetWriter(w io.Writer) {
+	o.writer = bufio.NewWriter(w)
 }

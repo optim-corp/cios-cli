@@ -160,7 +160,8 @@ func listDataStore() *cli.Command {
 				default:
 					printObject(channel.Id)
 				}
-				assert(out.Flush()).Log()
+
+				assert(utils.Console.Flush()).Log()
 			}
 
 			listUtility(func() {

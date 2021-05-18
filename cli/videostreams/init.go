@@ -5,6 +5,5 @@ import (
 )
 
 var (
-	out    = utils.Out
 	fPrint = utils.Console.Fprint
 )

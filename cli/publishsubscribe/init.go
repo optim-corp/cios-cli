@@ -8,7 +8,6 @@ import (
 )
 
 var (
-	out          = utils.Out
 	is           = utils.Is
 	listUtility  = utils.ListUtility
 	fPrintln     = utils.Console.Fprintln

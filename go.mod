@@ -6,7 +6,7 @@ require (
 	github.com/AlecAivazis/survey/v2 v2.2.12
 	github.com/atotto/clipboard v0.1.2
 	github.com/dimiro1/banner v1.1.0
-	github.com/fcfcqloow/go-advance v0.0.1
+	github.com/fcfcqloow/go-advance v0.0.5
 	github.com/mattn/go-colorable v0.1.8
 	github.com/mitchellh/go-homedir v1.1.0
 	github.com/optim-corp/cios-golang-sdk v0.2.0

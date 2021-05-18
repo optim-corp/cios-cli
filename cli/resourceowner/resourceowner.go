@@ -13,7 +13,6 @@ import (
 )
 
 var (
-	out         = utils.Out
 	listUtility = utils.ListUtility
 	spaceRight  = utils.SpaceRight
 	fPrintln    = utils.Console.Fprintln
