@@ -30,16 +30,17 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func mockCiosClient(fun http.HandlerFunc) *httptest.Server {
-	ts := httptest.NewServer(fun)
-	app.Client = ciossdk.NewCiosClient(ciossdk.CiosClientConfig{Urls: sdkmodel.CIOSUrl{AccountsUrl: ts.URL}})
-	return ts
+func mockCiosClient(fun http.HandlerFunc) (server *httptest.Server, fin func()) {
+	server = httptest.NewServer(fun)
+	app.Client = ciossdk.NewCiosClient(ciossdk.CiosClientConfig{Urls: sdkmodel.CIOSUrl{AccountsUrl: server.URL}})
+	fin = server.Close
+	return
 }
 
 var ctx = cli.NewContext(cli.NewApp(), &flag.FlagSet{}, &cli.Context{})
 
 func TestGetMeCommand(t *testing.T) {
-	mockCiosClient(func(w http.ResponseWriter, r *http.Request) {
+	_, fin := mockCiosClient(func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Content-Type", "application/json")
 		if r.Method == "GET" && r.URL.Path == "/v2/me" {
 			json.NewEncoder(w).Encode(cios.Me{
@@ -63,5 +64,14 @@ func TestGetMeCommand(t *testing.T) {
 	if !result.ContainsAll("test-name", "example@sample.com") {
 		t.Fatal("Fail Plot Name")
 	}
+	fin()
+	_, fin = mockCiosClient(func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("Content-Type", "application/json")
+		if r.Method == "GET" && r.URL.Path == "/v2/me" {
+			json.NewEncoder(w).Encode(cios.Me{
+				Groups: &[]cios.MeGroups{},
+			})
+		}
+	})
 
 }

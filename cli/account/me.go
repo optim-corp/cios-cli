@@ -46,7 +46,7 @@ func listMe() *cli.Command {
 						fPrintln("|Corporation|         : " + str(value.Corporation.Name))
 					}
 					fPrintln("\t     |group id|\t\t\t\t|resource_owner_id|\t\t|name / type|")
-					if value.Groups != nil {
+					if !check.IsNil(value.Groups) {
 						// 1000件超えたら積
 						resourceOwnerMap, err := Client.Account.GetResourceOwnersMapByGroupID(nil)
 						assert(err).Log()
