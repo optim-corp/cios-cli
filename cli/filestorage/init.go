@@ -9,8 +9,8 @@ var (
 	is          = utils.Is
 	listUtility = utils.ListUtility
 	spaceRight  = utils.SpaceRight
-	fPrintln    = utils.Fprintln
-	fPrintf     = utils.Fprintf
+	fPrintln    = utils.Console.Fprintln
+	fPrintf     = utils.Console.Fprintf
 	path        = ftil.Path
 	assert      = utils.EAssert
 )

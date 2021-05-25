@@ -1,6 +1,7 @@
 package utils
 
 import (
+	"fmt"
 	"os"
 
 	"github.com/fcfcqloow/go-advance/log"
@@ -39,14 +40,14 @@ func (self Assert) NoneErrAssert(e error) Assert {
 }
 func (self Assert) NoneErrPrintln(str ...interface{}) Assert {
 	if self.Err == nil {
-		Println(str...)
+		fmt.Println(str...)
 	}
 	return self
 }
 
 func (self Assert) NoneErrPrint(str ...interface{}) Assert {
 	if self.Err == nil {
-		Print(str...)
+		fmt.Print(str...)
 	}
 	return self
 }

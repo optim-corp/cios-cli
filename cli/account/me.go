@@ -13,7 +13,7 @@ import (
 
 var (
 	listUtility = utils.ListUtility
-	fPrintln    = utils.Fprintln
+	fPrintln    = utils.Console.Fprintln
 	str         = cnv.MustStr
 	assert      = utils.EAssert
 )
