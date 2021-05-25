@@ -1,7 +1,7 @@
 package device
 
 import (
-	"context"
+	ciosctx "github.com/optim-corp/cios-golang-sdk/ctx"
 
 	"github.com/optim-corp/cios-cli/utils/console"
 
@@ -83,14 +83,14 @@ func createDevice() *cli.Command {
 
 			assert(
 				func() error {
-					_, _, err := Client.DeviceManagement.CreateDevice(cios.DeviceInfo{
+					_, _, err := Client.DeviceManagement.CreateDevice(ciosctx.Background(), cios.DeviceInfo{
 						ResourceOwnerId: c.String("resource_owner_id"),
 						Name:            &in.Name,
 						IdNumber:        &in.IDNumber,
 						IsManaged:       &in.IsManaged,
 						RsaPublickey:    &in.RsaPublickey,
 						Description:     &in.Description,
-					}, context.Background())
+					})
 					return err
 				}()).Log().NoneErrPrintln("Completed " + in.Name)
 			return nil
@@ -107,7 +107,7 @@ func deleteDevice() *cli.Command {
 		},
 		Action: func(c *cli.Context) error {
 			console.CliArgsForEach(c, func(id string) {
-				_, err := Client.DeviceManagement.DeleteDevice(id, context.Background())
+				_, err := Client.DeviceManagement.DeleteDevice(ciosctx.Background(), id)
 				assert(err).Log().NoneErrPrintln("Completed ", id)
 			})
 
@@ -127,7 +127,7 @@ func listDevice() *cli.Command {
 		Action: func(c *cli.Context) error {
 			if c.Args().Len() > 0 {
 				console.CliArgsForEach(c, func(id string) {
-					device, _, err := Client.DeviceManagement.GetDevice(id, nil, nil, context.Background())
+					device, _, err := Client.DeviceManagement.GetDevice(ciosctx.Background(), id, nil, nil)
 					assert(err).Log().NoneErr(
 						func() {
 							value, err := console.StructToJsonStr(device)
@@ -140,7 +140,7 @@ func listDevice() *cli.Command {
 				})
 			} else {
 				isAll := c.Bool("all")
-				devices, _, err := Client.DeviceManagement.GetDevicesAll(ciossdk.MakeGetDevicesOpts().Name(c.String("name")), context.Background())
+				devices, _, err := Client.DeviceManagement.GetDevicesAll(ciosctx.Background(), ciossdk.MakeGetDevicesOpts().Name(c.String("name")))
 				assert(err).
 					Log().
 					NoneErr(func() {

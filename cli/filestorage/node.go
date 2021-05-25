@@ -119,11 +119,11 @@ func listNode() *cli.Command {
 			listUtility(func() {
 				if c.Args().Len() > 0 {
 					console.CliArgsForEach(c, func(bucketID string) {
-						res, _, err := Client.FileStorage.GetBucket(bucketID, nil)
+						res, _, err := Client.FileStorage.GetBucket(nil, bucketID)
 						assert(err).Log().NoneErr(func() { lsNode(res) })
 					})
 				} else {
-					buckets, _, err := Client.FileStorage.GetBucketsAll(ciossdk.MakeGetBucketsOpts().Limit(30), context.Background())
+					buckets, _, err := Client.FileStorage.GetBucketsAll(nil, ciossdk.MakeGetBucketsOpts().Limit(30))
 					assert(err).Log().NoneErr(func() {
 						for _, value := range buckets {
 							lsNode(value)

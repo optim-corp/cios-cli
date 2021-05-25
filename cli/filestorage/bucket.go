@@ -3,6 +3,8 @@ package filestorage
 import (
 	"strconv"
 
+	ciosctx "github.com/optim-corp/cios-golang-sdk/ctx"
+
 	"github.com/optim-corp/cios-cli/utils/console"
 
 	"github.com/fcfcqloow/go-advance/log"
@@ -47,7 +49,7 @@ func createBucket() *cli.Command {
 				names           = c.StringSlice("name")
 			)
 			for _, name := range names {
-				_, _, err := Client.FileStorage.CreateBucket(resourceOwnerId, name, nil)
+				_, _, err := Client.FileStorage.CreateBucket(ciosctx.Background(), resourceOwnerId, name)
 				assert(err).Log().NoneErrPrintln("Completed ", name)
 			}
 			return nil
@@ -62,7 +64,7 @@ func deleteBucket() *cli.Command {
 		Flags:     []cli.Flag{},
 		Action: func(c *cli.Context) error {
 			console.CliArgsForEach(c, func(id string) {
-				_, err := Client.FileStorage.DeleteBucket(id, nil)
+				_, err := Client.FileStorage.DeleteBucket(ciosctx.Background(), id)
 				assert(err).Log().NoneErrPrintln("Completed " + id)
 			})
 			return nil
@@ -92,19 +94,19 @@ func listBucket() *cli.Command {
 				limit           = xmath.MinInt64(c.Int64("limit"), 3000)
 				offset          = c.Int64("offset")
 			)
-			buckets, _, err := Client.FileStorage.GetBucketsAll(ciossdk.MakeGetBucketsOpts().
+			buckets, _, err := Client.FileStorage.GetBucketsAll(ciosctx.Background(), ciossdk.MakeGetBucketsOpts().
 				Name(name).
 				ResourceOwnerId(resourceOwnerId).
 				OrderBy(orderBy).
 				Order(order).
 				Limit(limit).
-				Offset(offset), nil)
+				Offset(offset))
 			assert(err).Log().NoneErr(func() {
 				log.Info("Getting Size: ", strconv.Itoa(len(buckets)))
 				listUtility(func() {
 					if isAll {
 						var resourceOwnerMap map[string]cios.ResourceOwner
-						resourceOwnerMap, _, err = Client.Account.GetResourceOwnersMapByID(nil)
+						resourceOwnerMap, _, err = Client.Account.GetResourceOwnersMapByID(ciosctx.Background())
 						assert(err).Log().NoneErr(func() {
 							fPrintln("\t|ID|\t\t\t|Resource Owner ID|\t\t|Name| : |Resource Owner Name|")
 							for _, value := range buckets {
@@ -140,7 +142,7 @@ func updateBucket() *cli.Command {
 				bucketID = c.String("bucket_id")
 				name     = c.String("")
 			)
-			_, err := Client.FileStorage.UpdateBucket(bucketID, name, nil)
+			_, err := Client.FileStorage.UpdateBucket(ciosctx.Background(), bucketID, name)
 			assert(err).Log().NoneErrPrintln("Completed " + bucketID)
 			return nil
 		},

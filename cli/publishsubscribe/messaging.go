@@ -10,6 +10,8 @@ import (
 	"strconv"
 	"time"
 
+	ciosctx "github.com/optim-corp/cios-golang-sdk/ctx"
+
 	"github.com/optim-corp/cios-cli/utils/console"
 
 	"github.com/AlecAivazis/survey/v2"
@@ -73,7 +75,7 @@ func GetMessagingCommand() *cli.Command {
 				}
 			)
 			if resourceOwnerID != "" {
-				if res, _, err := Client.PubSub.GetChannelsAll(ciossdk.MakeGetChannelsOpts().ResourceOwnerId(resourceOwnerID), context.Background()); assert(err).
+				if res, _, err := Client.PubSub.GetChannelsAll(ciosctx.Background(), ciossdk.MakeGetChannelsOpts().ResourceOwnerId(resourceOwnerID)); assert(err).
 					NoneErr(func() {
 						for _, channel := range res {
 							channelIDs = append(channelIDs, channel.Id)
@@ -146,7 +148,7 @@ func listChannels() *cli.Command {
 		},
 		Action: func(c *cli.Context) error {
 			resourceOwnerID := c.String("resource_owner_id")
-			channels, _, err := Client.PubSub.GetChannelsAll(ciossdk.MakeGetChannelsOpts().ResourceOwnerId(resourceOwnerID), context.Background())
+			channels, _, err := Client.PubSub.GetChannelsAll(ciosctx.Background(), ciossdk.MakeGetChannelsOpts().ResourceOwnerId(resourceOwnerID))
 			assert(err).Log().NoneErr(func() {
 				if c.Bool("datastore") {
 					println(datastoreDir)
@@ -331,7 +333,7 @@ func registerJob() *cli.Command {
 				scanner   = bufio.NewScanner(os.Stdin)
 				byts, err = path(filePath).ReadFile()
 				pubMsg    = func(channelId string, body interface{}, packetFormat string) error {
-					_, err := Client.PubSub.PublishMessage(channelId, body, &packetFormat, context.Background())
+					_, err := Client.PubSub.PublishMessage(ciosctx.Background(), channelId, body, &packetFormat)
 					return err
 				}
 				getChannelID = func(channelId string, formatJson cios.PackerFormatJson) string {

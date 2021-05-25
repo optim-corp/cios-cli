@@ -1,11 +1,12 @@
 package publishsubscribe
 
 import (
-	"context"
 	"fmt"
 	"strconv"
 	"strings"
 	"time"
+
+	ciosctx "github.com/optim-corp/cios-golang-sdk/ctx"
 
 	"github.com/optim-corp/cios-cli/utils/console"
 
@@ -65,12 +66,12 @@ func deleteDataStore() *cli.Command {
 			)
 			if channelID != "" {
 				if timestampRange != "" {
-					objects, _, err := Client.PubSub.GetObjectsAll(channelID, ciossdk.MakeGetObjectsOpts().TimestampRange(timestampRange), context.Background())
+					objects, _, err := Client.PubSub.GetObjectsAll(ciosctx.Background(), channelID, ciossdk.MakeGetObjectsOpts().TimestampRange(timestampRange))
 					assert(err).
 						Log().
 						NoneErr(func() {
 							for _, object := range objects {
-								_, err := Client.PubSub.DeleteObject(channelID, object.Id, context.Background())
+								_, err := Client.PubSub.DeleteObject(ciosctx.Background(), channelID, object.Id)
 								assert(err).
 									Log().
 									NoneErrPrintln("Completed ", object.Id)
@@ -78,11 +79,11 @@ func deleteDataStore() *cli.Command {
 						})
 
 				} else if c.Args().Len() == 0 {
-					_, err := Client.PubSub.DeleteDataByChannel(channelID, context.Background())
+					_, err := Client.PubSub.DeleteDataByChannel(ciosctx.Background(), channelID)
 					assert(err).Log()
 				} else {
 					console.CliArgsForEach(c, func(objectID string) {
-						_, err := Client.PubSub.DeleteObject(channelID, objectID, nil)
+						_, err := Client.PubSub.DeleteObject(ciosctx.Background(), channelID, objectID)
 						assert(err).Log().NoneErrPrintln("Completed ", channelID, objectID)
 					})
 				}
@@ -116,16 +117,16 @@ func listDataStore() *cli.Command {
 				resourceOwnerID   = c.String("resource_owner_id")
 				label             = c.String("label")
 				dataFlag          = c.Bool("data")
-				channelsMap, _, _ = Client.PubSub.GetChannelsMapByID(ciossdk.MakeGetChannelsOpts(), context.Background())
+				channelsMap, _, _ = Client.PubSub.GetChannelsMapByID(ciosctx.Background(), ciossdk.MakeGetChannelsOpts())
 			)
 
 			printObject := func(channelId string) {
-				objects, _, err := Client.PubSub.GetObjectsAll(channelId, ciossdk.MakeGetObjectsOpts().
+				objects, _, err := Client.PubSub.GetObjectsAll(ciosctx.Background(), channelId, ciossdk.MakeGetObjectsOpts().
 					Limit(limit).
 					TimestampRange(timestampRange).
 					Label(label).
 					Offset(offset),
-					context.Background())
+				)
 				if len(objects) == 0 || resourceOwnerID != "" && channelsMap[channelId].ResourceOwnerId != resourceOwnerID {
 					return
 				}
@@ -141,12 +142,12 @@ func listDataStore() *cli.Command {
 
 			}
 			printData := func(channelId string) []string {
-				data, err := Client.PubSub.GetStreamAll(channelId, ciossdk.MakeGetStreamOpts().
+				data, err := Client.PubSub.GetStreamAll(ciosctx.Background(), channelId, ciossdk.MakeGetStreamOpts().
 					Limit(limit).Offset(offset).
 					PackerFormat(packerFormat).
 					TimestampRange(timestampRange).
 					Label(label),
-					context.Background())
+				)
 				assert(err).Log()
 				fPrintf("\n|Channel ID|  : %s \n|Channel Name|: %s\n\n", channelId, channelsMap[channelId].Name)
 				for _, val := range data {
@@ -167,12 +168,12 @@ func listDataStore() *cli.Command {
 
 			listUtility(func() {
 				if channelID != "" {
-					channel, _, err := Client.PubSub.GetChannel(channelID, nil, nil, context.Background())
+					channel, _, err := Client.PubSub.GetChannel(ciosctx.Background(), channelID, nil, nil)
 					assert(err).
 						Log().
 						NoneErr(func() { printJob(channel, limit) })
 				} else {
-					channels, _, err := Client.PubSub.GetChannelsAll(ciossdk.MakeGetChannelsOpts().ResourceOwnerId(resourceOwnerID), context.Background())
+					channels, _, err := Client.PubSub.GetChannelsAll(ciosctx.Background(), ciossdk.MakeGetChannelsOpts().ResourceOwnerId(resourceOwnerID))
 					assert(err).
 						Log().
 						NoneErr(func() {
@@ -216,7 +217,7 @@ func saveDataStore() *cli.Command {
 				replaced          = wrp.AsString(c.String("replace_save_data_channel"))
 				indent            = c.Bool("indent")
 				collective        = c.Bool("collective")
-				channelsMap, _, _ = Client.PubSub.GetChannelsMapByID(ciossdk.MakeGetChannelsOpts(), context.Background())
+				channelsMap, _, _ = Client.PubSub.GetChannelsMapByID(ciosctx.Background(), ciossdk.MakeGetChannelsOpts())
 				stageDSDir        = fmt.Sprintf("%s/%s", datastoreDir, models.GetStage())
 			)
 			replaceChannelId := func(data string) string {
@@ -239,12 +240,12 @@ func saveDataStore() *cli.Command {
 					outputDir = wrp.String(fmt.Sprintf("%s/%s/%s___%s", datastoreDir, models.GetStage(), channelsMap[channel.Id].Name, channel.Id))
 					fallthrough
 				default:
-					data, err := Client.PubSub.GetStreamAll(channel.Id, ciossdk.MakeGetStreamOpts().
+					data, err := Client.PubSub.GetStreamAll(ciosctx.Background(), channel.Id, ciossdk.MakeGetStreamOpts().
 						Limit(limit).Offset(offset).
 						PackerFormat(packerFormat).
 						TimestampRange(timestampRange).
 						Label(label),
-						context.Background())
+					)
 					assert(err).Log()
 					for idx, val := range data {
 						switch {
@@ -282,12 +283,12 @@ func saveDataStore() *cli.Command {
 			}
 
 			if channelID != "" {
-				channel, _, err := Client.PubSub.GetChannel(channelID, nil, nil, context.Background())
+				channel, _, err := Client.PubSub.GetChannel(ciosctx.Background(), channelID, nil, nil)
 				assert(err).
 					Log().
 					NoneErr(func() { job(channel, limit) })
 			} else {
-				channels, _, err := Client.PubSub.GetChannelsAll(ciossdk.MakeGetChannelsOpts().ResourceOwnerId(resourceOwnerID), context.Background())
+				channels, _, err := Client.PubSub.GetChannelsAll(ciosctx.Background(), ciossdk.MakeGetChannelsOpts().ResourceOwnerId(resourceOwnerID))
 				assert(err).
 					Log().
 					NoneErr(func() {
@@ -325,8 +326,8 @@ func embezzleDateStore() *cli.Command {
 			if err := Client.PubSub.ConnectWebSocket(targetChannel, done, ciossdk.ConnectWebSocketOptions{PackerFormat: &packerFormat, PublishStr: &receiver}); err != nil {
 				return err
 			}
-			values, err := Client.PubSub.GetStreamAll(sourceChannel, ciossdk.MakeGetStreamOpts().
-				PackerFormat(packerFormat).TimestampRange(timestampRange).Label(label).Ascending(ascending), context.Background())
+			values, err := Client.PubSub.GetStreamAll(ciosctx.Background(), sourceChannel, ciossdk.MakeGetStreamOpts().
+				PackerFormat(packerFormat).TimestampRange(timestampRange).Label(label).Ascending(ascending))
 			if err != nil {
 				log.Error(err.Error())
 			} else {

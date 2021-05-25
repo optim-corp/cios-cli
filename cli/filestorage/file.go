@@ -1,11 +1,12 @@
 package filestorage
 
 import (
-	"context"
 	"io/fs"
 	"io/ioutil"
 	"os"
 	"path/filepath"
+
+	ciosctx "github.com/optim-corp/cios-golang-sdk/ctx"
 
 	"github.com/optim-corp/cios-cli/utils/console"
 
@@ -52,7 +53,7 @@ func downloadFile() *cli.Command {
 				node, _, err := Client.FileStorage.GetNode(bucketID, nodeID, nil)
 				assert(err).Log().
 					NoneErrAssertFn(func() error {
-						byt, _, err = Client.FileStorage.DownloadFile(bucketID, nodeID, nil)
+						byt, _, err = Client.FileStorage.DownloadFile(ciosctx.Background(), bucketID, nodeID)
 						return err
 					}).Log().
 					NoneErrAssertFn(func() error {
@@ -92,7 +93,7 @@ func uploadFile() *cli.Command {
 			)
 
 			if bucketID == "" {
-				bucket, _, err := Client.FileStorage.GetBucketByResourceOwnerIDAndName(bucketResourceOwner, bucketName, context.Background())
+				bucket, _, err := Client.FileStorage.GetBucketByResourceOwnerIDAndName(ciosctx.Background(), bucketResourceOwner, bucketName)
 				if err != nil {
 					return err
 				}
@@ -100,7 +101,7 @@ func uploadFile() *cli.Command {
 			}
 			if directory != "" {
 				if nodeID != "" {
-					node, _, err := Client.FileStorage.GetNode(bucketID, nodeID, context.Background())
+					node, _, err := Client.FileStorage.GetNode(bucketID, nodeID, ciosctx.Background())
 					if err != nil {
 						log.Error(err.Error())
 						return err
@@ -114,7 +115,7 @@ func uploadFile() *cli.Command {
 			console.CliArgsForEach(c, func(localPath string) {
 				byts, err := path(localPath).ReadFile()
 				assert(err).Log().NoneErr(func() {
-					_, err := Client.FileStorage.UploadFile(bucketID, byts, ciossdk.MakeUploadFileOpts().Name(filepath.Base(localPath)).NodeId(nodeID), context.Background())
+					_, err := Client.FileStorage.UploadFile(ciosctx.Background(), bucketID, byts, ciossdk.MakeUploadFileOpts().Name(filepath.Base(localPath)).NodeId(nodeID))
 					assert(err).Log().NoneErrPrintln("Completed " + localPath)
 				})
 			})
@@ -144,7 +145,7 @@ func directoryUpload(bucketID string, _dir string, key string) {
 					byts, err := path(localPath).ReadFile()
 					assert(err).Log().
 						NoneErrAssertFn(func() error {
-							_, err := Client.FileStorage.UploadFile(bucketID, byts, ciossdk.MakeUploadFileOpts().Key(updatedKey), context.Background())
+							_, err := Client.FileStorage.UploadFile(ciosctx.Background(), bucketID, byts, ciossdk.MakeUploadFileOpts().Key(updatedKey))
 							return err
 						}).
 						NoneErrPrintln("Completed " + updatedKey)

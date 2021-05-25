@@ -1,8 +1,9 @@
 package geography
 
 import (
-	"context"
 	"strings"
+
+	ciosctx "github.com/optim-corp/cios-golang-sdk/ctx"
 
 	"github.com/optim-corp/cios-cli/utils/console"
 
@@ -104,7 +105,7 @@ func createPoint() *cli.Command {
 				},
 				Labels: &labels,
 			}
-			point, _, err := Client.Geography.CreatePoint(request, context.Background())
+			point, _, err := Client.Geography.CreatePoint(ciosctx.Background(), request)
 			assert(err).Log().NoneErr(func() { console.OutStructJson(point) })
 			return nil
 		},
@@ -116,7 +117,7 @@ func deletePoint() *cli.Command {
 		Aliases: models.ALIAS_DELETE,
 		Action: func(c *cli.Context) error {
 			console.CliArgsForEach(c, func(id string) {
-				_, _, err := Client.Geography.DeletePoint(id, context.Background())
+				_, _, err := Client.Geography.DeletePoint(nil, id)
 				assert(err).Log().NoneErrPrintln("Completed ", id)
 			})
 			return nil
@@ -133,7 +134,7 @@ func listPoint() *cli.Command {
 		Action: func(c *cli.Context) error {
 			listUtility(func() {
 				fPrintln("\t|id|    \t\t|resource owner id|\t\t   |name -- latitude -- longitude -- altitude|\t\t|label|")
-				response, _, err := Client.Geography.GetPoints(ciossdk.MakeGetPointsOpts(), context.Background())
+				response, _, err := Client.Geography.GetPoints(ciosctx.Background(), ciossdk.MakeGetPointsOpts())
 				assert(err).Log().NoneErr(func() {
 					for _, val := range response.Points {
 						fPrintf(

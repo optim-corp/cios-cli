@@ -1,7 +1,7 @@
 package device
 
 import (
-	"context"
+	ciosctx "github.com/optim-corp/cios-golang-sdk/ctx"
 
 	"github.com/optim-corp/cios-cli/utils/console"
 
@@ -33,7 +33,7 @@ func listDeviceMonitoringCommand() *cli.Command {
 		Action: func(c *cli.Context) error {
 			deviceIDs := []string{}
 			if c.Args().Len() == 0 {
-				devices, _, err := Client.DeviceManagement.GetDevicesAll(ciossdk.MakeGetDevicesOpts(), context.Background())
+				devices, _, err := Client.DeviceManagement.GetDevicesAll(ciosctx.Background(), ciossdk.MakeGetDevicesOpts())
 				assert(err).Log().NoneErr(func() {
 					for _, device := range devices {
 						deviceIDs = append(deviceIDs, device.Id)
@@ -42,7 +42,7 @@ func listDeviceMonitoringCommand() *cli.Command {
 			} else {
 				console.CliArgsForEach(c, func(a string) { deviceIDs = append(deviceIDs, a) })
 			}
-			monitorings, _, err := Client.DeviceManagement.GetMonitoringLatestList(deviceIDs, context.Background())
+			monitorings, _, err := Client.DeviceManagement.GetMonitoringLatestList(ciosctx.Background(), deviceIDs)
 			assert(err).
 				Log().
 				NoneErrPrintln(func() { console.OutStructJson(monitorings) })

@@ -74,5 +74,21 @@ func TestGetMeCommand(t *testing.T) {
 
 		assert.True(t, getConsoleResult().ContainsAll(name))
 	})
+	t.Run("Plot corporation", func(t *testing.T) {
+		var (
+			gruopId = "test-group-id"
+		)
+		_, fin := mockCiosClientMe(cios.Me{Corporation: &cios.GroupChildren{Name: cnv.StrPtr("test-corpo")}, Groups: &[]cios.MeGroups{
+			{
+				Id:            gruopId,
+				Name:          "",
+				Type:          "",
+				CorporationId: cios.NullableString{},
+			},
+		}})
+		defer fin()
+
+		assert.True(t, getConsoleResult().ContainsAll(gruopId))
+	})
 
 }

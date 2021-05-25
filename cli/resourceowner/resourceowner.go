@@ -1,8 +1,9 @@
 package resourceowner
 
 import (
-	"context"
 	"unicode/utf8"
+
+	ciosctx "github.com/optim-corp/cios-golang-sdk/ctx"
 
 	"github.com/optim-corp/cios-cli/utils/console"
 
@@ -41,7 +42,7 @@ func listResourceOwner() *cli.Command {
 		Action: func(c *cli.Context) error {
 			listUtility(func() {
 				fPrintln("\t\t|id|\t\t\t\t|group_id|\t\t\t\t|user_id|                        |author_id|                  |profile|")
-				ros, _, err := Client.Account.GetResourceOwnersAll(ciossdk.MakeGetResourceOwnersOpts(), context.Background())
+				ros, _, err := Client.Account.GetResourceOwnersAll(ciosctx.Background(), ciossdk.MakeGetResourceOwnersOpts())
 				assert(err).Log().NoneErr(func() {
 					length := utf8.RuneCountInString("000000000000000000000000000000000000")
 					for _, val := range ros {

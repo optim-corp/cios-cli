@@ -1,7 +1,7 @@
 package device
 
 import (
-	"context"
+	ciosctx "github.com/optim-corp/cios-golang-sdk/ctx"
 
 	"github.com/optim-corp/cios-cli/utils/console"
 
@@ -32,7 +32,7 @@ func listDeviceInventoryCommand() *cli.Command {
 		},
 		Action: func(c *cli.Context) error {
 			list := func(deviceID string) {
-				inventory, _, err := Client.DeviceManagement.GetDeviceInventory(deviceID, context.Background())
+				inventory, _, err := Client.DeviceManagement.GetDeviceInventory(ciosctx.Background(), deviceID)
 				assert(err).
 					Log().NoneErr(func() {
 					fPrintln("\n\n\nDevice ID: " + deviceID + "\n\n\n")
@@ -42,7 +42,7 @@ func listDeviceInventoryCommand() *cli.Command {
 			}
 			listUtility(func() {
 				if c.Args().Len() == 0 {
-					devices, _, err := Client.DeviceManagement.GetDevicesAll(cios.ApiGetDevicesRequest{}, context.Background())
+					devices, _, err := Client.DeviceManagement.GetDevicesAll(ciosctx.Background(), cios.ApiGetDevicesRequest{})
 					assert(err).Log().NoneErr(func() {
 						for _, device := range devices {
 							list(device.Id)

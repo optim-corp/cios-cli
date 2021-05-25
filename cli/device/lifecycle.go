@@ -1,7 +1,7 @@
 package device
 
 import (
-	"context"
+	ciosctx "github.com/optim-corp/cios-golang-sdk/ctx"
 
 	"github.com/optim-corp/cios-cli/utils/console"
 
@@ -40,14 +40,14 @@ func deleteDeviceLifecycle() *cli.Command {
 				endTimestamp   = c.String("end_timestamp")
 				// wg             = sync.WaitGroup{}
 			)
-			lifecycles, _, err := Client.DeviceAssetManagement.GetLifecyclesAll(key,
+			lifecycles, _, err := Client.DeviceAssetManagement.GetLifecyclesAll(ciosctx.Background(), key,
 				ciossdk.MakeGetLifecyclesOpts().
 					StartEventAt(startTimestamp).
-					EndEventAt(endTimestamp), context.Background())
+					EndEventAt(endTimestamp))
 			assert(err).Log().NoneErr(func() {
 				for _, lifecycle := range lifecycles {
 					//time.Sleep(time.Millisecond * 50)
-					_, err := Client.DeviceAssetManagement.DeleteLifecycle(key, lifecycle.Id, context.Background())
+					_, err := Client.DeviceAssetManagement.DeleteLifecycle(ciosctx.Background(), key, lifecycle.Id)
 					assert(err).Log().NoneErrPrintln("Completed ", lifecycle.Id)
 				}
 			})
@@ -83,7 +83,7 @@ func listDeviceLifecycle() *cli.Command {
 					OrderBy(orderBy).
 					ComponentId(componentId).
 					StartEventAt(startTimestamp).
-					EndEventAt(endTimestamp), context.Background())
+					EndEventAt(endTimestamp))
 				stageDSDir := lifecycleDir + "/" + models.GetStage()
 				if save {
 					path(lifecycleDir).CreateDir()

@@ -1,9 +1,10 @@
 package group
 
 import (
-	"context"
 	"strings"
 	"unicode/utf8"
+
+	ciosctx "github.com/optim-corp/cios-golang-sdk/ctx"
 
 	"github.com/optim-corp/cios-cli/utils/console"
 
@@ -111,7 +112,7 @@ func createGroup() *cli.Command {
 					Type:          "Group",
 				}
 			}
-			_, _, err := Client.Account.CreateGroup(opts, context.Background())
+			_, _, err := Client.Account.CreateGroup(ciosctx.Background(), opts)
 			assert(err).Log().NoneErrPrintln("Completed " + answers.Name)
 			return nil
 		},
@@ -139,11 +140,11 @@ func updateGroup() *cli.Command {
 			}
 			if answers.Name == "" {
 				tags := is(answers.Tags != "").T(strings.Split(answers.Tags, ",")).F([]string{}).Value.([]string)
-				_, _, err := Client.Account.UpdateGroup(c.Args().Get(0), cios.GroupUpdateRequest{Tags: &tags}, context.Background())
+				_, _, err := Client.Account.UpdateGroup(ciosctx.Background(), c.Args().Get(0), cios.GroupUpdateRequest{Tags: &tags})
 				assert(err).Log().NoneErrPrintln("Completed " + c.Args().Get(0))
 			} else {
 				tags := is(answers.Tags != "").T(strings.Split(answers.Tags, ",")).F([]string{}).Value.([]string)
-				_, _, err := Client.Account.UpdateGroup(c.Args().Get(0), cios.GroupUpdateRequest{Name: &answers.Name, Tags: &tags}, context.Background())
+				_, _, err := Client.Account.UpdateGroup(ciosctx.Background(), c.Args().Get(0), cios.GroupUpdateRequest{Name: &answers.Name, Tags: &tags})
 				assert(err).Log().NoneErrPrintln("Completed " + c.Args().Get(0))
 			}
 
@@ -157,7 +158,7 @@ func deleteGroup() *cli.Command {
 		Aliases: models.ALIAS_DELETE,
 		Action: func(c *cli.Context) error {
 			console.CliArgsForEach(c, func(id string) {
-				_, err := Client.Account.DeleteGroup(id, context.Background())
+				_, err := Client.Account.DeleteGroup(ciosctx.Background(), id)
 				assert(err).Log().NoneErrPrintln("Completed " + id)
 			})
 			return nil
@@ -183,17 +184,17 @@ func listGroup() *cli.Command {
 				offset = c.Int64("offset")
 				tag    = c.String("tag")
 			)
-			groups, _, _ := Client.Account.GetGroupsAll(ciossdk.MakeGetGroupsOpts().
+			groups, _, _ := Client.Account.GetGroupsAll(ciosctx.Background(), ciossdk.MakeGetGroupsOpts().
 				Limit(limit).
 				Name(name).
 				Label(label).
 				Tags(tag).
-				Offset(offset), nil)
+				Offset(offset))
 			listUtility(func() {
 				length := utf8.RuneCountInString("0000000000000-0000-0000-000000000000")
 				fPrintln("\t\t|id|\t\t\t\t|parent_group_id|\t\t\t|resource_owner_id|\t\t|type|         |name / tags|")
 				for _, value := range groups {
-					resource, _, err := Client.Account.GetResourceOwnerByGroupId(value.Id, context.Background())
+					resource, _, err := Client.Account.GetResourceOwnerByGroupId(ciosctx.Background(), value.Id)
 					assert(err).Log().NoneErr(func() {
 						fPrintf(
 							"%s\t%s\t%s\t%s　　%s / %s\n",
@@ -245,7 +246,7 @@ func inviteGroup() *cli.Command {
 				}
 				console.CliArgsForEach(c, func(id string) {
 					for _, email := range emails {
-						_, _, err := Client.Account.InviteGroup(id, email, context.Background())
+						_, _, err := Client.Account.InviteGroup(ciosctx.Background(), id, email)
 						assert(err).Log().NoneErrPrintln("Completed ", id, "\n", email)
 					}
 				})

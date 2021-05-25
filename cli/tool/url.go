@@ -19,14 +19,13 @@ func GetURLCommand() *cli.Command {
 			listUtility(func() {
 				fPrintln("|DeviceAssetManagement_URL| : " + app.Client.DeviceAssetManagement.Url)
 				fPrintln("|DeviceManagement_URL|      : " + app.Client.DeviceManagement.Url)
-				//fPrintln("|VideoStreams_URL|          : " + app.Client.Vide.Url)
-				//fPrintln("|Monitoring_URL|            : " + app.Client.DeviceManagement.Url)
+				fPrintln("|VideoStreams_URL|          : " + app.Client.Video.Url)
+				fPrintln("|Monitoring_URL|            : " + app.Client.DeviceManagement.Url)
 				fPrintln("|Messaging_URL|             : " + app.Client.PubSub.Url)
 				fPrintln("|Location_URL|              : " + app.Client.Geography.Url)
 				fPrintln("|Accounts_URL|              : " + app.Client.Account.Url)
 				fPrintln("|Storage_URL|               : " + app.Client.FileStorage.Url)
 				fPrintln("|Auth_URL|                  : " + app.Client.Auth.Url)
-				//fPrintln("|Iam_URL|                   : " + app.Client.Iam.Url)
 			})
 			return nil
 		},
