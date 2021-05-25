@@ -79,7 +79,7 @@ func listDeviceLifecycle() *cli.Command {
 				save           = c.Bool("save")
 			)
 			if c.Args().Len() == 0 {
-				lifecycles, _, err := Client.DeviceAssetManagement.GetLifecyclesAll(key, ciossdk.MakeGetLifecyclesOpts().
+				lifecycles, _, err := Client.DeviceAssetManagement.GetLifecyclesAll(ciosctx.Background(), key, ciossdk.MakeGetLifecyclesOpts().
 					OrderBy(orderBy).
 					ComponentId(componentId).
 					StartEventAt(startTimestamp).

@@ -382,7 +382,7 @@ func updateChannel() *cli.Command {
 						return []cios.Label{}
 					}
 					labels := labelExp(answers.Label != "")
-					_, _, err := Client.PubSub.UpdateChannel(
+					_, _, err := Client.PubSub.UpdateChannel(ciosctx.Background(),
 						channelID,
 						cios.ChannelUpdateProposal{
 							DisplayInfo: []cios.DisplayInfo{
