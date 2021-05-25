@@ -2,6 +2,7 @@ package filestorage
 
 import (
 	"context"
+	"io/fs"
 	"io/ioutil"
 	"os"
 	"path/filepath"
@@ -35,34 +36,34 @@ func downloadFile() *cli.Command {
 			&cli.StringFlag{Name: "local_save_directory", Aliases: []string{"ld"}, Value: "./"},
 		},
 		Action: func(c *cli.Context) error {
+			println("Download start....")
 			var (
 				bucketID = c.String("bucket_id")
 				dir      = c.String("local_save_directory")
 			)
-			println("Download start....")
 
 			console.CliArgsForEach(c, func(nodeID string) {
+				var (
+					byt  []byte
+					file *os.File
+					err  error
+				)
+				defer func() { assert(file.Close()).Log() }()
 				node, _, err := Client.FileStorage.GetNode(bucketID, nodeID, nil)
-				assert(err).
-					Log().
-					NoneErr(func() {
-						byt, _, err := Client.FileStorage.DownloadFile(bucketID, nodeID, nil)
-						assert(err).
-							Log().
-							NoneErr(func() {
-								file, err := os.Create(dir + node.Name)
-								defer func() { assert(file.Close()).Log() }()
-								assert(err).
-									Log().
-									NoneErr(func() {
-										_, err = file.Write(byt)
-										assert(err).
-											Log().
-											NoneErrPrintln("Completed ", nodeID)
-									})
-							})
-					})
-
+				assert(err).Log().
+					NoneErrAssertFn(func() error {
+						byt, _, err = Client.FileStorage.DownloadFile(bucketID, nodeID, nil)
+						return err
+					}).Log().
+					NoneErrAssertFn(func() error {
+						file, err = os.Create(dir + node.Name)
+						return err
+					}).Log().
+					NoneErrAssertFn(func() error {
+						_, err = file.Write(byt)
+						return err
+					}).Log().
+					NoneErrPrintln("Completed ", nodeID)
 			})
 			return nil
 		},
@@ -123,10 +124,16 @@ func uploadFile() *cli.Command {
 }
 
 func directoryUpload(bucketID string, _dir string, key string) {
+	var (
+		dirs []fs.FileInfo
+	)
 	_dir, err := filepath.Abs(_dir)
-	assert(err).Log().NoneErr(func() {
-		dirs, err := ioutil.ReadDir(_dir)
-		assert(err).Log().NoneErr(func() {
+	assert(err).Log().
+		NoneErrAssertFn(func() error {
+			dirs, err = ioutil.ReadDir(_dir)
+			return err
+		}).Log().
+		NoneErr(func() {
 			for _, dir := range dirs {
 				f := string(key[len(key)-1])
 				localPath := filepath.Join(_dir, dir.Name())
@@ -135,12 +142,13 @@ func directoryUpload(bucketID string, _dir string, key string) {
 					directoryUpload(bucketID, localPath, updatedKey)
 				} else {
 					byts, err := path(localPath).ReadFile()
-					assert(err).Log().NoneErr(func() {
-						_, err := Client.FileStorage.UploadFile(bucketID, byts, ciossdk.MakeUploadFileOpts().Key(updatedKey), context.Background())
-						assert(err).NoneErrPrintln("Completed " + updatedKey)
-					})
+					assert(err).Log().
+						NoneErrAssertFn(func() error {
+							_, err := Client.FileStorage.UploadFile(bucketID, byts, ciossdk.MakeUploadFileOpts().Key(updatedKey), context.Background())
+							return err
+						}).
+						NoneErrPrintln("Completed " + updatedKey)
 				}
 			}
 		})
-	})
 }
