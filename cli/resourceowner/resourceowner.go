@@ -3,6 +3,8 @@ package resourceowner
 import (
 	"unicode/utf8"
 
+	cnv "github.com/fcfcqloow/go-advance/convert"
+
 	ciosctx "github.com/optim-corp/cios-golang-sdk/ctx"
 
 	"github.com/optim-corp/cios-cli/utils/console"
@@ -46,24 +48,12 @@ func listResourceOwner() *cli.Command {
 				assert(err).Log().NoneErr(func() {
 					length := utf8.RuneCountInString("000000000000000000000000000000000000")
 					for _, val := range ros {
-						groupId := ""
-						userId := ""
-						authorId := ""
-						if val.GroupId != nil {
-							groupId = *val.GroupId
-						}
-						if val.UserId != nil {
-							userId = *val.UserId
-						}
-						if val.AuthorId != nil {
-							authorId = *val.AuthorId
-						}
 						fPrintf("%s %s %s %s  %s\n",
 							spaceRight(val.Id, length),
-							spaceRight(groupId, length),
-							spaceRight(userId, length),
-							spaceRight(authorId, length),
-							*val.Profile.DisplayName)
+							spaceRight(cnv.MustStr(val.GroupId), length),
+							spaceRight(cnv.MustStr(val.UserId), length),
+							spaceRight(cnv.MustStr(val.AuthorId), length),
+							cnv.MustStr(val.Profile.DisplayName))
 					}
 				})
 			})
