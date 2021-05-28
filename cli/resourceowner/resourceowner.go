@@ -1,8 +1,13 @@
 package resourceowner
 
 import (
-	"context"
 	"unicode/utf8"
+
+	cnv "github.com/fcfcqloow/go-advance/convert"
+
+	ciosctx "github.com/optim-corp/cios-golang-sdk/ctx"
+
+	"github.com/optim-corp/cios-cli/utils/console"
 
 	ciossdk "github.com/optim-corp/cios-golang-sdk/sdk"
 
@@ -13,11 +18,10 @@ import (
 )
 
 var (
-	out         = utils.Out
-	listUtility = utils.ListUtility
-	spaceRight  = utils.SpaceRight
-	fPrintln    = utils.Console.Fprintln
-	fPrintf     = utils.Console.Fprintf
+	listUtility = console.ListUtility
+	spaceRight  = console.SpaceRight
+	fPrintln    = console.Fprintln
+	fPrintf     = console.Fprintf
 	assert      = utils.EAssert
 )
 
@@ -40,28 +44,16 @@ func listResourceOwner() *cli.Command {
 		Action: func(c *cli.Context) error {
 			listUtility(func() {
 				fPrintln("\t\t|id|\t\t\t\t|group_id|\t\t\t\t|user_id|                        |author_id|                  |profile|")
-				ros, _, err := Client.Account.GetResourceOwnersAll(ciossdk.MakeGetResourceOwnersOpts(), context.Background())
+				ros, _, err := Client.Account.GetResourceOwnersAll(ciosctx.Background(), ciossdk.MakeGetResourceOwnersOpts())
 				assert(err).Log().NoneErr(func() {
 					length := utf8.RuneCountInString("000000000000000000000000000000000000")
 					for _, val := range ros {
-						groupId := ""
-						userId := ""
-						authorId := ""
-						if val.GroupId != nil {
-							groupId = *val.GroupId
-						}
-						if val.UserId != nil {
-							userId = *val.UserId
-						}
-						if val.AuthorId != nil {
-							authorId = *val.AuthorId
-						}
 						fPrintf("%s %s %s %s  %s\n",
 							spaceRight(val.Id, length),
-							spaceRight(groupId, length),
-							spaceRight(userId, length),
-							spaceRight(authorId, length),
-							*val.Profile.DisplayName)
+							spaceRight(cnv.MustStr(val.GroupId), length),
+							spaceRight(cnv.MustStr(val.UserId), length),
+							spaceRight(cnv.MustStr(val.AuthorId), length),
+							cnv.MustStr(val.Profile.DisplayName))
 					}
 				})
 			})

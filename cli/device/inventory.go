@@ -1,11 +1,12 @@
 package device
 
 import (
-	"context"
+	ciosctx "github.com/optim-corp/cios-golang-sdk/ctx"
+
+	"github.com/optim-corp/cios-cli/utils/console"
 
 	. "github.com/optim-corp/cios-cli/cli"
 	"github.com/optim-corp/cios-cli/models"
-	"github.com/optim-corp/cios-cli/utils"
 	"github.com/optim-corp/cios-golang-sdk/cios"
 	"github.com/urfave/cli/v2"
 )
@@ -31,24 +32,24 @@ func listDeviceInventoryCommand() *cli.Command {
 		},
 		Action: func(c *cli.Context) error {
 			list := func(deviceID string) {
-				inventory, _, err := Client.DeviceManagement.GetDeviceInventory(deviceID, context.Background())
+				inventory, _, err := Client.DeviceManagement.GetDeviceInventory(ciosctx.Background(), deviceID)
 				assert(err).
 					Log().NoneErr(func() {
 					fPrintln("\n\n\nDevice ID: " + deviceID + "\n\n\n")
-					utils.FOutStructJsonSlim(inventory)
+					console.FOutStructJsonSlim(inventory)
 					fPrintln("------------------------------------------------------------------------------------------------------------------------")
 				})
 			}
 			listUtility(func() {
 				if c.Args().Len() == 0 {
-					devices, _, err := Client.DeviceManagement.GetDevicesAll(cios.ApiGetDevicesRequest{}, context.Background())
+					devices, _, err := Client.DeviceManagement.GetDevicesAll(ciosctx.Background(), cios.ApiGetDevicesRequest{})
 					assert(err).Log().NoneErr(func() {
 						for _, device := range devices {
 							list(device.Id)
 						}
 					})
 				} else {
-					utils.CliArgsForEach(c, func(id string) { list(id) })
+					console.CliArgsForEach(c, func(id string) { list(id) })
 				}
 			})
 			return nil

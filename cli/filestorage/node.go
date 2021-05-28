@@ -1,15 +1,17 @@
 package filestorage
 
 import (
-	"context"
 	"strconv"
 	"unicode/utf8"
+
+	ciosctx "github.com/optim-corp/cios-golang-sdk/ctx"
+
+	"github.com/optim-corp/cios-cli/utils/console"
 
 	cnv "github.com/fcfcqloow/go-advance/convert"
 	"github.com/fcfcqloow/go-advance/log"
 	. "github.com/optim-corp/cios-cli/cli"
 	"github.com/optim-corp/cios-cli/models"
-	"github.com/optim-corp/cios-cli/utils"
 	"github.com/optim-corp/cios-golang-sdk/cios"
 	ciossdk "github.com/optim-corp/cios-golang-sdk/sdk"
 	"github.com/urfave/cli/v2"
@@ -42,11 +44,11 @@ func createNode() *cli.Command {
 		},
 		Action: func(c *cli.Context) error {
 			var parentNodeId = c.String("parent_node_id")
-			utils.CliArgsForEach(c, func(name string) {
-				_, _, err := Client.FileStorage.CreateNodeOnNodeID(c.String("bucket_id"), cios.NodeRequest{
+			console.CliArgsForEach(c, func(name string) {
+				_, _, err := Client.FileStorage.CreateNodeOnNodeID(ciosctx.Background(), c.String("bucket_id"), cios.NodeRequest{
 					Name:         name,
 					ParentNodeId: &parentNodeId,
-				}, context.Background())
+				})
 				assert(err).Log().NoneErrPrintln("Completed " + name)
 			})
 			return nil
@@ -63,8 +65,8 @@ func deleteNode() *cli.Command {
 		},
 		Action: func(c *cli.Context) error {
 			bucketID := c.String("bucket_id")
-			utils.CliArgsForEach(c, func(nodeID string) {
-				_, err := Client.FileStorage.DeleteNode(bucketID, nodeID, context.Background())
+			console.CliArgsForEach(c, func(nodeID string) {
+				_, err := Client.FileStorage.DeleteNode(ciosctx.Background(), bucketID, nodeID)
 				assert(err).Log().NoneErrPrintln("Completed " + nodeID)
 			})
 			return nil
@@ -90,7 +92,7 @@ func listNode() *cli.Command {
 				opts         = ciossdk.MakeGetNodesOpts().Name(name).Recursive(all).ParentNodeId(parentNodeID).Limit(limit)
 			)
 			lsNode := func(value cios.Bucket) {
-				nodes, _, err := Client.FileStorage.GetNodesAll(value.Id, opts, context.Background())
+				nodes, _, err := Client.FileStorage.GetNodesAll(ciosctx.Background(), value.Id, opts)
 				if len(nodes) == 0 {
 					return
 				}
@@ -117,12 +119,12 @@ func listNode() *cli.Command {
 			}
 			listUtility(func() {
 				if c.Args().Len() > 0 {
-					utils.CliArgsForEach(c, func(bucketID string) {
-						res, _, err := Client.FileStorage.GetBucket(bucketID, nil)
+					console.CliArgsForEach(c, func(bucketID string) {
+						res, _, err := Client.FileStorage.GetBucket(nil, bucketID)
 						assert(err).Log().NoneErr(func() { lsNode(res) })
 					})
 				} else {
-					buckets, _, err := Client.FileStorage.GetBucketsAll(ciossdk.MakeGetBucketsOpts().Limit(30), context.Background())
+					buckets, _, err := Client.FileStorage.GetBucketsAll(nil, ciossdk.MakeGetBucketsOpts().Limit(30))
 					assert(err).Log().NoneErr(func() {
 						for _, value := range buckets {
 							lsNode(value)
@@ -150,13 +152,13 @@ func copyNode() *cli.Command {
 				destBucketId = c.String("dest_bucket_id")
 				parentNodeId = c.String("parent_node_id")
 			)
-			utils.CliArgsForEach(c, func(nodeID string) {
+			console.CliArgsForEach(c, func(nodeID string) {
 				_, _, err := Client.FileStorage.CopyNode(
+					ciosctx.Background(),
 					bucketId,
 					nodeID,
 					&destBucketId,
 					&parentNodeId,
-					context.Background(),
 				)
 				assert(err).Log().NoneErrPrintln("Completed ", nodeID)
 			})
@@ -180,13 +182,13 @@ func moveNode() *cli.Command {
 				destBucketId = c.String("dest_bucket_id")
 				parentNodeId = c.String("parent_node_id")
 			)
-			utils.CliArgsForEach(c, func(nodeID string) {
+			console.CliArgsForEach(c, func(nodeID string) {
 				_, _, err := Client.FileStorage.MoveNode(
+					ciosctx.Background(),
 					bucketId,
 					nodeID,
 					&destBucketId,
 					&parentNodeId,
-					context.Background(),
 				)
 				assert(err).Log().NoneErrPrintln("Completed " + nodeID)
 			})
@@ -206,7 +208,7 @@ func renameNode() *cli.Command {
 		},
 		Action: func(c *cli.Context) error {
 			name := c.String("name")
-			_, _, err := Client.FileStorage.RenameNode(c.String("bucket_id"), c.String("node_id"), name, context.Background())
+			_, _, err := Client.FileStorage.RenameNode(ciosctx.Background(), c.String("bucket_id"), c.String("node_id"), name)
 			assert(err).Log().NoneErrPrintln("Completed ", name)
 			return nil
 		},

@@ -1,37 +1,35 @@
-package utils
+package console
 
 import (
-	"encoding/json"
-	"fmt"
 	"io/ioutil"
 	"unicode/utf8"
 
+	"github.com/AlecAivazis/survey/v2"
 	cnv "github.com/fcfcqloow/go-advance/convert"
 	"github.com/fcfcqloow/go-advance/log"
-
 	"github.com/urfave/cli/v2"
-	"gopkg.in/AlecAivazis/survey.v1"
 )
 
+func Q(question []*survey.Question, st interface{}) {
+	Question(question, st)
+}
 func Question(question []*survey.Question, st interface{}) {
-	err := survey.Ask(question, st)
-	if err != nil {
+	if err := survey.Ask(question, st); err != nil {
 		log.Emergency(err.Error())
 		panic(err)
 	}
 }
 
-func CliArgsForEach(c *cli.Context, fun func(val string)) {
+func CliArgsForEach(c *cli.Context, fun func(string)) {
 	for i := 0; i < c.Args().Len(); i++ {
 		fun(c.Args().Get(i))
 	}
 }
-func CliArgs(c *cli.Context) []string {
-	result := []string{}
-	for i := 0; i < c.Args().Len(); i++ {
-		result = append(result, c.Args().Get(i))
-	}
-	return result
+func CliArgs(c *cli.Context) (result []string) {
+	CliArgsForEach(c, func(val string) {
+		result = append(result, val)
+	})
+	return
 }
 func ListDirs(_dir string, indent string) {
 	dirs, err := ioutil.ReadDir(_dir)
@@ -47,25 +45,22 @@ func ListDirs(_dir string, indent string) {
 		} else {
 			println(indent + dir.Name() + " <File>")
 		}
-
 	}
 }
 
 func FOutStructJson(object interface{}) {
-	body, err := StructToJsonStr(object)
-	if err != nil {
+	if body, err := cnv.Json(object); err != nil {
 		log.Error(err.Error())
 	} else {
-		result, err := cnv.IndentJson(body)
-		if err != nil {
+		if result, err := cnv.IndentJson(body); err != nil {
 			log.Error(err.Error())
 		} else {
-			Console.Fprintln(result)
+			Fprintln(result)
 		}
 	}
 }
 func OutStructJson(object interface{}) {
-	body, err := StructToJsonStr(object)
+	body, err := cnv.Json(object)
 	if err != nil {
 		log.Error(err.Error())
 	} else {
@@ -78,16 +73,14 @@ func OutStructJson(object interface{}) {
 	}
 }
 func FOutStructJsonSlim(object interface{}) {
-	body, err := StructToJsonStr(object)
-	if err != nil {
+	if body, err := cnv.Json(object); err != nil {
 		log.Error(err.Error())
 	} else {
-		Console.Fprintln(body)
+		Fprintln(body)
 	}
 }
 func OutStructJsonSlim(object interface{}) {
-	body, err := StructToJsonStr(object)
-	if err != nil {
+	if body, err := cnv.Json(object); err != nil {
 		log.Error(err.Error())
 	} else {
 		println(body)
@@ -103,12 +96,12 @@ func GetConsoleMultipleLine(message string) string {
 }
 
 func ListUtility(print func()) {
-	fmt.Fprintln(Out, "\n********************************************************"+
+	Fprintln("\n********************************************************" +
 		"********************************************************\n")
 	print()
-	fmt.Fprintln(Out, "\n********************************************************"+
+	Fprintln("\n********************************************************" +
 		"********************************************************\n")
-	Out.Flush()
+	Flush()
 }
 
 func SpaceRight(val string, len int) string {
@@ -116,12 +109,10 @@ func SpaceRight(val string, len int) string {
 	for i := 1; 0 < (len - valLen); i++ {
 		val += " "
 		valLen = utf8.RuneCountInString(val)
-
 	}
 	return val
 }
 
 func StructToJsonStr(object interface{}) (string, error) {
-	result, err := json.Marshal(object)
-	return string(result), err
+	return cnv.Json(object)
 }

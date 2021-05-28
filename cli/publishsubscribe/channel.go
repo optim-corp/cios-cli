@@ -4,13 +4,16 @@ import (
 	"context"
 	"strings"
 
+	ciosctx "github.com/optim-corp/cios-golang-sdk/ctx"
+
+	"github.com/optim-corp/cios-cli/utils/console"
+
+	"github.com/AlecAivazis/survey/v2"
 	. "github.com/optim-corp/cios-cli/cli"
 	"github.com/optim-corp/cios-cli/models"
-	"github.com/optim-corp/cios-cli/utils"
 	"github.com/optim-corp/cios-golang-sdk/cios"
 	ciossdk "github.com/optim-corp/cios-golang-sdk/sdk"
 	"github.com/urfave/cli/v2"
-	"gopkg.in/AlecAivazis/survey.v1"
 )
 
 func GetChannelCommand() *cli.Command {
@@ -106,7 +109,7 @@ func createChannel() *cli.Command {
 					MaxCount: "0",
 					MaxSize:  "0",
 				}
-				utils.Question(
+				console.Question(
 					[]*survey.Question{
 						{
 							Name:   "name",
@@ -150,7 +153,7 @@ func createChannel() *cli.Command {
 					}, &answers,
 				)
 				if answers.DataStoreEnabled {
-					utils.Question([]*survey.Question{
+					console.Question([]*survey.Question{
 						{Name: "maxCount", Prompt: &survey.Input{Message: "Max Count: ", Default: "0"}},
 						{Name: "maxSize", Prompt: &survey.Input{Message: "Max Size: ", Default: "0"}},
 					}, &dataStoreConfig)
@@ -191,7 +194,7 @@ func createChannel() *cli.Command {
 				}
 
 			}
-			channel, _, err := Client.PubSub.CreateChannel(body, context.Background())
+			channel, _, err := Client.PubSub.CreateChannel(ciosctx.Background(), body)
 			assert(err).
 				Log().
 				NoneErrPrintln("Completed ", channel.Id)
@@ -205,8 +208,8 @@ func deleteChannel() *cli.Command {
 		Aliases: models.ALIAS_DELETE,
 		Flags:   []cli.Flag{},
 		Action: func(c *cli.Context) error {
-			utils.CliArgsForEach(c, func(id string) {
-				_, err := Client.PubSub.DeleteChannel(id, nil)
+			console.CliArgsForEach(c, func(id string) {
+				_, err := Client.PubSub.DeleteChannel(ciosctx.Background(), id)
 				assert(err).
 					Log().
 					NoneErrPrintln("Completed ", id)
@@ -239,17 +242,17 @@ func listChannel() *cli.Command {
 				offset           = c.Int64("offset")
 				resourceOwnerMap map[string]cios.ResourceOwner
 			)
-			channels, _, err := Client.PubSub.GetChannelsAll(ciossdk.MakeGetChannelsOpts().
+			channels, _, err := Client.PubSub.GetChannelsAll(ciosctx.Background(), ciossdk.MakeGetChannelsOpts().
 				ResourceOwnerId(resourceOwnerID).
 				Label(label).
 				Name(name).
 				Limit(limit).
-				Offset(offset), nil)
+				Offset(offset))
 			assert(err).Log()
 			if isDetail {
 				listUtility(func() {
 					for _, channel := range channels {
-						utils.FOutStructJson(channel)
+						console.FOutStructJson(channel)
 						fPrintln()
 					}
 				})
@@ -293,8 +296,8 @@ func updateChannel() *cli.Command {
 			labels := is(c.String("label") == "").T([]string{}).F(strings.Split(c.String("label"), "=")).Value.([]string)
 			name := c.String("name")
 			if len(labels) >= 2 && name != "" {
-				utils.CliArgsForEach(c, func(channelID string) {
-					_, _, err := Client.PubSub.UpdateChannel(channelID, cios.ChannelUpdateProposal{
+				console.CliArgsForEach(c, func(channelID string) {
+					_, _, err := Client.PubSub.UpdateChannel(ciosctx.Background(), channelID, cios.ChannelUpdateProposal{
 						DisplayInfo: []cios.DisplayInfo{
 							{
 								Name:      c.String("name"),
@@ -308,12 +311,12 @@ func updateChannel() *cli.Command {
 								Value: labels[1],
 							},
 						},
-					}, context.Background())
+					})
 					assert(err).Log().NoneErrPrintln("Completed " + channelID)
 				})
 			} else if name != "" {
-				utils.CliArgsForEach(c, func(channelID string) {
-					_, _, err := Client.PubSub.UpdateChannel(channelID, cios.ChannelUpdateProposal{
+				console.CliArgsForEach(c, func(channelID string) {
+					_, _, err := Client.PubSub.UpdateChannel(ciosctx.Background(), channelID, cios.ChannelUpdateProposal{
 						DisplayInfo: []cios.DisplayInfo{
 							{
 								Name:      c.String("name"),
@@ -321,19 +324,19 @@ func updateChannel() *cli.Command {
 								IsDefault: true,
 							},
 						},
-					}, context.Background())
+					})
 					assert(err).Log().NoneErrPrintln("Completed " + channelID)
 				})
 			} else if len(labels) >= 2 {
-				utils.CliArgsForEach(c, func(channelID string) {
-					_, _, err := Client.PubSub.UpdateChannel(channelID, cios.ChannelUpdateProposal{
+				console.CliArgsForEach(c, func(channelID string) {
+					_, _, err := Client.PubSub.UpdateChannel(ciosctx.Background(), channelID, cios.ChannelUpdateProposal{
 						DisplayInfo: nil,
 						Labels: &[]cios.Label{
 							{
 								Key:   labels[0],
 								Value: labels[1],
 							},
-						}}, context.Background())
+						}})
 					assert(err).Log().NoneErrPrintln("Completed ", channelID)
 				})
 			} else if c.String("label") == "" {
@@ -344,8 +347,8 @@ func updateChannel() *cli.Command {
 					isDefault   bool
 					Label       string
 				}{}
-				utils.CliArgsForEach(c, func(channelID string) {
-					utils.Question([]*survey.Question{
+				console.CliArgsForEach(c, func(channelID string) {
+					console.Question([]*survey.Question{
 						{
 							Name:   "name",
 							Prompt: &survey.Input{Message: "name: "},
@@ -379,7 +382,7 @@ func updateChannel() *cli.Command {
 						return []cios.Label{}
 					}
 					labels := labelExp(answers.Label != "")
-					_, _, err := Client.PubSub.UpdateChannel(
+					_, _, err := Client.PubSub.UpdateChannel(ciosctx.Background(),
 						channelID,
 						cios.ChannelUpdateProposal{
 							DisplayInfo: []cios.DisplayInfo{
@@ -391,7 +394,7 @@ func updateChannel() *cli.Command {
 								},
 							},
 							Labels: &labels,
-						}, context.Background())
+						})
 					assert(err).Log().NoneErrPrintln()
 				})
 			}

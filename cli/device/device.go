@@ -1,17 +1,18 @@
 package device
 
 import (
-	"context"
+	ciosctx "github.com/optim-corp/cios-golang-sdk/ctx"
+
+	"github.com/optim-corp/cios-cli/utils/console"
 
 	cnv "github.com/fcfcqloow/go-advance/convert"
 
+	"github.com/AlecAivazis/survey/v2"
 	. "github.com/optim-corp/cios-cli/cli"
 	"github.com/optim-corp/cios-cli/models"
-	"github.com/optim-corp/cios-cli/utils"
 	"github.com/optim-corp/cios-golang-sdk/cios"
 	ciossdk "github.com/optim-corp/cios-golang-sdk/sdk"
 	"github.com/urfave/cli/v2"
-	"gopkg.in/AlecAivazis/survey.v1"
 )
 
 func GetDeviceCommand() *cli.Command {
@@ -51,7 +52,7 @@ func createDevice() *cli.Command {
 				RsaPublickey    string
 			}{}
 
-			utils.Question([]*survey.Question{
+			console.Question([]*survey.Question{
 				{
 					Name:   "idNumber",
 					Prompt: &survey.Input{Message: "ID Number: "},
@@ -82,14 +83,14 @@ func createDevice() *cli.Command {
 
 			assert(
 				func() error {
-					_, _, err := Client.DeviceManagement.CreateDevice(cios.DeviceInfo{
+					_, _, err := Client.DeviceManagement.CreateDevice(ciosctx.Background(), cios.DeviceInfo{
 						ResourceOwnerId: c.String("resource_owner_id"),
 						Name:            &in.Name,
 						IdNumber:        &in.IDNumber,
 						IsManaged:       &in.IsManaged,
 						RsaPublickey:    &in.RsaPublickey,
 						Description:     &in.Description,
-					}, context.Background())
+					})
 					return err
 				}()).Log().NoneErrPrintln("Completed " + in.Name)
 			return nil
@@ -105,8 +106,8 @@ func deleteDevice() *cli.Command {
 			&cli.BoolFlag{Name: "all", Aliases: []string{"a"}},
 		},
 		Action: func(c *cli.Context) error {
-			utils.CliArgsForEach(c, func(id string) {
-				_, err := Client.DeviceManagement.DeleteDevice(id, context.Background())
+			console.CliArgsForEach(c, func(id string) {
+				_, err := Client.DeviceManagement.DeleteDevice(ciosctx.Background(), id)
 				assert(err).Log().NoneErrPrintln("Completed ", id)
 			})
 
@@ -125,11 +126,11 @@ func listDevice() *cli.Command {
 		},
 		Action: func(c *cli.Context) error {
 			if c.Args().Len() > 0 {
-				utils.CliArgsForEach(c, func(id string) {
-					device, _, err := Client.DeviceManagement.GetDevice(id, nil, nil, context.Background())
+				console.CliArgsForEach(c, func(id string) {
+					device, _, err := Client.DeviceManagement.GetDevice(ciosctx.Background(), id, nil, nil)
 					assert(err).Log().NoneErr(
 						func() {
-							value, err := utils.StructToJsonStr(device)
+							value, err := console.StructToJsonStr(device)
 							assert(err).Log().ExitWith(1)
 							value, err = cnv.IndentJson(value)
 							assert(err).Log().ExitWith(1)
@@ -139,7 +140,7 @@ func listDevice() *cli.Command {
 				})
 			} else {
 				isAll := c.Bool("all")
-				devices, _, err := Client.DeviceManagement.GetDevicesAll(ciossdk.MakeGetDevicesOpts().Name(c.String("name")), context.Background())
+				devices, _, err := Client.DeviceManagement.GetDevicesAll(ciosctx.Background(), ciossdk.MakeGetDevicesOpts().Name(c.String("name")))
 				assert(err).
 					Log().
 					NoneErr(func() {
@@ -151,7 +152,7 @@ func listDevice() *cli.Command {
 								fPrintln(
 									is(isAll).
 										T(func() string {
-											str, err := utils.StructToJsonStr(device)
+											str, err := console.StructToJsonStr(device)
 											assert(err).Log().ExitWith(1)
 											str, err = cnv.IndentJson(str)
 											assert(err).Log().ExitWith(1)

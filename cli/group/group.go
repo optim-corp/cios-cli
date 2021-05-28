@@ -1,9 +1,12 @@
 package group
 
 import (
-	"context"
 	"strings"
 	"unicode/utf8"
+
+	ciosctx "github.com/optim-corp/cios-golang-sdk/ctx"
+
+	"github.com/optim-corp/cios-cli/utils/console"
 
 	cnv "github.com/fcfcqloow/go-advance/convert"
 
@@ -13,18 +16,18 @@ import (
 
 	"github.com/urfave/cli/v2"
 
+	"github.com/AlecAivazis/survey/v2"
 	. "github.com/optim-corp/cios-cli/cli"
 	"github.com/optim-corp/cios-cli/models"
 	"github.com/optim-corp/cios-cli/utils"
-	"gopkg.in/AlecAivazis/survey.v1"
 )
 
 var (
 	is          = utils.Is
-	listUtility = utils.ListUtility
-	spaceRight  = utils.SpaceRight
-	fPrintln    = utils.Console.Fprintln
-	fPrintf     = utils.Console.Fprintf
+	listUtility = console.ListUtility
+	spaceRight  = console.SpaceRight
+	fPrintln    = console.Fprintln
+	fPrintf     = console.Fprintf
 	assert      = utils.EAssert
 )
 
@@ -58,7 +61,7 @@ func createGroup() *cli.Command {
 				Tags          string
 			}{}
 			if c.String("name") == "" {
-				utils.Question(
+				console.Question(
 					[]*survey.Question{
 						{
 							Name:   "name",
@@ -109,7 +112,7 @@ func createGroup() *cli.Command {
 					Type:          "Group",
 				}
 			}
-			_, _, err := Client.Account.CreateGroup(opts, context.Background())
+			_, _, err := Client.Account.CreateGroup(ciosctx.Background(), opts)
 			assert(err).Log().NoneErrPrintln("Completed " + answers.Name)
 			return nil
 		},
@@ -137,11 +140,11 @@ func updateGroup() *cli.Command {
 			}
 			if answers.Name == "" {
 				tags := is(answers.Tags != "").T(strings.Split(answers.Tags, ",")).F([]string{}).Value.([]string)
-				_, _, err := Client.Account.UpdateGroup(c.Args().Get(0), cios.GroupUpdateRequest{Tags: &tags}, context.Background())
+				_, _, err := Client.Account.UpdateGroup(ciosctx.Background(), c.Args().Get(0), cios.GroupUpdateRequest{Tags: &tags})
 				assert(err).Log().NoneErrPrintln("Completed " + c.Args().Get(0))
 			} else {
 				tags := is(answers.Tags != "").T(strings.Split(answers.Tags, ",")).F([]string{}).Value.([]string)
-				_, _, err := Client.Account.UpdateGroup(c.Args().Get(0), cios.GroupUpdateRequest{Name: &answers.Name, Tags: &tags}, context.Background())
+				_, _, err := Client.Account.UpdateGroup(ciosctx.Background(), c.Args().Get(0), cios.GroupUpdateRequest{Name: &answers.Name, Tags: &tags})
 				assert(err).Log().NoneErrPrintln("Completed " + c.Args().Get(0))
 			}
 
@@ -154,8 +157,8 @@ func deleteGroup() *cli.Command {
 		Name:    models.DELETE,
 		Aliases: models.ALIAS_DELETE,
 		Action: func(c *cli.Context) error {
-			utils.CliArgsForEach(c, func(id string) {
-				_, err := Client.Account.DeleteGroup(id, context.Background())
+			console.CliArgsForEach(c, func(id string) {
+				_, err := Client.Account.DeleteGroup(ciosctx.Background(), id)
 				assert(err).Log().NoneErrPrintln("Completed " + id)
 			})
 			return nil
@@ -181,17 +184,17 @@ func listGroup() *cli.Command {
 				offset = c.Int64("offset")
 				tag    = c.String("tag")
 			)
-			groups, _, _ := Client.Account.GetGroupsAll(ciossdk.MakeGetGroupsOpts().
+			groups, _, _ := Client.Account.GetGroupsAll(ciosctx.Background(), ciossdk.MakeGetGroupsOpts().
 				Limit(limit).
 				Name(name).
 				Label(label).
 				Tags(tag).
-				Offset(offset), nil)
+				Offset(offset))
 			listUtility(func() {
 				length := utf8.RuneCountInString("0000000000000-0000-0000-000000000000")
 				fPrintln("\t\t|id|\t\t\t\t|parent_group_id|\t\t\t|resource_owner_id|\t\t|type|         |name / tags|")
 				for _, value := range groups {
-					resource, _, err := Client.Account.GetResourceOwnerByGroupId(value.Id, context.Background())
+					resource, _, err := Client.Account.GetResourceOwnerByGroupId(ciosctx.Background(), value.Id)
 					assert(err).Log().NoneErr(func() {
 						fPrintf(
 							"%s\t%s\t%s\t%s　　%s / %s\n",
@@ -229,7 +232,7 @@ func inviteGroup() *cli.Command {
 					answers := struct {
 						Email string
 					}{}
-					utils.Question([]*survey.Question{
+					console.Question([]*survey.Question{
 						{
 							Name:   "email",
 							Prompt: &survey.Input{Message: "email or exit: "},
@@ -241,9 +244,9 @@ func inviteGroup() *cli.Command {
 						emails = append(emails, answers.Email)
 					}
 				}
-				utils.CliArgsForEach(c, func(id string) {
+				console.CliArgsForEach(c, func(id string) {
 					for _, email := range emails {
-						_, _, err := Client.Account.InviteGroup(id, email, context.Background())
+						_, _, err := Client.Account.InviteGroup(ciosctx.Background(), id, email)
 						assert(err).Log().NoneErrPrintln("Completed ", id, "\n", email)
 					}
 				})

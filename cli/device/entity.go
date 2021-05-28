@@ -1,13 +1,14 @@
 package device
 
 import (
-	"context"
+	ciosctx "github.com/optim-corp/cios-golang-sdk/ctx"
+
+	"github.com/optim-corp/cios-cli/utils/console"
 
 	xmath "github.com/fcfcqloow/go-advance/math"
 
 	. "github.com/optim-corp/cios-cli/cli"
 	"github.com/optim-corp/cios-cli/models"
-	"github.com/optim-corp/cios-cli/utils"
 	ciossdk "github.com/optim-corp/cios-golang-sdk/sdk"
 	"github.com/urfave/cli/v2"
 )
@@ -46,13 +47,12 @@ func listDeviceEntities() *cli.Command {
 				offset          = c.Int64("offset")
 				isAll           = c.Bool("all")
 			)
-			m, _, err := Client.DeviceAssetManagement.GetEntitiesAll(ciossdk.MakeGetEntitiesOpts().
+			m, _, err := Client.DeviceAssetManagement.GetEntitiesAll(ciosctx.Background(), ciossdk.MakeGetEntitiesOpts().
 				Limit(limit).
 				Offset(offset).
 				Order(order).
 				OrderBy(orderBy).
-				ResourceOwnerId(resourceOwnerId),
-				context.Background())
+				ResourceOwnerId(resourceOwnerId))
 			assert(err).Log().NoneErr(func() {
 				listUtility(func() {
 					if isAll {
@@ -61,7 +61,7 @@ func listDeviceEntities() *cli.Command {
 							fPrintln("|Resource Owner ID|: ", model.ResourceOwnerId)
 							fPrintln("|Component ID|     : ", model.Components.Get().Id)
 							fPrintln("|Key|             : ", model.Key, "\n")
-							utils.FOutStructJsonSlim(model)
+							console.FOutStructJsonSlim(model)
 							fPrintln("\n------------------------------------------------------------------------------------------------------------------------------------------------------------\n")
 						}
 					} else {
@@ -90,13 +90,13 @@ func deleteDeviceEntity() *cli.Command {
 			var (
 				key = c.String("key")
 			)
-			entityMap, err := Client.DeviceAssetManagement.GetEntitiesMapByID(ciossdk.MakeGetEntitiesOpts(), context.Background())
+			entityMap, err := Client.DeviceAssetManagement.GetEntitiesMapByID(ciosctx.Background(), ciossdk.MakeGetEntitiesOpts())
 			assert(err).Log().NoneErr(func() {
 				if entity, ok := entityMap[key]; ok {
-					_, err = Client.DeviceAssetManagement.DeleteEntity(entity.Key, context.Background())
+					_, err = Client.DeviceAssetManagement.DeleteEntity(ciosctx.Background(), entity.Key)
 					assert(err).NoneErrPrintln("Completed ", entity.Key)
 				} else {
-					_, err = Client.DeviceAssetManagement.DeleteEntity(key, context.Background())
+					_, err = Client.DeviceAssetManagement.DeleteEntity(ciosctx.Background(), key)
 					assert(err).NoneErrPrintln("Completed ", key)
 				}
 			})

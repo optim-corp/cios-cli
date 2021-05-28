@@ -1,17 +1,18 @@
 package device
 
 import (
-	"context"
+	ciosctx "github.com/optim-corp/cios-golang-sdk/ctx"
 
+	"github.com/optim-corp/cios-cli/utils/console"
+
+	"github.com/AlecAivazis/survey/v2"
 	cnv "github.com/fcfcqloow/go-advance/convert"
 	"github.com/fcfcqloow/go-advance/log"
 	. "github.com/optim-corp/cios-cli/cli"
 	"github.com/optim-corp/cios-cli/models"
-	"github.com/optim-corp/cios-cli/utils"
 	"github.com/optim-corp/cios-golang-sdk/cios"
 	ciossdk "github.com/optim-corp/cios-golang-sdk/sdk"
 	"github.com/urfave/cli/v2"
-	"gopkg.in/AlecAivazis/survey.v1"
 )
 
 func GetDeviceModelsCommand() *cli.Command {
@@ -47,16 +48,16 @@ func listDeviceModels() *cli.Command {
 				fPrintln("|Watch|            : ", model.Watch)
 				fPrintln("|Created at|       : ", model.CreatedAt)
 				fPrintln("|Updated at|       : ", model.UpdatedAt, "\n")
-				utils.FOutStructJsonSlim(model.Components)
+				console.FOutStructJsonSlim(model.Components)
 				fPrintln("\n------------------------------------------------------------------------------------------------------------------------------------------------------------\n")
 			}
 			if c.Args().Len() > 0 {
-				utils.CliArgsForEach(c, func(arg string) {
-					modelMap, err := Client.DeviceAssetManagement.GetModelsMapByID(ciossdk.MakeGetModelsOpts(), context.Background())
+				console.CliArgsForEach(c, func(arg string) {
+					modelMap, err := Client.DeviceAssetManagement.GetModelsMapByID(ciosctx.Background(), ciossdk.MakeGetModelsOpts())
 					assert(err).Log().NoneErr(func() {
 						model, ok := modelMap[arg]
 						if !ok {
-							model, _, err = Client.DeviceAssetManagement.GetModel(arg, context.Background())
+							model, _, err = Client.DeviceAssetManagement.GetModel(ciosctx.Background(), arg)
 							if assert(err).Log().ErrNotNil() {
 								return
 							}
@@ -67,7 +68,7 @@ func listDeviceModels() *cli.Command {
 				return nil
 			}
 
-			ms, _, err := Client.DeviceAssetManagement.GetModelsAll(ciossdk.MakeGetModelsOpts(), context.Background())
+			ms, _, err := Client.DeviceAssetManagement.GetModelsAll(ciosctx.Background(), ciossdk.MakeGetModelsOpts())
 			isAll := c.Bool("all")
 			assert(err).Log().NoneErr(func() {
 				listUtility(func() {
@@ -100,13 +101,13 @@ func deleteDeviceModel() *cli.Command {
 			&cli.BoolFlag{Name: "all", Aliases: []string{"a"}},
 		},
 		Action: func(c *cli.Context) error {
-			utils.CliArgsForEach(c, func(arg string) {
-				_, err := Client.DeviceAssetManagement.DeleteModel(arg, context.Background())
+			console.CliArgsForEach(c, func(arg string) {
+				_, err := Client.DeviceAssetManagement.DeleteModel(ciosctx.Background(), arg)
 				assert(err).Log().NoneErr(func() {
-					modelMap, err := Client.DeviceAssetManagement.GetModelsMapByID(ciossdk.MakeGetModelsOpts(), context.Background())
+					modelMap, err := Client.DeviceAssetManagement.GetModelsMapByID(ciosctx.Background(), ciossdk.MakeGetModelsOpts())
 					assert(err).Log().NoneErr(func() {
 						if model, ok := modelMap[arg]; ok {
-							_, err = Client.DeviceAssetManagement.DeleteModel(model.Name, context.Background())
+							_, err = Client.DeviceAssetManagement.DeleteModel(ciosctx.Background(), model.Name)
 							assert(err).Log().NoneErrPrintln("Completed ", arg)
 						}
 					})
@@ -125,10 +126,10 @@ func createDeviceModel() *cli.Command {
 		Flags:   []cli.Flag{},
 		Action: func(c *cli.Context) error {
 			req := cios.DeviceModelRequest{}
-			input := utils.GetConsoleMultipleLine(">>")
+			input := console.GetConsoleMultipleLine(">>")
 			assert(cnv.UnMarshalJson(input, &req)).Log().NoneErr(func() {
-				model, _, err := Client.DeviceAssetManagement.CreateModel(req, context.Background())
-				assert(err).Log().NoneErr(func() { utils.OutStructJsonSlim(model) })
+				model, _, err := Client.DeviceAssetManagement.CreateModel(ciosctx.Background(), req)
+				assert(err).Log().NoneErr(func() { console.OutStructJsonSlim(model) })
 			})
 			return nil
 		},
@@ -153,7 +154,7 @@ func entityDeviceModel() *cli.Command {
 					log.Error("No Name and ID")
 					return nil
 				}
-				modelMap, err := Client.DeviceAssetManagement.GetModelsMapByID(ciossdk.MakeGetModelsOpts(), context.Background())
+				modelMap, err := Client.DeviceAssetManagement.GetModelsMapByID(ciosctx.Background(), ciossdk.MakeGetModelsOpts())
 				if assert(err).Log().ErrNotNil() {
 					if model, ok := modelMap[id]; ok {
 						name = model.Name
@@ -171,7 +172,7 @@ func entityDeviceModel() *cli.Command {
 				Value           string
 			}{}
 
-			utils.Question([]*survey.Question{
+			console.Question([]*survey.Question{
 				{
 					Name:   "serialNumber",
 					Prompt: &survey.Input{Message: "Serial Number: "},
@@ -197,7 +198,7 @@ func entityDeviceModel() *cli.Command {
 			if ans.Value != "" {
 				assert(cnv.UnMarshalJson(ans.Value, &body.CustomInventory)).
 					Log().NoneErr(func() {
-					_, _, err := Client.DeviceAssetManagement.CreateEntity(name, body, context.Background())
+					_, _, err := Client.DeviceAssetManagement.CreateEntity(ciosctx.Background(), name, body)
 					assert(err).Log()
 				})
 			}

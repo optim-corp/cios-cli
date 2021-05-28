@@ -1,19 +1,18 @@
 package geography
 
 import (
-	"context"
 	"strings"
 
-	"github.com/optim-corp/cios-golang-sdk/cios"
+	ciosctx "github.com/optim-corp/cios-golang-sdk/ctx"
 
-	ciossdk "github.com/optim-corp/cios-golang-sdk/sdk"
+	"github.com/optim-corp/cios-cli/utils/console"
 
-	"github.com/urfave/cli/v2"
-
+	"github.com/AlecAivazis/survey/v2"
 	. "github.com/optim-corp/cios-cli/cli"
 	"github.com/optim-corp/cios-cli/models"
-	"github.com/optim-corp/cios-cli/utils"
-	"gopkg.in/AlecAivazis/survey.v1"
+	"github.com/optim-corp/cios-golang-sdk/cios"
+	ciossdk "github.com/optim-corp/cios-golang-sdk/sdk"
+	"github.com/urfave/cli/v2"
 )
 
 func GetPointCommand() *cli.Command {
@@ -45,7 +44,7 @@ func createPoint() *cli.Command {
 				ResourceOwnerID string
 				Label           string
 			}{}
-			utils.Question([]*survey.Question{
+			console.Question([]*survey.Question{
 				{
 					Name:   "name",
 					Prompt: &survey.Input{Message: "name: "},
@@ -106,8 +105,8 @@ func createPoint() *cli.Command {
 				},
 				Labels: &labels,
 			}
-			point, _, err := Client.Geography.CreatePoint(request, context.Background())
-			assert(err).Log().NoneErr(func() { utils.OutStructJson(point) })
+			point, _, err := Client.Geography.CreatePoint(ciosctx.Background(), request)
+			assert(err).Log().NoneErr(func() { console.OutStructJson(point) })
 			return nil
 		},
 	}
@@ -117,8 +116,8 @@ func deletePoint() *cli.Command {
 		Name:    models.DELETE,
 		Aliases: models.ALIAS_DELETE,
 		Action: func(c *cli.Context) error {
-			utils.CliArgsForEach(c, func(id string) {
-				_, _, err := Client.Geography.DeletePoint(id, context.Background())
+			console.CliArgsForEach(c, func(id string) {
+				_, _, err := Client.Geography.DeletePoint(nil, id)
 				assert(err).Log().NoneErrPrintln("Completed ", id)
 			})
 			return nil
@@ -135,7 +134,7 @@ func listPoint() *cli.Command {
 		Action: func(c *cli.Context) error {
 			listUtility(func() {
 				fPrintln("\t|id|    \t\t|resource owner id|\t\t   |name -- latitude -- longitude -- altitude|\t\t|label|")
-				response, _, err := Client.Geography.GetPoints(ciossdk.MakeGetPointsOpts(), context.Background())
+				response, _, err := Client.Geography.GetPoints(ciosctx.Background(), ciossdk.MakeGetPointsOpts())
 				assert(err).Log().NoneErr(func() {
 					for _, val := range response.Points {
 						fPrintf(

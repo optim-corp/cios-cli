@@ -1,12 +1,13 @@
 package tool
 
 import (
+	"github.com/AlecAivazis/survey/v2"
 	app "github.com/optim-corp/cios-cli/cli"
 	"github.com/optim-corp/cios-cli/models"
 	"github.com/optim-corp/cios-cli/utils"
+	"github.com/optim-corp/cios-cli/utils/console"
 	"github.com/skratchdot/open-golang/open"
 	"github.com/urfave/cli/v2"
-	"gopkg.in/AlecAivazis/survey.v1"
 )
 
 func GetURLCommand() *cli.Command {
@@ -18,14 +19,13 @@ func GetURLCommand() *cli.Command {
 			listUtility(func() {
 				fPrintln("|DeviceAssetManagement_URL| : " + app.Client.DeviceAssetManagement.Url)
 				fPrintln("|DeviceManagement_URL|      : " + app.Client.DeviceManagement.Url)
-				//fPrintln("|VideoStreams_URL|          : " + app.Client.Vide.Url)
-				//fPrintln("|Monitoring_URL|            : " + app.Client.DeviceManagement.Url)
+				fPrintln("|VideoStreams_URL|          : " + app.Client.Video.Url)
+				fPrintln("|Monitoring_URL|            : " + app.Client.DeviceManagement.Url)
 				fPrintln("|Messaging_URL|             : " + app.Client.PubSub.Url)
 				fPrintln("|Location_URL|              : " + app.Client.Geography.Url)
 				fPrintln("|Accounts_URL|              : " + app.Client.Account.Url)
 				fPrintln("|Storage_URL|               : " + app.Client.FileStorage.Url)
 				fPrintln("|Auth_URL|                  : " + app.Client.Auth.Url)
-				//fPrintln("|Iam_URL|                   : " + app.Client.Iam.Url)
 			})
 			return nil
 		},
@@ -97,12 +97,12 @@ func addUrls() *cli.Command {
 					VideoStreams:          "video-streaming." + domain,
 				}
 			} else if isInteractive {
-				utils.Question(
+				console.Question(
 					[]*survey.Question{
 						{Name: "stage", Prompt: &survey.Input{Message: "Stage: "}},
 						{Name: "domain", Prompt: &survey.Input{Message: "Domain: "}},
 					}, &in)
-				utils.Question(
+				console.Question(
 					[]*survey.Question{
 						{Name: "auth", Prompt: &survey.Input{Message: "Auth URL: ", Default: "auth." + in.Domain}},
 					}, &in)
@@ -119,7 +119,7 @@ func addUrls() *cli.Command {
 					VideoStreams:          "video-streaming." + in.Domain,
 				}
 			} else if isInteractiveAll {
-				utils.Question(
+				console.Question(
 					[]*survey.Question{
 						{Name: "stage", Prompt: &survey.Input{Message: "Stage: "}},
 						{Name: "device", Prompt: &survey.Input{Message: "Device URL: "}},

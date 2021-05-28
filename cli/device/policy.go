@@ -1,13 +1,13 @@
 package device
 
 import (
-	"context"
+	"github.com/optim-corp/cios-cli/utils/console"
+	ciosctx "github.com/optim-corp/cios-golang-sdk/ctx"
 
 	"github.com/optim-corp/cios-golang-sdk/cios"
 
 	. "github.com/optim-corp/cios-cli/cli"
 	"github.com/optim-corp/cios-cli/models"
-	"github.com/optim-corp/cios-cli/utils"
 	"github.com/urfave/cli/v2"
 )
 
@@ -32,8 +32,8 @@ func createDevicePolicy() *cli.Command {
 			&cli.StringFlag{Name: "resourceOwnerId", Required: true},
 		},
 		Action: func(c *cli.Context) error {
-			policy, _, err := Client.DeviceManagement.CreatePolicy(c.String("resourceOwnerId"), context.Background())
-			assert(err).Log().NoneErr(func() { utils.OutStructJson(policy) })
+			policy, _, err := Client.DeviceManagement.CreatePolicy(ciosctx.Background(), c.String("resourceOwnerId"))
+			assert(err).Log().NoneErr(func() { console.OutStructJson(policy) })
 			return nil
 		},
 	}
@@ -44,7 +44,7 @@ func listDevicePolicy() *cli.Command {
 		UsageText: "cios device policy ls",
 		Aliases:   models.ALIAS_LIST,
 		Action: func(c *cli.Context) error {
-			policies, _, err := Client.DeviceManagement.GetPolicies(cios.ApiGetDevicePoliciesRequest{}, context.Background())
+			policies, _, err := Client.DeviceManagement.GetPolicies(ciosctx.Background(), cios.ApiGetDevicePoliciesRequest{})
 			assert(err).Log().NoneErr(func() {
 				listUtility(func() {
 					fPrintln("\t\t|id|\t\t\t\t|resource owner|\t      |create at|\t|updated at|")
@@ -67,8 +67,8 @@ func deleteDevicePolicy() *cli.Command {
 		Aliases:   models.ALIAS_DELETE,
 		UsageText: "cios device monitoring del [command options] [policy_id...]",
 		Action: func(c *cli.Context) error {
-			utils.CliArgsForEach(c, func(t string) {
-				_, err := Client.DeviceManagement.DeletePolicy(t, context.Background())
+			console.CliArgsForEach(c, func(t string) {
+				_, err := Client.DeviceManagement.DeletePolicy(ciosctx.Background(), t)
 				assert(err).Log()
 			})
 			return nil

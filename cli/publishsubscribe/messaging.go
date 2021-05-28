@@ -1,26 +1,32 @@
 package publishsubscribe
 
 import (
+	"bufio"
 	"context"
+	"encoding/json"
 	"errors"
 	"fmt"
 	"os"
 	"strconv"
-	"sync"
 	"time"
 
+	ciosctx "github.com/optim-corp/cios-golang-sdk/ctx"
+
+	"github.com/optim-corp/cios-cli/utils/console"
+
+	"github.com/AlecAivazis/survey/v2"
+
 	cnv "github.com/fcfcqloow/go-advance/convert"
+
 	"github.com/fcfcqloow/go-advance/log"
-
-	"gopkg.in/yaml.v2"
-
+	"github.com/fcfcqloow/go-advance/util"
 	. "github.com/optim-corp/cios-cli/cli"
 	"github.com/optim-corp/cios-cli/models"
-	"github.com/optim-corp/cios-cli/utils"
 	"github.com/optim-corp/cios-golang-sdk/cios"
 	ciossdk "github.com/optim-corp/cios-golang-sdk/sdk"
 	"github.com/urfave/cli/v2"
 	"golang.org/x/sync/errgroup"
+	"gopkg.in/yaml.v2"
 )
 
 func GetMessagingCommand() *cli.Command {
@@ -57,7 +63,7 @@ func GetMessagingCommand() *cli.Command {
 				}
 				scanLogic = func(message string) {
 					for {
-						in := utils.GetConsoleMultipleLine(message)
+						in := console.GetConsoleMultipleLine(message)
 						if in == "/exit" {
 							done <- true
 							exit = true
@@ -69,7 +75,7 @@ func GetMessagingCommand() *cli.Command {
 				}
 			)
 			if resourceOwnerID != "" {
-				if res, _, err := Client.PubSub.GetChannelsAll(ciossdk.MakeGetChannelsOpts().ResourceOwnerId(resourceOwnerID), context.Background()); assert(err).
+				if res, _, err := Client.PubSub.GetChannelsAll(ciosctx.Background(), ciossdk.MakeGetChannelsOpts().ResourceOwnerId(resourceOwnerID)); assert(err).
 					NoneErr(func() {
 						for _, channel := range res {
 							channelIDs = append(channelIDs, channel.Id)
@@ -80,7 +86,7 @@ func GetMessagingCommand() *cli.Command {
 					return err
 				}
 			} else {
-				channelIDs = utils.CliArgs(c)
+				channelIDs = console.CliArgs(c)
 			}
 			go func() {
 				err := eg.Wait()
@@ -142,11 +148,11 @@ func listChannels() *cli.Command {
 		},
 		Action: func(c *cli.Context) error {
 			resourceOwnerID := c.String("resource_owner_id")
-			channels, _, err := Client.PubSub.GetChannelsAll(ciossdk.MakeGetChannelsOpts().ResourceOwnerId(resourceOwnerID), context.Background())
+			channels, _, err := Client.PubSub.GetChannelsAll(ciosctx.Background(), ciossdk.MakeGetChannelsOpts().ResourceOwnerId(resourceOwnerID))
 			assert(err).Log().NoneErr(func() {
 				if c.Bool("datastore") {
 					println(datastoreDir)
-					utils.ListDirs(datastoreDir, "|-")
+					console.ListDirs(datastoreDir, "|-")
 					return
 				}
 
@@ -190,7 +196,7 @@ func publishMessage() *cli.Command {
 				str          = make(chan *string)
 				done         = make(chan bool)
 			)
-			utils.CliArgsForEach(c, func(channelID string) {
+			console.CliArgsForEach(c, func(channelID string) {
 				eg.Go(func() error {
 					return Client.PubSub.ConnectWebSocket(channelID, done, ciossdk.ConnectWebSocketOptions{
 						PackerFormat: &packerFormat,
@@ -228,7 +234,7 @@ func publishMessage() *cli.Command {
 
 				})
 			} else {
-				input := utils.GetConsoleMultipleLine("")
+				input := console.GetConsoleMultipleLine("")
 				str <- &input
 			}
 			str <- nil
@@ -314,79 +320,71 @@ func registerJob() *cli.Command {
 		Aliases: []string{"register", "reg", "j"},
 		Usage:   "cios messaging job | register",
 		Flags: []cli.Flag{
-			&cli.StringFlag{Name: "path", Aliases: []string{"file_path", "f", "p", "file"}},
-			&cli.Int64Flag{Name: "beginning_timestamp", Aliases: []string{"start", "b", "start_timestamp", "beginning"}, Value: time.Now().UnixNano(), DefaultText: "Now Timestamp"},
+			&cli.StringFlag{Name: "path", Aliases: []string{"file_path", "f", "p", "file"}, Required: true},
+			&cli.StringFlag{Name: "channel_id", Aliases: []string{"c", "channel"}},
+			&cli.BoolFlag{Name: "packer_format_json", Aliases: []string{"json"}},
 		},
 		Action: func(c *cli.Context) error {
 			var (
-				filePath           = c.String("file_path")
-				beginningTimestamp = c.Int64("beginning_timestamp")
-				jobYaml            models.Job
-				byts, err          = path(filePath).ReadFile()
-				wg                 = sync.WaitGroup{}
-			)
-			fmt.Println(filePath, beginningTimestamp)
-			check := func(jobYaml models.Job) error {
-				for _, jobs := range jobYaml {
-					for _, job := range jobs {
-						for _, v := range job.Value {
-							var formatJson cios.PackerFormatJson
-							if err := cnv.UnMarshalJson([]byte(v.Data), &formatJson); err != nil {
-								return err
-							}
-
-						}
-					}
+				filePath  = c.String("file_path")
+				isJson    = c.Bool("packer_format_json")
+				channelId = c.String("channel_id")
+				jobs      models.Job
+				scanner   = bufio.NewScanner(os.Stdin)
+				byts, err = path(filePath).ReadFile()
+				pubMsg    = func(channelId string, body interface{}, packetFormat string) error {
+					_, err := Client.PubSub.PublishMessage(ciosctx.Background(), channelId, body, &packetFormat)
+					return err
 				}
-				return nil
-			}
-			send := func(v models.MessagingJobValue, formatJson cios.PackerFormatJson, loop int, SendJson func(interface{}) error) error {
-				for i, cnt := int64(0), 0; cnt < loop; i++ {
+				getChannelID = func(channelId string, formatJson cios.PackerFormatJson) string {
+					return util.Is(channelId == "").T(formatJson.Header.ChannelId).F(channelId).Value().AsString()
+				}
+				sendMessage = func(job models.MessagingJob) {
+					var err error
 					switch {
-					case i%v.Timestamp == 0:
-						formatJson.Header.Timestamp = str(beginningTimestamp + i)
-						fallthrough
-					case v.Timestamp == -1 || i%v.Timestamp == 0:
-						fmt.Println("Publish", formatJson.Header.Timestamp)
-						if err := SendJson(formatJson); err != nil {
-							return err
-						}
-						cnt++
-					}
-					time.Sleep(time.Nanosecond)
-				}
-				return nil
-			}
-			execJob := func(jobs models.MessagingJobs, name string) {
-				defer wg.Done()
-				for _, job := range jobs {
-					ms := Client.PubSub.NewMessaging(job.Channel, "publish", "json")
-					if err := ms.Start(context.Background()); err != nil {
-						log.Error(err)
-						return
-					}
-					fmt.Println(fmt.Sprintf("Start Job: %s", name))
-
-					for _, v := range job.Value {
+					case isJson:
 						var formatJson cios.PackerFormatJson
-						_ = cnv.UnMarshalJson([]byte(v.Data), &formatJson)
-						if err := send(v, formatJson, job.Loop, ms.SendJson); err != nil {
-							break
+						err = assert(json.Unmarshal([]byte(job.Value), &formatJson)).
+							NoneErrAssert(pubMsg(getChannelID(channelId, formatJson), formatJson, "json")).
+							NoneErrPrintln("Publish", time.Unix(0, cnv.MustInt64(formatJson.Header.Timestamp)).String(), formatJson.Header.ChannelId).
+							Err
+					case channelId != "":
+						err = assert(pubMsg(channelId, job.Value, "payload_only")).
+							NoneErrPrintln("Publish", channelId).Err
+					default:
+						err = fmt.Errorf("not found channel id")
+					}
+					if err != nil {
+						panic(err)
+					}
+				}
+			)
+			return assert(err).Log().
+				NoneErrAssert(yaml.Unmarshal(byts, &jobs)).Log().
+				NoneErrAssert((func() error {
+					for jobNames := cnv.GetObjectKeys(jobs); ; {
+						ans := struct{ JobName string }{}
+						console.Q([]*survey.Question{
+							{Name: "JobName", Prompt: &survey.Select{Message: "Select a Job", Options: append(jobNames, "exit")}}},
+							&ans,
+						)
+						switch ans.JobName {
+						case "exit":
+							return nil
+						default:
+							println("Job Name: ", ans.JobName)
+							for _, job := range jobs[ans.JobName] {
+								print(
+									"\n\nJob Description: ", job.Description,
+									"\nEnter <-",
+								)
+								scanner.Scan()
+								sendMessage(job)
+							}
 						}
 					}
-
-				}
-			}
-			return assert(err).Log().
-				NoneErrAssert(yaml.Unmarshal(byts, &jobYaml)).Log().
-				NoneErrAssert(check(jobYaml)).Log().
-				NoneErr(func() {
-					for name, jobs := range jobYaml {
-						wg.Add(1)
-						go execJob(jobs, name)
-					}
-					wg.Wait()
-				}).
+				})()).
+				NoneErrPrintln("Completed").
 				Err
 		},
 	}
