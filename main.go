@@ -138,7 +138,7 @@ func main() {
 		},
 	}
 	if err := app.Run(os.Args); err != nil {
-		log.Error(err.Error())
+		log.Fatal(err)
 	}
 }
 func setClientType() {

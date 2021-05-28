@@ -1,9 +1,10 @@
 package filestorage
 
 import (
-	"context"
 	"strconv"
 	"unicode/utf8"
+
+	ciosctx "github.com/optim-corp/cios-golang-sdk/ctx"
 
 	"github.com/optim-corp/cios-cli/utils/console"
 
@@ -44,10 +45,10 @@ func createNode() *cli.Command {
 		Action: func(c *cli.Context) error {
 			var parentNodeId = c.String("parent_node_id")
 			console.CliArgsForEach(c, func(name string) {
-				_, _, err := Client.FileStorage.CreateNodeOnNodeID(c.String("bucket_id"), cios.NodeRequest{
+				_, _, err := Client.FileStorage.CreateNodeOnNodeID(ciosctx.Background(), c.String("bucket_id"), cios.NodeRequest{
 					Name:         name,
 					ParentNodeId: &parentNodeId,
-				}, context.Background())
+				})
 				assert(err).Log().NoneErrPrintln("Completed " + name)
 			})
 			return nil
@@ -65,7 +66,7 @@ func deleteNode() *cli.Command {
 		Action: func(c *cli.Context) error {
 			bucketID := c.String("bucket_id")
 			console.CliArgsForEach(c, func(nodeID string) {
-				_, err := Client.FileStorage.DeleteNode(bucketID, nodeID, context.Background())
+				_, err := Client.FileStorage.DeleteNode(ciosctx.Background(), bucketID, nodeID)
 				assert(err).Log().NoneErrPrintln("Completed " + nodeID)
 			})
 			return nil
@@ -91,7 +92,7 @@ func listNode() *cli.Command {
 				opts         = ciossdk.MakeGetNodesOpts().Name(name).Recursive(all).ParentNodeId(parentNodeID).Limit(limit)
 			)
 			lsNode := func(value cios.Bucket) {
-				nodes, _, err := Client.FileStorage.GetNodesAll(value.Id, opts, context.Background())
+				nodes, _, err := Client.FileStorage.GetNodesAll(ciosctx.Background(), value.Id, opts)
 				if len(nodes) == 0 {
 					return
 				}
@@ -153,11 +154,11 @@ func copyNode() *cli.Command {
 			)
 			console.CliArgsForEach(c, func(nodeID string) {
 				_, _, err := Client.FileStorage.CopyNode(
+					ciosctx.Background(),
 					bucketId,
 					nodeID,
 					&destBucketId,
 					&parentNodeId,
-					context.Background(),
 				)
 				assert(err).Log().NoneErrPrintln("Completed ", nodeID)
 			})
@@ -183,11 +184,11 @@ func moveNode() *cli.Command {
 			)
 			console.CliArgsForEach(c, func(nodeID string) {
 				_, _, err := Client.FileStorage.MoveNode(
+					ciosctx.Background(),
 					bucketId,
 					nodeID,
 					&destBucketId,
 					&parentNodeId,
-					context.Background(),
 				)
 				assert(err).Log().NoneErrPrintln("Completed " + nodeID)
 			})
@@ -207,7 +208,7 @@ func renameNode() *cli.Command {
 		},
 		Action: func(c *cli.Context) error {
 			name := c.String("name")
-			_, _, err := Client.FileStorage.RenameNode(c.String("bucket_id"), c.String("node_id"), name, context.Background())
+			_, _, err := Client.FileStorage.RenameNode(ciosctx.Background(), c.String("bucket_id"), c.String("node_id"), name)
 			assert(err).Log().NoneErrPrintln("Completed ", name)
 			return nil
 		},

@@ -150,6 +150,8 @@ github.com/mitchellh/go-homedir v1.1.0 h1:lukF9ziXFxDFPkA1vsr5zpc1XuPDn/wFntq5mG
 github.com/mitchellh/go-homedir v1.1.0/go.mod h1:SfyaCUpYCn1Vlf4IUYiD9fPX4A5wJrkLzIz1N1q0pr0=
 github.com/optim-corp/cios-golang-sdk v0.3.0 h1:fKiSN79Wgmfx4tz+Bxp8FC+9ZmvN9ood8kNHcLJYEsg=
 github.com/optim-corp/cios-golang-sdk v0.3.0/go.mod h1:AhMv1zhP3P9blbPl1wU6IqNF+lhFJr6TxcRDYi5iIUc=
+github.com/optim-corp/cios-golang-sdk v0.3.1 h1:lgwq7vIg6j1bP0ZCor0vCgQtk0m8MPqR09z/diQvEz4=
+github.com/optim-corp/cios-golang-sdk v0.3.1/go.mod h1:AhMv1zhP3P9blbPl1wU6IqNF+lhFJr6TxcRDYi5iIUc=
 github.com/pmezard/go-difflib v1.0.0 h1:4DBwDE0NGyQoBHbLQYPwSUPoCMWR5BEzIk/f1lZbAQM=
 github.com/pmezard/go-difflib v1.0.0/go.mod h1:iKH77koFhYxTK1pcRnkKkqfTogsbg7gZNVY4sRDYZ/4=
 github.com/prometheus/client_model v0.0.0-20190812154241-14fe0d1b01d4/go.mod h1:xMI15A0UPsDsEKsMN9yxemIoYk6Tm2C1GtYGdfGttqA=
