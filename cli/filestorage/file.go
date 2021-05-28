@@ -50,7 +50,7 @@ func downloadFile() *cli.Command {
 					err  error
 				)
 				defer func() { assert(file.Close()).Log() }()
-				node, _, err := Client.FileStorage.GetNode(bucketID, nodeID, nil)
+				node, _, err := Client.FileStorage.GetNode(ciosctx.Background(), bucketID, nodeID)
 				assert(err).Log().
 					NoneErrAssertFn(func() error {
 						byt, _, err = Client.FileStorage.DownloadFile(ciosctx.Background(), bucketID, nodeID)
@@ -101,7 +101,7 @@ func uploadFile() *cli.Command {
 			}
 			if directory != "" {
 				if nodeID != "" {
-					node, _, err := Client.FileStorage.GetNode(bucketID, nodeID, ciosctx.Background())
+					node, _, err := Client.FileStorage.GetNode(ciosctx.Background(), bucketID, nodeID)
 					if err != nil {
 						log.Error(err.Error())
 						return err

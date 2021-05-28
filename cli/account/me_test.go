@@ -8,6 +8,8 @@ import (
 	"os"
 	"testing"
 
+	"github.com/optim-corp/cios-cli/utils/xstring"
+
 	cnv "github.com/fcfcqloow/go-advance/convert"
 
 	xos "github.com/fcfcqloow/go-advance/os"
@@ -53,42 +55,78 @@ func TestGetMeCommand(t *testing.T) {
 	assert.Equal(t, "me", account.GetMeCommand().Name)
 	assert.Equal(t, "list", account.GetMeCommand().Subcommands[0].Name)
 	assert.Equal(t, models.ALIAS_LIST, account.GetMeCommand().Subcommands[0].Aliases)
-
-	t.Run("Plot Name", func(t *testing.T) {
-		var (
-			name  = "test-name"
-			email = "example@sample.com"
-		)
-
-		_, fin := mockCiosClientMe(cios.Me{Name: &name, Email: email})
-		defer fin()
-
-		assert.True(t, getConsoleResult().ContainsAll(name, email))
-	})
-	t.Run("Plot corporation", func(t *testing.T) {
-		var (
-			name = "test-corpo"
-		)
-		_, fin := mockCiosClientMe(cios.Me{Corporation: &cios.GroupChildren{Name: cnv.StrPtr("test-corpo")}})
-		defer fin()
-
-		assert.True(t, getConsoleResult().ContainsAll(name))
-	})
-	t.Run("Plot corporation", func(t *testing.T) {
-		var (
-			gruopId = "test-group-id"
-		)
-		_, fin := mockCiosClientMe(cios.Me{Corporation: &cios.GroupChildren{Name: cnv.StrPtr("test-corpo")}, Groups: &[]cios.MeGroups{
-			{
-				Id:            gruopId,
-				Name:          "",
-				Type:          "",
-				CorporationId: cios.NullableString{},
-			},
-		}})
-		defer fin()
-
-		assert.True(t, getConsoleResult().ContainsAll(gruopId))
-	})
-
+	cases := []struct {
+		title    string
+		me       cios.Me
+		expected string
+	}{
+		{
+			title: "Plot Name",
+			me:    cios.Me{Name: cnv.StrPtr("test-name"), Email: "example@sample.com"},
+			expected: "****************************************************************************************************************" +
+				"|Name|: test-name|Email| : example@sample.com |group id||resource_owner_id||name / type|" +
+				"****************************************************************************************************************",
+		},
+		{
+			title: "Plot corporation",
+			me:    cios.Me{Corporation: &cios.GroupChildren{Name: cnv.StrPtr("test-corpo")}},
+			expected: "****************************************************************************************************************" +
+				"|Name|: |Email| : |Corporation| : test-corpo |group id||resource_owner_id||name / type|" +
+				"****************************************************************************************************************",
+		},
+		{
+			title: "Plot group id",
+			me: cios.Me{Corporation: &cios.GroupChildren{Name: cnv.StrPtr("test-corpo")}, Groups: &[]cios.MeGroups{
+				{
+					Id:            "test-group-id",
+					Name:          "",
+					Type:          "",
+					CorporationId: cios.NullableString{},
+				},
+			}},
+			expected: "****************************************************************************************************************" +
+				"|Name|: |Email| : |Corporation| : test-corpo |group id||resource_owner_id||name / type|test-group-id / " +
+				"****************************************************************************************************************",
+		},
+		{
+			title: "Plot groups",
+			me: cios.Me{Corporation: &cios.GroupChildren{Name: cnv.StrPtr("test-corpo")}, Groups: &[]cios.MeGroups{
+				{
+					Id:            "ead53ded-003d-4525-816b-e471f11814d9",
+					Name:          "test1",
+					Type:          "Group",
+					CorporationId: cios.NullableString{},
+				},
+				{
+					Id:            "ead53ded-003d-4525-816b-e471f11814d9",
+					Name:          "test2",
+					Type:          "Group",
+					CorporationId: cios.NullableString{},
+				},
+				{
+					Id:            "ead53ded-003d-4525-816b-e471f11814d9",
+					Name:          "test2",
+					Type:          "Group",
+					CorporationId: cios.NullableString{},
+				},
+				{
+					Id:            "ead53ded-003d-4525-816b-e471f11814d9",
+					Name:          "test1",
+					Type:          "Corporation",
+					CorporationId: cios.NullableString{},
+				},
+			}},
+			expected: "****************************************************************************************************************" +
+				"|Name|: |Email| : |Corporation| : test-corpo |group id||resource_owner_id||name / type|ead53ded-003d-4525-816b-e471f11814d9test1 / Groupead53ded-003d-4525-816b-e471f11814d9test2 / Groupead53ded-003d-4525-816b-e471f11814d9test2 / Groupead53ded-003d-4525-816b-e471f11814d9test1 / Corporation" +
+				"****************************************************************************************************************",
+		},
+	}
+	for _, c := range cases {
+		t.Run(c.title, func(t *testing.T) {
+			_, fin := mockCiosClientMe(c.me)
+			t.Log(getConsoleResult().Str())
+			assert.Equal(t, c.expected, xstring.ToOneLine(getConsoleResult().Str()))
+			fin()
+		})
+	}
 }

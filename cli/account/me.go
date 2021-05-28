@@ -1,7 +1,7 @@
 package account
 
 import (
-	"context"
+	ciosctx "github.com/optim-corp/cios-golang-sdk/ctx"
 
 	"github.com/optim-corp/cios-cli/utils/console"
 
@@ -37,31 +37,28 @@ func listMe() *cli.Command {
 		Aliases: models.ALIAS_LIST,
 		Flags:   []cli.Flag{},
 		Action: func(c *cli.Context) error {
+			value, _, err := Client.Account.GetMe(ciosctx.Background())
+			if err != nil {
+				return err
+			}
+			resourceOwnerMap, err := Client.Account.GetResourceOwnersMapByGroupID(ciosctx.Background())
+			if err != nil {
+				return nil
+			}
 			listUtility(func() {
-				value, _, err := Client.Account.GetMe(context.Background())
-				assert(err).Log().NoneErr(func() {
-					fPrintln("|Name|                : " + str(value.Name))
-					fPrintln("|Email|               : " + value.Email)
-					if !check.IsNil(value.Corporation) && !check.IsNil(value.Corporation.Name) {
-						fPrintln("|Corporation|         : " + str(value.Corporation.Name))
+				fPrintln("|Name|                : " + str(value.Name))
+				fPrintln("|Email|               : " + value.Email)
+				if !check.IsNil(value.Corporation) && !check.IsNil(value.Corporation.Name) {
+					fPrintln("|Corporation|         : " + str(value.Corporation.Name))
+				}
+				fPrintln("\t     |group id|\t\t\t\t|resource_owner_id|\t\t|name / type|")
+				if !check.IsNil(value.Groups) {
+					// 1000件超えたら積
+					for _, group := range *value.Groups {
+						resourceOwner, _ := resourceOwnerMap[group.Id]
+						fPrintln(group.Id + "\t" + resourceOwner.GetId() + "\t" + group.Name + " / " + group.Type)
 					}
-					fPrintln("\t     |group id|\t\t\t\t|resource_owner_id|\t\t|name / type|")
-					if !check.IsNil(value.Groups) {
-						// 1000件超えたら積
-						resourceOwnerMap, err := Client.Account.GetResourceOwnersMapByGroupID(nil)
-						assert(err).Log()
-						for _, group := range *value.Groups {
-							resourceOwner, ok := resourceOwnerMap[group.Id]
-							resourceOwnerId := ""
-							if ok {
-								resourceOwnerId = resourceOwner.Id
-							}
-							assert(err).Log().NoneErr(func() {
-								fPrintln(group.Id + "\t" + resourceOwnerId + "\t" + group.Name + " / " + group.Type)
-							})
-						}
-					}
-				})
+				}
 			})
 			return nil
 		},
