@@ -16,7 +16,7 @@ var (
 
 	Stages    = createStages()
 	FullScope = "openid email profile address user.profile user.read user.write " +
-		"group.read group.write group.relation.read group.relation.write" +
+		"group.read group.write group.relation.read group.relation.write " +
 		"corporation.read corporation.write corporation.user.read corporation.user.write corporation.group.read  corporation.group.write " +
 		"oauth2_client.read oauth2_client.write license.read license.write acl.read acl.write resource_owner.read " +
 		"resource_owner.read " +
