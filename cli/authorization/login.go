@@ -79,13 +79,17 @@ func login() {
 		},
 		{
 			Name:   "clientSecret",
-			Prompt: &survey.Password{Message: "Client Secret"},
+			Prompt: &survey.Password{Message: "Client Secret: "},
 		},
 	}, &answers)
 	answers.Stage = stage.Stage
 	basePath := setPath(answers.Stage)
-	port := answers.RedirectUri[16:21]
-	path := answers.RedirectUri[21:]
+	redirectUri, err := url.Parse(answers.RedirectUri)
+	if err != nil {
+		panic("Invlid Uri")
+	}
+	port := redirectUri.Port()
+	path := redirectUri.RequestURI()
 	http.HandleFunc(path, func(w http.ResponseWriter, r *http.Request) {
 		form := url.Values{}
 		form.Add("grant_type", "authorization_code")
