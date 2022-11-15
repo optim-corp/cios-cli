@@ -89,6 +89,10 @@ func login() {
 		panic("Invlid Uri")
 	}
 	port := redirectUri.Port()
+	if port == "" {
+		port = "80"
+	}
+	port = ":" + port
 	path := redirectUri.RequestURI()
 	http.HandleFunc(path, func(w http.ResponseWriter, r *http.Request) {
 		form := url.Values{}
